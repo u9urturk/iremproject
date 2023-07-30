@@ -1,10 +1,19 @@
 import React from 'react'
-import Products from './Products'
+import Navbar from '../components/Navbar'
+import Testimonial from '../components/Testimonial'
+import Footer from '../components/Footer'
+import { Outlet } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 
-export default function Layout() {  
+export default function Layout() {
   return (
     <>
-    <Products></Products>
+      <Navbar></Navbar>
+      <Outlet></Outlet>
+      <Testimonial></Testimonial>
+      <Footer></Footer>
+     
+
     </>
   )
 }

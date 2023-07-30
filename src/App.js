@@ -1,16 +1,28 @@
+import { useRoutes } from 'react-router-dom';
 import './App.css';
-import Footer from './components/Footer';
-import Navbar from './components/Navbar';
-import Testimonial from './components/Testimonial';
-import Layout from './pages/Layout';
+import routes from './routes';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
+
+  const showRoutes = useRoutes(routes)
   return (
     <div className="App">
-      <Navbar></Navbar>
-      <Layout></Layout>
-      <Testimonial></Testimonial   >
-      <Footer></Footer>
+
+      {showRoutes}
+      <ToastContainer
+        position="top-left"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+
     </div>
   );
 }
