@@ -1,5 +1,6 @@
 import Layout from "./pages/Layout"
 import Products from "./pages/Products"
+import ProductsByCategory from "./pages/ProductsByCategory"
 import PrivateRoute from "./utils"
 
 const routes = [
@@ -9,7 +10,12 @@ const routes = [
         children: [
             {
                 index: true,
-                element: <Products></Products>
+                element: <Products></Products>,
+              
+            },
+            {
+                path:'products/:categoryId',
+                element:<ProductsByCategory></ProductsByCategory>
             }
         ]
     }

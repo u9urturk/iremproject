@@ -4,21 +4,21 @@ import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
 import { HiOutlinePhotograph } from 'react-icons/hi'
 import { useSelector } from 'react-redux'
-import { downloadImage, getCategoryByCategoryId, getProducts, uploadImage } from '../firebase'
+import { getCategoryByCategoryId, getProductByCategoryId } from '../firebase'
+import { useParams } from 'react-router-dom'
+import baseImage from '../materials/baseImages/420x260.webp'
 import ListenImages from '../components/ListenImages'
 
-
-export default function Products() {
+export default function ProductsByCategory() {
     const user = useSelector(state => state.auth.user)
-    const getProductsBase = getProducts();
     const [products, setProducts] = useState([])
     const [categoryName, setCategoryName] = useState("")
-    const [currentProduct, setCurrentProduct] = useState(null)
-    const [file, setFile] = useState(null)
+    const categoryId = useParams();
 
 
     const productReaction = () => {
-        getProductsBase.then(res => {
+        setProducts("");
+        getProductByCategoryId(categoryId.categoryId).then((res) => {
             res.forEach(async (doc) => {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
                     setCategoryName(res.categoryName);
@@ -31,14 +31,32 @@ export default function Products() {
 
 
                 setProducts(prevState => [...prevState, data])
-            })
+            });
+
         })
+
+
+
+        // getProductsBase.then(res => {
+        //     res.forEach(async (doc) => {
+        //         await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
+        //             setCategoryName(res.categoryName);
+        //         });
+        //         let data = {
+        //             productId: doc.id,
+        //             categoryName: categoryName,
+        //             ...doc.data()
+        //         }
+
+
+        //         setProducts(prevState => [...prevState, data])
+        //     })
+        // })
     }
 
     useEffect(() => {
         productReaction()
-    }, [])
-
+    }, [categoryId])
 
     const loadingPage = () => {
         const set = []
@@ -66,21 +84,6 @@ export default function Products() {
         return set;
     }
 
-
-    const updateImage = () => {
-        if (currentProduct != null && file != null) {
-            uploadImage(currentProduct, file[0]);
-            setCurrentProduct(null);
-            setFile(null);
-        }
-    }
- 
-
-    useEffect(() => {
-        updateImage()
-    }, [file])
-
-
     return (
         <div class="container px-5 py-24 mx-auto ">
             <div className='pb-8'><ProductAdd></ProductAdd></div>
@@ -89,8 +92,7 @@ export default function Products() {
                     return res.res
                 })}
                 {
-                    products.length > 0 && products.map((product, key) => {
-                        
+                    products && products.map((product, key) => {
                         return <div key={key} class="relative group/card lg:w-1/4 md:w-1/2 p-4 w-full cursor-pointer hover:scale-105 transition-all">
                             {user && <div className='hidden  group-hover/card:block '>
                                 <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
@@ -100,11 +102,11 @@ export default function Products() {
 
                                 </div>
                                 <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all text-brandBlue' title='Görsel Güncelle'></input>
+                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all text-brandBlue' title='Görsel Güncelle'><HiOutlinePhotograph size={22} ></HiOutlinePhotograph></div>
                                 </div>
                             </div>}
                             <a class="block relative h-48 rounded overflow-hidden">
-                                <ListenImages productId={product.productId}></ListenImages>
+                            <ListenImages productId={product.productId}></ListenImages>
                             </a>
                             <div class="mt-4">
                                 <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{product.categoryName}</h3>
@@ -113,9 +115,11 @@ export default function Products() {
 
                             </div>
                         </div>
-                        
+
+
+
                     })
-                } 
+                }
             </div>
         </div>
     )

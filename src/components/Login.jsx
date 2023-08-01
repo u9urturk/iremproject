@@ -8,19 +8,19 @@ import { Form, Formik } from 'formik'
 import Input from './Input'
 import Button from './Button'
 import { LoginSchema } from '../Validation'
+import logo from '../materials/logos/logo.svg'
 
 export default function Login() {
     const [isActive, setisActive] = useState(false)
     const user = useSelector(state => state.auth.user)
-    const logo = process.env.PUBLIC_URL + "logos/logo.svg"
 
     const handleSubmit = async (values, actions) => {
         login(values.username, values.password)
     }
     return (
         <div>
-            {!user && <div className='text-[#f9faf5]  active:scale-90  cursor-pointer transition-all hover:text-gray-700' onClick={() => { setisActive(true) }}><SiAdminer size={34}></SiAdminer></div>}
-            {user && <button className='text-[#f9faf5] hover:text-gray-700 active:scale-90 cursor-pointer transition-all' onClick={() => { logout() }}><RiLogoutCircleRLine size={28}></RiLogoutCircleRLine></button>}
+            {!user && <div className='text-[#f9faf5]  active:scale-90  cursor-pointer transition-all hover:text-gray-700' onClick={() => { setisActive(true) }}><SiAdminer size={28}></SiAdminer></div>}
+            {user && <button className='text-[#f9faf5] flex items-center justify-center hover:text-gray-700 active:scale-90 cursor-pointer transition-all' onClick={() => { logout() }}><RiLogoutCircleRLine size={24}></RiLogoutCircleRLine></button>}
             {
                 isActive === true && !user && <div className='fixed top-0 left-0 h-screen w-full z-10  backdrop-blur-sm'>
                     <div className='h-full w-full flex items-center justify-center '>

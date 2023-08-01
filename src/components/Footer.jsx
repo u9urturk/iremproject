@@ -1,7 +1,7 @@
 import React from 'react'
+import logo from '../materials/logos/logo.svg'
 
 export default function Footer() {
-    const logo = process.env.PUBLIC_URL +"logos/logo.svg"
     return (
         <footer class="text-gray-600 bg-[#6e77ee] body-font">
             <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
