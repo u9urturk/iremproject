@@ -19,7 +19,7 @@ export default function Input({ label, type = "text", ...props }) {
     }, [show])
 
     return (
-        <label className='relative flex bg-zinc-50 border rounded-sm focus-within:border-gray-400  '>
+        <label className='relative flex bg-zinc-50 border rounded-md focus-within:border-gray-400  '>
             <input type={inputType} className={classNames({
                 'px-2 text-sm outline-none bg-transparent w-full  h-[38px]': true,
                 'pt-[10px]': field.value
