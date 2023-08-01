@@ -159,8 +159,9 @@ export const login = async (email, password) => {
                 })
         })
         .catch((error) => {
+            console.log(error.code)
             const errorCode = error.code;
-            if (errorCode === "auth/invalid-email") {
+            if (errorCode === "auth/invalid-email" || errorCode === "auth/wrong-password") {
                 toast.error('Kullanıcı giriş bilgileri hatalı !', {
                     position: "top-left",
                     autoClose: 2000,
