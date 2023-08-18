@@ -18,7 +18,7 @@ export default function Navbar() {
             <div className='w-full flex relative   md:flex-row flex-col  items-center justify-around  py-3 bg-gradient-to-tl from-brandGray to-brandBlue'>
                 <div className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
                     <img className='w-auto h-20 ' src={logo} alt="logo" />
-                    <span class="ml-3 text-xl  text-brandWhite">İrem Aksesuar</span>
+                    <span class="ml-3 text-xl font-serif tracking-widest  text-brandWhite">İrem Nakış</span>
 
                 </div>
                 <div className='flex border border-brandGray md:-translate-x-16  py-1 px-2 rounded-2xl items-center justify-center gap-x-2'>

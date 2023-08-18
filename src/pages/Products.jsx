@@ -91,8 +91,8 @@ export default function Products() {
                 {
                     products.length > 0 && products.map((product, key) => {
                         
-                        return <div key={key} class="relative group/card lg:w-1/4 md:w-1/2 p-4 w-full cursor-pointer hover:scale-105 transition-all">
-                            {user && <div className='hidden  group-hover/card:block '>
+                        return <div key={key} class="relative group/card lg:w-1/4 md:w-1/2 p-4 w-full  cursor-pointer hover:scale-105 transition-all">
+                            {user && <div className='hidden  group-hover/card:block   '>
                                 <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
                                     <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                     <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>

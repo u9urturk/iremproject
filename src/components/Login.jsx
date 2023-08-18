@@ -22,8 +22,8 @@ export default function Login() {
             {!user && <div className='text-[#f9faf5]  active:scale-90  cursor-pointer transition-all hover:text-gray-700' onClick={() => { setisActive(true) }}><SiAdminer size={28}></SiAdminer></div>}
             {user && <button className='text-[#f9faf5] flex items-center justify-center hover:text-gray-700 active:scale-90 cursor-pointer transition-all' onClick={() => { logout() }}><RiLogoutCircleRLine size={24}></RiLogoutCircleRLine></button>}
             {
-                isActive === true && !user && <div className='fixed top-0 left-0 h-screen w-full z-10  backdrop-blur-sm'>
-                    <div className='h-full w-full flex items-center justify-center '>
+                isActive === true && !user && <div className='fixed top-0 left-0 h-screen w-full z-10 animate-fade backdrop-blur-sm'>
+                    <div className='h-full w-full flex items-center  justify-center '>
                         <div className='relative flex flex-col items-center pb-8  bg-gradient-to-tl from-[#b7bac3] to-[#6e77ee]  rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
                             <div onClick={() => { setisActive(false) }}><AiOutlineCloseCircle className='absolute top-4 right-4 text-white transition-all cursor-pointer hover:scale-75' size={34}></AiOutlineCloseCircle></div>
                             <div className='flex items-center justify-center gap-x-3'>

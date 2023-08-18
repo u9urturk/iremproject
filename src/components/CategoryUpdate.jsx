@@ -22,7 +22,7 @@ export default function CategoryUpdate({ isActive, onClose, data }) {
 
     if (isActive === true) {
         return (
-            <div className='fixed top-0 left-0 h-screen w-full z-10  backdrop-blur-sm'>
+            <div className='fixed top-0 animate-fade left-0 h-screen w-full z-10  backdrop-blur-sm'>
                 <div className='h-full w-full flex items-center justify-center '>
                     <div className='relative flex flex-col items-center py-8  bg-gradient-to-tl from-[#b7bac3] to-[#6e77ee]  rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
                         <div className='flex items-center justify-center gap-x-3'>
