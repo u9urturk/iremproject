@@ -100,7 +100,7 @@ export default function Products() {
 
                                 </div>
                                 <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all text-brandBlue' title='Görsel Güncelle'></input>
+                                    <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input>
                                 </div>
                             </div>}
                             <a class="block relative h-48 rounded overflow-hidden">

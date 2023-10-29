@@ -102,7 +102,7 @@ export default function ProductsByCategory() {
 
                                 </div>
                                 <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all text-brandBlue' title='Görsel Güncelle'><HiOutlinePhotograph size={22} ></HiOutlinePhotograph></div>
+                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Görsel Güncelle'><HiOutlinePhotograph size={22} ></HiOutlinePhotograph></div>
                                 </div>
                             </div>}
                             <a class="block relative h-48 rounded overflow-hidden">
