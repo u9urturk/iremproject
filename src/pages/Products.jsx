@@ -74,7 +74,7 @@ export default function Products() {
             setFile(null);
         }
     }
- 
+
 
     useEffect(() => {
         updateImage()
@@ -82,40 +82,38 @@ export default function Products() {
 
 
     return (
-        <div class="container px-5 py-24 mx-auto ">
+        <div class="container px-5   mx-auto ">
             <div className='pb-8'><ProductAdd></ProductAdd></div>
-            <div class="flex flex-wrap -m-4 ">
-                {products.length == 0 && loadingPage().map(res => {
-                    return res.res
-                })}
-                {
-                    products.length > 0 && products.map((product, key) => {
-                        
-                        return <div key={key} class="relative group/card lg:w-1/4 md:w-1/2 p-4 w-full  cursor-pointer hover:scale-105 transition-all">
-                            {user && <div className='hidden  group-hover/card:block   '>
-                                <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
+            <div className='flex items-center justify-center '>
+                <div className='grid grid-cols-1 md:grid-cols-3  gap-8'>
+                    {products.length == 0 && loadingPage().map(res => {
+                        return res.res
+                    })}
+                    {
+                        products.length > 0 && products.map((product, key) => {
 
-
+                            return <div key={key} className="card w-80  md:w-96 shadow-xl glass h-96 cursor-pointer group">
+                                {user && <div className='hidden  group-hover:block transition-all  '>
+                                    <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
+                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
+                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
+                                    </div>
+                                    <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
+                                        <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input>
+                                    </div>
+                                </div>}
+                                <figure ><ListenImages productId={product.productId}></ListenImages></figure>
+                                <div className="card-body ">
+                                    <h2 className="card-title">{product.productName}</h2>
+                                    <div className="card-actions pt-4 flex items-center justify-between">
+                                        <div className=" badge  badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div>
+                                        <button className="btn ">Sepete Ekle</button>
+                                    </div>
                                 </div>
-                                <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input>
-                                </div>
-                            </div>}
-                            <a class="block relative h-48 rounded overflow-hidden">
-                                <ListenImages productId={product.productId}></ListenImages>
-                            </a>
-                            <div class="mt-4">
-                                <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{product.categoryName}</h3>
-                                <h2 class="text-gray-900 title-font text-lg font-medium">{product.productName}</h2>
-                                <p class="mt-1">{product.price} &#x20BA;  </p>
-
                             </div>
-                        </div>
-                        
-                    })
-                } 
+                        })
+                    }
+                </div>
             </div>
         </div>
     )

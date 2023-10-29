@@ -73,7 +73,7 @@ export default function Categories() {
 
 
                             </div>}
-                            <NavLink to={`products/${data.categoryId}`} className='hover:bg-gradient-to-tl from-brandGray to-brandBlue bg-brandGray cursor-pointer transition-all py-1 px-3 rounded-md'>
+                            <NavLink to={`products/${data.categoryId}`} className='btn glass btn-xs sm:btn-sm md:btn-md '>
                                 {data.categoryName}
                             </NavLink>
                         </div>

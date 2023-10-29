@@ -25,16 +25,18 @@ export default function Navbar() {
                     <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                     <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                 </div>
-                <div className='flex items-center justify-center '>
-                    <Link  to={"/"}   className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200'  data-tip="AnaSayfa" >
-                        <AiOutlineHome  size={24}></AiOutlineHome>
-                    </Link>
+                <div className='hidden md:block'>
+                    <div className='flex items-center justify-center '>
+                        <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
+                            <AiOutlineHome size={24}></AiOutlineHome>
+                        </Link>
 
-                    <div className='text-brandPink  tooltip  md:static absolute left-3 top-5 block cursor-pointer  p-3 rounded-full hover:bg-base-200'   data-tip="Bildirimler">
-                        <BsBell size={23}></BsBell>
-                    </div>
-                    <div className='flex items-center justify-center md:static   p-3 rounded-full hover:bg-base-200'>
-                        <Login></Login>
+                        <div className='text-brandPink  tooltip  md:static absolute left-3 top-5 block cursor-pointer  p-3 rounded-full hover:bg-base-200' data-tip="Bildirimler">
+                            <BsBell size={23}></BsBell>
+                        </div>
+                        <div className='flex items-center justify-center md:static   p-3 rounded-full hover:bg-base-200'>
+                            <Login></Login>
+                        </div>
                     </div>
                 </div>
             </div>
