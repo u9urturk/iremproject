@@ -40,7 +40,7 @@ export default function Login() {
                                 {({ isSubmitting, values, isValid, dirty }) => (
                                     <Form>
                                         <div className='flex flex-col items-center justify-center gap-y-3'>
-                                            <Input type="text" name="username" className='p-2 bg-transparent border focus:outline-brandGreen  w-48 text-base  transition-all h-10 outline-none hover:text-sm ' label='E-Posta' />
+                                            <Input type="text" name="username" className='p-2 bg-transparent   w-48 text-base  transition-all h-10 outline-none hover:text-sm ' label='E-Posta' />
                                             <Input type="password" name="password" className='p-2  w-48 bg-transparent h-10 text-base transition-all outline-none hover:text-sm ' label='Şifre' />
                                             <Button type='submit' disabled={!isValid || !dirty || isSubmitting}>Giriş Yap</Button>
                                         </div>

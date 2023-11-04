@@ -18,7 +18,7 @@ export default function ListenImages({productId}) {
 
     return (
         <Fragment>
-            <img alt="ecommerce" class="object-cover rounded-t-2xl object-center w-full h-56 block" src={image!=null ? image:baseImage} />
+            <img alt="ecommerce" class="object-cover rounded-t-2xl object-center w-full h-24 md:h-56 block" src={image!=null ? image:baseImage} />
         </Fragment>
     )
 }

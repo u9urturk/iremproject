@@ -37,21 +37,7 @@ export default function ProductsByCategory() {
 
 
 
-        // getProductsBase.then(res => {
-        //     res.forEach(async (doc) => {
-        //         await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
-        //             setCategoryName(res.categoryName);
-        //         });
-        //         let data = {
-        //             productId: doc.id,
-        //             categoryName: categoryName,
-        //             ...doc.data()
-        //         }
-
-
-        //         setProducts(prevState => [...prevState, data])
-        //     })
-        // })
+       
     }
 
     useEffect(() => {
@@ -63,7 +49,7 @@ export default function ProductsByCategory() {
         let range = 9;
         for (let i = 0; i < range; i++) {
             set.push({
-                res: <div class="  shadow rounded-md my-2 p-4 max-w-sm w-full mx-auto">
+                res: <div class="  shadow rounded-md my-2 p-4 w-  w-56 mx-auto">
                     <div class="animate-pulse flex space-x-4">
                         <div class="rounded-full bg-slate-700 h-10 w-10"></div>
                         <div class="flex-1 space-y-6 py-1">
@@ -84,42 +70,41 @@ export default function ProductsByCategory() {
         return set;
     }
 
+   
     return (
-        <div class="container px-5 py-24 mx-auto ">
+        <div class="container px-5   mx-auto ">
             <div className='pb-8'><ProductAdd></ProductAdd></div>
-            <div class="flex flex-wrap -m-4 ">
-                {products.length == 0 && loadingPage().map(res => {
-                    return res.res
-                })}
-                {
-                    products && products.map((product, key) => {
-                        return <div key={key} class="relative group/card lg:w-1/4 md:w-1/2 p-4 w-full cursor-pointer hover:scale-105 transition-all">
-                            {user && <div className='hidden  group-hover/card:block '>
-                                <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
+            <div className='flex items-center justify-center '>
+                <div className='grid grid-cols-2 md:grid-cols-5  gap-6 md:gap-8'>
+                    {products.length == 0 && loadingPage().map(res => {
+                        return res.res
+                    })}
+                    {
+                        products.length > 0 && products.map((product, key) => {
 
-
+                            return <div key={key} className="card w-36  md:w-56 shadow-xl glass h-auto cursor-pointer group">
+                                {user && <div className='hidden  group-hover:block transition-all  '>
+                                    <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
+                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
+                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
+                                    </div>
+                                   
+                                </div>}
+                                <figure ><ListenImages  productId={product.productId}></ListenImages></figure>
+                                <div className="card-body  ">
+                                    <h2 className="card-title text-xs md:text-md">{product.productName}</h2>
+                                    <div className="card-actions relative pt-1 md:pt-4 flex md:flex-col items-center  justify-center">
+                                        
+                                        <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
+                                        <button className=" md:opacity-0 md:group-hover:opacity-100 bg-base-200 transition-all mt-2 md:hover:bg-base-300 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Sepete Ekle</button>
+                                    </div>
+                                    
+                                  
                                 </div>
-                                <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                    <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Görsel Güncelle'><HiOutlinePhotograph size={22} ></HiOutlinePhotograph></div>
-                                </div>
-                            </div>}
-                            <a class="block relative h-48 rounded overflow-hidden">
-                            <ListenImages productId={product.productId}></ListenImages>
-                            </a>
-                            <div class="mt-4">
-                                <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{product.categoryName}</h3>
-                                <h2 class="text-gray-900 title-font text-lg font-medium">{product.productName}</h2>
-                                <p class="mt-1">{product.price} &#x20BA;  </p>
-
                             </div>
-                        </div>
-
-
-
-                    })
-                }
+                        })
+                    }
+                </div>
             </div>
         </div>
     )

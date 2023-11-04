@@ -9,13 +9,13 @@ import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFire
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAOXcyZevHShLVZOOA-pHlrAs33GNitz8E",
-    authDomain: "iremnakis-144a2.firebaseapp.com",
-    projectId: "iremnakis-144a2",
-    storageBucket: "iremnakis-144a2.appspot.com",
-    messagingSenderId: "848842595220",
-    appId: "1:848842595220:web:9e91bec59831aab645cd81",
-    measurementId: "G-S421CPS54N"
+    apiKey: "AIzaSyBssFu2VLMd1kXD99rb-TvFxBXXelCf_Ws",
+  authDomain: "iremceyizevi-6265d.firebaseapp.com",
+  projectId: "iremceyizevi-6265d",
+  storageBucket: "iremceyizevi-6265d.appspot.com",
+  messagingSenderId: "398714082560",
+  appId: "1:398714082560:web:c8ce37c349b03d710a8fe5",
+  measurementId: "G-VCQFBWR9ZJ"
 };
 
 

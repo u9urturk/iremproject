@@ -30,7 +30,7 @@ export default function Input({ label, type = "text", ...props }) {
                 'text-[10px] top-1.5': field.value
             })}>{label}</small>
             {type === "password" && field?.value && (
-                <div onClick={() => setShow(show => !show)} className=' absolute right-0 h-full cursor-pointer select-none flex items-center text-sm font-semibold pr-2'>
+                <div onClick={() => setShow(show => !show)} className=' absolute right-0 top-0 h-full cursor-pointer select-none flex items-center text-sm font-semibold pr-2'>
                     {show ? 'Gizle' : 'Göster'}
                 </div>
             )}
