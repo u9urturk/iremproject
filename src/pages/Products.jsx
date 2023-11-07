@@ -6,6 +6,8 @@ import { HiOutlinePhotograph } from 'react-icons/hi'
 import { useSelector } from 'react-redux'
 import { downloadImage, getCategoryByCategoryId, getProducts, uploadImage } from '../firebase'
 import ListenImages from '../components/ListenImages'
+import Categories from '../components/Categories'
+import Billboard from '../components/Billboard'
 
 
 export default function Products() {
@@ -83,6 +85,10 @@ export default function Products() {
 
     return (
         <div class="container px-5   mx-auto ">
+            <Billboard></Billboard>
+            <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
+                <Categories></Categories>
+            </div>
             <div className='pb-8'><ProductAdd></ProductAdd></div>
             <div className='flex items-center justify-center '>
                 <div className='grid grid-cols-2 md:grid-cols-5  gap-6 md:gap-8'>
@@ -102,16 +108,16 @@ export default function Products() {
                                         <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input>
                                     </div>
                                 </div>}
-                                <figure ><ListenImages  productId={product.productId}></ListenImages></figure>
+                                <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body  ">
                                     <h2 className="card-title text-xs md:text-md">{product.productName}</h2>
                                     <div className="card-actions relative pt-1 md:pt-4 flex md:flex-col items-center  justify-center">
-                                        
+
                                         <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
                                         <button className=" md:opacity-0 md:group-hover:opacity-100 bg-base-200 transition-all mt-2 md:hover:bg-base-300 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Sepete Ekle</button>
                                     </div>
-                                    
-                                  
+
+
                                 </div>
                             </div>
                         })
