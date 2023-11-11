@@ -32,7 +32,7 @@ export default function Billboard() {
     updateImage()
   }, [file])
   return (
-    <div className="w-full w-max-[calc(100%-200px)] h-[600px] carousel rounded-box">
+    <div className="w-full md:carousel hidden w-max-[calc(100%-200px)] h-[600px]  rounded-box">
       {/* <button className='h-8 w-12 bg-red'><input accept='image/jpeg/png' type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input></button> */}
       {
         images.map((image, key) => {
