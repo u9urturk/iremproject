@@ -1,4 +1,5 @@
 import Layout from "./pages/Layout"
+import Product from "./pages/Product"
 import Products from "./pages/Products"
 import ProductsByCategory from "./pages/ProductsByCategory"
 import PrivateRoute from "./utils"
@@ -16,6 +17,10 @@ const routes = [
             {
                 path:'products/:categoryId',
                 element:<ProductsByCategory></ProductsByCategory>
+            },
+            {
+                path:'test',
+                element:<Product></Product>
             }
         ]
     }
