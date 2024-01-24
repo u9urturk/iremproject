@@ -1,3 +1,5 @@
+import DevDash from "./pages/DevDash/Main"
+import CategoryOperations from "./pages/DevDash/Pages/CategoryOperations"
 import Layout from "./pages/Layout"
 import Product from "./pages/Product"
 import Products from "./pages/Products"
@@ -19,8 +21,26 @@ const routes = [
                 element:<ProductsByCategory></ProductsByCategory>
             },
             {
-                path:'test',
-                element:<Product></Product>
+                path:'yöneticipaneli',
+                element:<DevDash></DevDash>,
+                children:[
+                    {
+                        path:'kategoriislemleri',
+                        element:<CategoryOperations></CategoryOperations>
+                    },
+                    {
+                        path:'ozellikislemleri',
+                        element:<CategoryOperations></CategoryOperations>
+                    },
+                    {
+                        path:'urunislemleri',
+                        element:<CategoryOperations></CategoryOperations>
+                    },
+                    {
+                        path:'kullaniciislemleri',
+                        element:<CategoryOperations></CategoryOperations>
+                    }
+                ]
             }
         ]
     }

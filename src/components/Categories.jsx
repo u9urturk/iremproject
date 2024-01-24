@@ -60,7 +60,7 @@ export default function Categories() {
     return (
         <Fragment>
             <div className='flex flex-col  gap-y-2 items-center justify-center'>
-                <CategoryAdd></CategoryAdd>
+                
                 {categories.length == 0 && <div className='py-1 px-2'>Yükleniyor ...</div>}
 
                 {categories.length > 0 && <div className='flex items-center justify-center gap-x-2 text-brandWhite'>

@@ -10,8 +10,8 @@ export default function Layout() {
     <>
       <Navbar></Navbar>
       <Outlet></Outlet>
-      {/* <Testimonial></Testimonial>
-      <Footer></Footer> */}
+      <Testimonial></Testimonial>
+      <Footer></Footer>
      
 
     </>

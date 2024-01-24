@@ -6,9 +6,11 @@ import logo from '../materials/logos/logo.svg'
 import { AiOutlineHome } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
+import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { useSelector } from 'react-redux'
 export default function Navbar() {
 
-
+    const user = useSelector(state => state.auth.user)
     const [scrollY, setScrollY] = useState(0);
 
     const handleScroll = () => {
@@ -44,8 +46,15 @@ export default function Navbar() {
                     </div>
                     <div className='hidden md:block'>
                         <div className='flex items-center justify-center '>
-                            <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
+                        <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
                                 <AiOutlineHome size={24}></AiOutlineHome>
+                            </Link>
+
+                            <Link to={"/yöneticipaneli"} className={classNames({
+                                'text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200':user,
+                                'hidden':user==false
+                            })} data-tip="Yönetici Paneli" >
+                                <MdOutlineDashboardCustomize size={24}></MdOutlineDashboardCustomize>
                             </Link>
 
                             <div className='text-brandPink  tooltip  md:static absolute left-3 top-5 block cursor-pointer  p-3 rounded-full hover:bg-base-200' data-tip="Bildirimler">
