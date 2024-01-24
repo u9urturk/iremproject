@@ -1,20 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsBell } from 'react-icons/bs'
 import { CiSearch } from 'react-icons/ci'
 import Login from './Login'
 import logo from '../materials/logos/logo.svg'
 import { AiOutlineHome } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
+import classNames from 'classnames'
 export default function Navbar() {
 
 
+    const [scrollY, setScrollY] = useState(0);
 
+    const handleScroll = () => {
+        setScrollY(window.scrollY);
+    };
 
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
 
     return (
         <div>
-            <div className='fixed z-[1]  bg-base-100 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center'>
+            <div
+                className={classNames({
+                    "fixed z-[1]  bg-base-100 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
+                    "opacity-0": scrollY != 0,
+
+                })}
+            >
                 <div className='w-full flex relative   md:flex-row flex-col  items-center justify-around  py-3 '>
                     <div className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
                         <img className='w-auto h-24' src={logo} alt="logo" />
@@ -43,7 +60,7 @@ export default function Navbar() {
 
             </div>
             <div className='w-full h-20 mb-16 md:mb-3'>
-            
+
             </div>
         </div>
     )
