@@ -30,7 +30,7 @@ export default function Navbar() {
             <div
                 className={classNames({
                     "fixed z-[1]  bg-base-100 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
-                    "opacity-0": scrollY != 0,
+                    "opacity-0 -z-[1]": scrollY != 0,
 
                 })}
             >

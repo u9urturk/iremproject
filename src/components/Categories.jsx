@@ -67,12 +67,7 @@ export default function Categories() {
                     {categories.map((data, key) => {
 
                         return <div key={key} className='flex flex-col items-center justify-center gap-y-2'>
-                            {user && data && <div className='flex items-center justify-center gap-x-2'>
-                                <div onClick={() => { selectCurrentCategory(data, "delete") }} className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={16} color='red'  ></AiOutlineDelete></div>
-                                <div onClick={() => { selectCurrentCategory(data, "update") }} className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={16} color='green' ></RxUpdate></div>
-
-
-                            </div>}
+                          
                             <NavLink to={`products/${data.categoryId}`} className='btn glass btn-xs sm:btn-sm md:btn-md '>
                                 {data.categoryName}
                             </NavLink>

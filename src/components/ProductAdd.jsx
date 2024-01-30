@@ -47,7 +47,7 @@ export default function ProductAdd() {
     return (
         <div>
             {user && <div className='flex items-center justify-center gap-x-2'>
-                <button type='button' onClick={() => { setisActive(true) }} className='bg-brandGray active:scale-90 transition-all text-brandWhite hover:bg-brandBlue py-1 px-6 rounded-md'>Ürün Ekle</button>
+                <button type='button' onClick={() => { setisActive(true) }} className='bg-brandGray active:scale-90 transition-all text-brandWhite hover:bg-brandGreen py-2 px-6 rounded-md'>Ürün Ekle</button>
             </div>}
 
             {

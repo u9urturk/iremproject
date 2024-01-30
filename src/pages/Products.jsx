@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import ProductAdd from '../components/ProductAdd'
-import { AiOutlineDelete } from 'react-icons/ai'
-import { RxUpdate } from 'react-icons/rx'
-import { HiOutlinePhotograph } from 'react-icons/hi'
 import { useSelector } from 'react-redux'
-import { downloadImage, getCategoryByCategoryId, getProducts, uploadImage } from '../firebase'
+import {  getCategoryByCategoryId, getProducts } from '../firebase'
 import ListenImages from '../components/ListenImages'
 import Categories from '../components/Categories'
 import Billboard from '../components/Billboard'
@@ -17,6 +13,7 @@ export default function Products() {
     const [categoryName, setCategoryName] = useState("")
     const [currentProduct, setCurrentProduct] = useState(null)
     const [file, setFile] = useState(null)
+    
 
 
     const productReaction = () => {
@@ -69,27 +66,13 @@ export default function Products() {
     }
 
 
-    const updateImage = () => {
-        if (currentProduct != null && file != null) {
-            uploadImage(currentProduct, file[0]);
-            setCurrentProduct(null);
-            setFile(null);
-        }
-    }
-
-
-    useEffect(() => {
-        updateImage()
-    }, [file])
-
 
     return (
-        <div class="container px-5   mx-auto ">
+        <div class="container px-5 flex flex-col items-center justify-center gap-y-16   mx-auto ">
             <Billboard></Billboard>
             <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
                 <Categories></Categories>
             </div>
-            <div className='pb-8'><ProductAdd></ProductAdd></div>
             <div className='flex items-center justify-center '>
                 <div className='grid grid-cols-2 md:grid-cols-5  gap-6 md:gap-8'>
                     {products.length == 0 && loadingPage().map(res => {
@@ -99,15 +82,7 @@ export default function Products() {
                         products.length > 0 && products.map((product, key) => {
 
                             return <div key={key} className="card w-36  md:w-56 shadow-xl glass h-auto cursor-pointer group">
-                                {user && <div className='hidden  group-hover:block transition-all  '>
-                                    <div className='absolute left-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
-                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
-                                    </div>
-                                    <div className='absolute right-6 top-5 z-[1] gap-x-2 flex items-center justify-center py-2'>
-                                        <input accept='image/jpeg' onClick={() => { setCurrentProduct(product.productId) }} type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input>
-                                    </div>
-                                </div>}
+                                
                                 <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body  ">
                                     <h2 className="card-title text-xs md:text-md">{product.productName}</h2>

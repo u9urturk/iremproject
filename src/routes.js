@@ -1,5 +1,6 @@
 import DevDash from "./pages/DevDash/Main"
 import CategoryOperations from "./pages/DevDash/Pages/CategoryOperations"
+import ProductOperations from "./pages/DevDash/Pages/ProductOperations"
 import Layout from "./pages/Layout"
 import Product from "./pages/Product"
 import Products from "./pages/Products"
@@ -34,7 +35,7 @@ const routes = [
                     },
                     {
                         path:'urunislemleri',
-                        element:<CategoryOperations></CategoryOperations>
+                        element:<ProductOperations></ProductOperations>
                     },
                     {
                         path:'kullaniciislemleri',
