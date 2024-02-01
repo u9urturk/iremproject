@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { addCategory, login, logout } from '../firebase'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
@@ -6,10 +6,25 @@ import { Form, Formik } from 'formik'
 import Input from './Input'
 import Button from './Button'
 import { LoginSchema } from '../Validation'
+import { useModal } from '../Context/ModalContext'
 
 export default function CategoryAdd() {
     const [isActive, setisActive] = useState(false)
     const user = useSelector(state => state.auth.user)
+
+    const { isAnyModalOpen, openModal, closeModal } = useModal();
+
+    useEffect(() => {
+      if(isActive){
+            openModal()
+      }else{
+            closeModal()
+      }
+    
+      return () => {
+        closeModal()
+      }
+    }, [isActive])
 
     const handleSubmit = async (values, actions) => {
         addCategory(values.categoryName).then(res=>{
