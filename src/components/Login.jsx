@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { login, logout } from '../firebase'
 import { AiOutlineCloseCircle, AiOutlineLogin, AiOutlineLogout } from 'react-icons/ai'
@@ -7,10 +7,26 @@ import Input from './Input'
 import Button from './Button'
 import { LoginSchema } from '../Validation'
 import logo from '../materials/logos/logo.svg'
+import { useModal } from '../Context/ModalContext'
 
 export default function Login() {
     const [isActive, setisActive] = useState(false)
     const user = useSelector(state => state.auth.user)
+
+    
+    const { isAnyModalOpen, openModal, closeModal } = useModal();
+
+    useEffect(() => {
+      if(isActive){
+            openModal()
+      }else{
+            closeModal()
+      }
+    
+      return () => {
+        closeModal()
+      }
+    }, [isActive])
 
     const handleSubmit = async (values, actions) => {
         login(values.username, values.password)

@@ -450,3 +450,79 @@ export const logout = async () => {
     })
     return true
 }
+
+
+
+//ColorOperations
+export const addColor = async (values) => {
+    let isSuccess = false
+    //console.log(categoryName)
+    await addDoc(collection(db, "colors"), {
+        colorName: values.colorName,
+        colorCode: values.colorCode,
+        creationTime: Timestamp.fromDate(new Date())
+    }).then(function () {
+        toast.success(`"${values.colorName}" isimli renk başarıyla eklendi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+export const deleteColorByColorId = async (data) => {
+    let isSuccess = false
+    // console.log(data)
+
+    await deleteDoc(doc(db, "categories", data.colorId)).then(function () {
+        toast.warning(`"${data.colorName}" isimli kategori başarıyla silindi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        setTimeout(() => {
+            window.location.reload()
+
+        }, 2300);
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+export const getColors = async () => {
+
+    const first = query(collection(db, "colors"), orderBy("creationTime", "asc"));
+    const querySnapshot = await getDocs(first)
+    return querySnapshot;
+}
+
+export const getColorsByColorId = async (colorId) => {
+
+    const docRef = doc(db, "categories", colorId);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.data();
+}
+
+
