@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { downloadImageBilboard, uploadImageBilboard } from '../firebase';
+import { Carousel } from '@material-tailwind/react';
 
 export default function Billboard() {
 
@@ -32,16 +33,19 @@ export default function Billboard() {
     updateImage()
   }, [file])
   return (
-    <div className="w-full md:carousel hidden w-max-[calc(100%-200px)] h-[600px]  rounded-box">
-      {/* <button className='h-8 w-12 bg-red'><input accept='image/jpeg/png' type='file' multiple onChange={((e) => { setFile(e.target.files) })} className='cursor-pointer hover:scale-125 active:scale-100 transition-all ' title='Görsel Güncelle'></input></button> */}
+    <Carousel autoplay={true} loop={true} autoplayDelay={5000} transition={{ duration: 2 }} className="rounded-xl">
       {
         images.map((image, key) => {
-          return <div key={key} className="carousel-item w-full">
-            <img src={image} className="w-full" alt="Tailwind CSS Carousel component" />
-          </div>
+          return <img
+            key={key}
+            src={image}
+            alt={`image + ${key}`}
+            className="h-[300px] w-full object-cover"
+          />
         })
       }
 
-    </div>
+    </Carousel>
+
   )
 }

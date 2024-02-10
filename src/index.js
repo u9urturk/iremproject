@@ -8,13 +8,17 @@ import store from './store';
 import 'react-toastify/dist/ReactToastify.css'
 import { ModalProvider } from './Context/ModalContext';
 
+import { ThemeProvider } from "@material-tailwind/react";
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
         <ModalProvider>
             <BrowserRouter>
-                <App />
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
             </BrowserRouter>
         </ModalProvider>
     </Provider>
