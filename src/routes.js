@@ -23,6 +23,10 @@ const routes = [
                 element:<ProductsByCategory></ProductsByCategory>
             },
             {
+                path:'product/test',
+                element:<Product></Product>
+            },
+            {
                 path:'yöneticipaneli',
                 element:<DevDash></DevDash>,
                 children:[

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import {  getCategoryByCategoryId, getProducts } from '../firebase'
 import ListenImages from '../components/ListenImages'
 import Categories from '../components/Categories'
-import Billboard from '../components/Billboard'
+import { Link } from 'react-router-dom'
 
 
 export default function Products() {
@@ -69,23 +69,22 @@ export default function Products() {
 
     return (
         <div class="container px-5 flex flex-col items-center justify-center gap-y-16   mx-auto ">
-            <Billboard></Billboard>
             <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
                 <Categories></Categories>
             </div>
             <div className='flex items-center justify-center '>
-                <div className='grid grid-cols-2 md:grid-cols-5  gap-6 md:gap-8'>
+                <div className='grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-5 xl:gird-cols-8  gap-6 md:gap-8'>
                     {products.length == 0 && loadingPage().map(res => {
                         return res.res
                     })}
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <div key={key} className="card w-36  md:w-56 shadow-xl glass h-auto cursor-pointer group">
+                            return <Link to={"product/test"} key={key} className="card w-56 shadow-xl glass h-auto cursor-pointer group">
                                 
                                 <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body  ">
-                                    <h2 className="card-title text-xs md:text-md">{product.productName}</h2>
+                                    <h2 className="card-title text-md">{product.productName}</h2>
                                     <div className="card-actions relative pt-1 md:pt-4 flex md:flex-col items-center  justify-center">
 
                                         <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
@@ -94,7 +93,7 @@ export default function Products() {
 
 
                                 </div>
-                            </div>
+                            </Link>
                         })
                     }
                 </div>

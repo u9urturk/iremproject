@@ -29,8 +29,9 @@ export default function Navbar() {
         <div>
             <div
                 className={classNames({
-                    "fixed z-[1]  bg-base-100 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
-                    "opacity-0 -z-[1]": scrollY != 0,
+                    "fixed z-[1]   duration-1000 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
+
+                    "bg-gradient-to-b bg-base-100 h-24 from-base-200": scrollY != 0,
 
                 })}
             >
@@ -40,7 +41,7 @@ export default function Navbar() {
                         <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
 
                     </div>
-                    <div className='flex  border-2 border-base-200 md:-translate-x-16  py-1 px-2 rounded-2xl items-center justify-center '>
+                    <div className='hidden md:flex border-2 border-base-200 md:-translate-x-16  py-1 px-2 rounded-2xl items-center justify-center '>
                         <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                         <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                     </div>

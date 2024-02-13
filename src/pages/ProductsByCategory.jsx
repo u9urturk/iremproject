@@ -73,7 +73,6 @@ export default function ProductsByCategory() {
    
     return (
         <div class="container px-5   mx-auto ">
-            <div className='pb-8'><ProductAdd></ProductAdd></div>
             <div className='flex items-center justify-center '>
                 <div className='grid grid-cols-2 md:grid-cols-5  gap-6 md:gap-8'>
                     {products.length == 0 && loadingPage().map(res => {
