@@ -73,14 +73,14 @@ export default function Products() {
                 <Categories></Categories>
             </div>
             <div className='flex items-center justify-center '>
-                <div className='grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-5 xl:gird-cols-8  gap-6 md:gap-8'>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:gird-cols-5  gap-y-16 md:gap-x-12 md:gap-y-24'>
                     {products.length == 0 && loadingPage().map(res => {
                         return res.res
                     })}
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <Link to={"product/test"} key={key} className="card w-56 shadow-xl glass h-auto cursor-pointer group">
+                            return <Link to={"product/test"} key={key} className="card w-72 shadow-xl glass h-auto cursor-pointer group">
                                 
                                 <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body  ">

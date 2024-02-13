@@ -29,7 +29,7 @@ export default function Navbar() {
         <div>
             <div
                 className={classNames({
-                    "fixed z-[1]   duration-1000 pt-14 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
+                    "fixed z-[1]   duration-1000 pt-4 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
 
                     "bg-gradient-to-b bg-base-100 h-24 from-base-200": scrollY != 0,
 
