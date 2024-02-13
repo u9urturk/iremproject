@@ -5,7 +5,6 @@ import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
 import Product from "./pages/Product"
 import Products from "./pages/Products"
-import ProductsByCategory from "./pages/ProductsByCategory"
 import PrivateRoute from "./utils"
 
 const routes = [
@@ -18,10 +17,7 @@ const routes = [
                 element: <Products></Products>,
               
             },
-            {
-                path:'products/:categoryId',
-                element:<ProductsByCategory></ProductsByCategory>
-            },
+            
             {
                 path:'product/test',
                 element:<Product></Product>
