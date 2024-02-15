@@ -5,7 +5,6 @@ import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { Form, Formik } from 'formik'
 import Input from './Input'
 import Button from './Button'
-import { LoginSchema } from '../Validation'
 import { useModal } from '../Context/ModalContext'
 
 export default function CategoryAdd() {

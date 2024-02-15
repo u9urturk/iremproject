@@ -38,7 +38,7 @@ export default function Login() {
             {
                 isActive === true && !user && <div className='fixed top-0 left-0 h-screen w-full z-10  animate-fade backdrop-blur-sm'>
                     <div className='h-full w-full flex items-center  justify-center  '>
-                        <div className='relative flex flex-col items-center pb-8 bg-base-100 bg-opacity-70  rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 border-brandGreen border-opacity-30 '>
+                        <div className='relative  bg-gradient-to-b from-base-300 bg-base-100 flex flex-col items-center pb-8  bg-opacity-70  rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto  '>
                             <div onClick={() => { setisActive(false) }}><AiOutlineCloseCircle className='absolute top-4 right-4 text-brandPink transition-all cursor-pointer hover:scale-75' size={34}></AiOutlineCloseCircle></div>
                             <div className='flex items-center justify-center gap-x-3'>
                                 <img src={logo} width={70} height={150} alt="iremnakis" />

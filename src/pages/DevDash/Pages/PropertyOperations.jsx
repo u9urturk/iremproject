@@ -15,7 +15,7 @@ export default function PropertyOperations() {
     
 
     return (
-        <div className='flex w-full h-full flex-col items-center justify-center'>
+        <div className='flex animate-fade-down animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
             <div  className='flex flex-col w-full h-1/4 gap-y-8 items-center justify-center'>
                 <h1 className='text-2xl font-semibold'>
                     Özellikler

@@ -24,6 +24,7 @@ export default function Products() {
 
 
     const productReaction = () => {
+        setProducts("");
         getProductsBase.then(res => {
             res.forEach(async (doc) => {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
@@ -47,16 +48,16 @@ export default function Products() {
         getProductByCategoryId(categoryId).then((res) => {
             res.forEach(async (doc) => {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
-                    setCategoryName(res.categoryName);
+                    let data = {
+                        productId: doc.id,
+                        categoryName: res.categoryName,
+                        ...doc.data()
+                    }
+    
+    
+                    setProducts(prevState => [...prevState, data])
                 });
-                let data = {
-                    productId: doc.id,
-                    categoryName: categoryName,
-                    ...doc.data()
-                }
-
-
-                setProducts(prevState => [...prevState, data])
+               
             });
 
         })
@@ -129,7 +130,7 @@ export default function Products() {
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <Link to={"product/test"} key={key} className="card w-60  shadow-xl hover:scale-110 transition-all glass h-auto cursor-pointer group">
+                            return <Link to={`product/${product.productId}`} key={key} className="card w-60  shadow-xl hover:scale-110 transition-all glass h-auto cursor-pointer group">
 
                                 <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body  ">
@@ -138,7 +139,7 @@ export default function Products() {
                                     <div className="card-actions relative pt-1 md:pt-4 flex md:flex-col items-center  justify-center">
 
                                         <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
-                                        <button className=" opacity-100 bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 md:hover:bg-base-300 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Ürünü İncele</button>
+                                        <button className=" opacity-100 bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Ürünü İncele</button>
                                     </div>
 
 

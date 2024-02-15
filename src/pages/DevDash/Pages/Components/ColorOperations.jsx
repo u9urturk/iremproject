@@ -18,7 +18,7 @@ export default function ColorOperations({ isActive = false, close }) {
   const handleSubmit = async (values, actions) => {
     addColor(values).then(res => {
       if (res === true) {
-        setColors(prevState => [...prevState, {colorName:values.colorName,colorCode:values.colorCode}])
+        setColors(prevState => [...prevState, { colorName: values.colorName, colorCode: values.colorCode }])
       }
     })
   }
@@ -49,15 +49,15 @@ export default function ColorOperations({ isActive = false, close }) {
 
   }
 
-  
+
   useEffect(() => {
     colorReaction()
-}, [])
+  }, [])
 
 
   if (isAnyModalOpen) {
     return (
-      <div className={`fixed top-0 flex items-center justify-center animate-fade left-0 h-screen w-full z-10 bg-gray-800 bg-opacity-80`}>
+      <div className={` flex items-center justify-center  h-screen w-full z-10 bg-gray-800 bg-opacity-80`}>
         <div className='relative flex  items-center justify-center opacity-90 w-[calc(100%-10rem)] rounded-3xl drop-shadow-2xl h-[calc(80%)] bg-base-100'>
           <button onClick={close} className='absolute right-1 top-1 h-auto  w-auto hover:opacity-60'><IoIosClose size={44} /> </button>
           <div className=' flex-col h-full w-full py-4 flex items-center justify-center '>
@@ -67,8 +67,8 @@ export default function ColorOperations({ isActive = false, close }) {
             <div className='w-full h-3/4 flex flex-row items-center justify-center gap-x-12 '>
               <div className=' w-2/3 place-items-center h-full scroll-invisible m-8 grid grid-cols-5 border-brandGreen rounded-2xl overflow-scroll py-10 gap-2 gap-y-10 border-2 border-spacing-8'>
                 {
-                  colors.map((data,key)=>{
-                    return <div key={key} style={{ backgroundColor: "#"+data.colorCode}} className={`h-14 w-14 tooltip hover:tooltip-top  cursor-pointer transition-all hover:scale-110 rounded-full`} data-tip={data.colorName}></div>
+                  colors.map((data, key) => {
+                    return <div key={key} style={{ backgroundColor: "#" + data.colorCode }} className={`h-14 w-14 tooltip hover:tooltip-top  cursor-pointer transition-all hover:scale-110 rounded-full`} data-tip={data.colorName}></div>
                   })
                 }
 
@@ -91,7 +91,7 @@ export default function ColorOperations({ isActive = false, close }) {
                         <Input type="text" name='colorCode' className='px-2 py-2 bg-transparent border text-center border-brandGreen rounded-2xl outline-none' placeholder='Renk Kodu ' />
                         <div className='flex flex-col gap-y-2 items-center justify-center'>
                           <p>Ön İzleme</p>
-                          <div  style={{ backgroundColor: "#"+values.colorCode }} className={`w-14 h-14  rounded-full transition-colors`}></div>
+                          <div style={{ backgroundColor: "#" + values.colorCode }} className={`w-14 h-14  rounded-full transition-colors`}></div>
                         </div>
 
                       </div>

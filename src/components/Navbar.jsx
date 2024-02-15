@@ -31,7 +31,7 @@ export default function Navbar() {
                 className={classNames({
                     "fixed z-[1]   duration-1000 pt-4 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
 
-                    "bg-gradient-to-b bg-base-100 h-24 from-base-200": scrollY != 0,
+                    "bg-gradient-to-b from-base-300 bg-base-100 transition-all h-24 ": scrollY != 0,
 
                 })}
             >

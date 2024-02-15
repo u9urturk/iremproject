@@ -74,6 +74,13 @@ export const getProductByCategoryId = async (categoryId) => {
     return querySnapshot;
 }
 
+export const getProductByProductId = async (productId) => {
+    const docRef = doc(db, "products", productId);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.data();
+}
+
 export const downloadImage = async (productId) => {
     let url = null
     const listRef = ref(storage, productId);
