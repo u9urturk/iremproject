@@ -1,5 +1,6 @@
 import DevDash from "./pages/DevDash/Main"
 import CategoryOperations from "./pages/DevDash/Pages/CategoryOperations"
+import ColorOperations from "./pages/DevDash/Pages/Components/ColorOperations"
 import ProductOperations from "./pages/DevDash/Pages/ProductOperations"
 import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
@@ -33,6 +34,10 @@ const routes = [
                     {
                         path:'ozellikislemleri',
                         element:<PropertyOperations></PropertyOperations>
+                    },
+                    {
+                        path:'ozellikislemleri/renkler',
+                        element:<ColorOperations></ColorOperations>
                     },
                     {
                         path:'urunislemleri',

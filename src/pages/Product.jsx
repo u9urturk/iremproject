@@ -5,8 +5,8 @@ import { getCategoryByCategoryId, getProductByProductId } from '../firebase'
 
 export default function Product() {
     const productId = useParams();
-
     const [product, setProduct] = useState();
+  
 
     const productReaction = () => {
         getProductByProductId(productId.productId).then(res => {

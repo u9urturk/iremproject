@@ -5,7 +5,7 @@ import { Link, Outlet } from 'react-router-dom';
 
 export default function DevDash() {
     return (
-        <div className='pt-10  animate-fade-left animate-ease-in-out animate-normal   w-full h-auto flex items-center justify-center' >
+        <div className='pt-10 bg-200 animate-fade-left animate-ease-in-out animate-normal   w-full h-auto flex items-center justify-center' >
             <div className=' flex flex-row items-start justify-between max-w-[calc(90%)] h-screen rounded-[3rem] w-full bg-gray-100'>
                 <div className='relative w-1/4'>
                     <div className='absolute -left-8 -top-8 bg-brandGreen max-w-xs w-auto h-screen rounded-[3rem]'>
