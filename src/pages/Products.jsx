@@ -77,7 +77,6 @@ export default function Products() {
         productReaction()
     }, [])
 
-    console.log(products)
 
     const loadingPage = () => {
         const set = []

@@ -114,16 +114,11 @@ export const downloadImage = async (productId) => {
 }
 
 export const downloadImages = async (productId) => {
-    let images = [];
+    let data = null;
     const listRef = ref(storage,productId);
+    
     await listAll(listRef).then(async (res) => {
-        res.items.forEach(element => {
-             getDownloadURL(ref(storage, element.fullPath))
-            .then((path) => {
-                images.push(path)
-            })
-        });
-        
+        data=res.items
     }).catch((error) => {
         switch (error.code) {
             case 'storage/object-not-found':
@@ -144,7 +139,7 @@ export const downloadImages = async (productId) => {
         }
     });
 
-    return images;
+   return data;
 
 }
 
