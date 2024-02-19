@@ -113,9 +113,9 @@ export const downloadImage = async (productId) => {
 
 }
 
-export const downloadImageBilboard = async () => {
+export const downloadImages = async (productId) => {
     let images = [];
-    const listRef = ref(storage,"bilboard");
+    const listRef = ref(storage,productId);
     await listAll(listRef).then(async (res) => {
         res.items.forEach(element => {
              getDownloadURL(ref(storage, element.fullPath))
