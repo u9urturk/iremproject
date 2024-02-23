@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-
+import { HiOutlineColorSwatch } from "react-icons/hi";
 import { useParams } from 'react-router-dom'
 import { downloadImages, getCategoryByCategoryId, getProductByProductId, getStoragebase } from '../firebase'
-import { Carousel, IconButton } from '@material-tailwind/react';
+import { Avatar, Carousel, IconButton, Rating, Typography } from '@material-tailwind/react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import classNames from 'classnames';
 import { useModal } from '../Context/ModalContext';
+import { GiRolledCloth } from "react-icons/gi";
+import { MdOutlinePattern } from "react-icons/md";
+
+
 
 export default function Product() {
     const productId = useParams();
@@ -13,6 +17,7 @@ export default function Product() {
     const [images, setImages] = useState([]);
     const [fullImage, setFullImage] = useState(null);
     const modalRef = useRef();
+    const [rated, setRated] = useState(4);
 
 
     const { isAnyModalOpen, openModal, closeModal } = useModal();
@@ -92,20 +97,26 @@ export default function Product() {
     return (
         !product ? <div className='bg-transparent w-full h-screen'></div> :
             <div className={classNames({
-                'pt-10 w-full  flex items-center justify-center': true,
+                'pt-10 w-full gap-y-24 flex flex-col items-center justify-center': true,
                 'animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards ': fullImage == null
             })} >
                 <div className=' flex flex-row items-start justify-between max-w-[calc(90%)] h-auto rounded-[3rem] w-full bg-gray-100'>
                     <div className=' w-1/4 -translate-y-8  h-screen -translate-x-8'>
-                        <div className='  bg-brandGreen max-w-xs w-56  h-[80%]  rounded-[3rem]'>
-                            <div className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
+                        <div className='  bg-brandGreen flex flex-col justify-between py-8 items-center max-w-xs w-56  h-[80%]  rounded-[3rem]'>
+
+                            <Typography variant='h1' className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
                                 {product.productName}
+                            </Typography>
+                            <div className='flex flex-col gap-y-2 items-center justify-center w-full '>
+                                <div className='text-sm font-semibold text-white opacity-95'>Müşteri Derecelendirmeleri</div>
+                                <div className='flex items-center justify-center gap-x-2 text-white text-opacity-90 font-semibold'>{rated}<Rating value={4} readonly onChange={(value) => setRated(value)} /></div>
+                                <div className='flex items-center justify-center text-xs text-white opacity-60 '>134 Yoruma Dayalı</div>
                             </div>
-                            <div className='px-8 py-4  flex items-center justify-center gap-x-2'>
-                                <ul className='flex flex-col items-start text-gray-100 justify-center text-left gap-y-3'>
-                                    <li> 45 cm x 45 cm</li>
-                                    <li> El işi nakış detayları</li>
-                                    <li> Beyaz, gri, mavi, bej</li>
+                            <div className='px-8 py-4 w-full flex items-center justify-center gap-x-2'>
+                                <ul className='flex flex-col w-full  items-start text-gray-100 justify-center text-left gap-y-3'>
+                                    <li data-tip="Renkler" className='flex w-full tooltip place-items-center items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><HiOutlineColorSwatch size={30} /> Kırmızı</li>
+                                    <li data-tip="Kumaşlar" className='flex w-full tooltip place-items-center items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><GiRolledCloth size={30} /> Polyester</li>
+                                    <li data-tip="Desenler" className='flex w-full tooltip place-items-center  items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><MdOutlinePattern size={30} /></li>
                                 </ul>
                             </div>
                             <div className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
@@ -180,17 +191,92 @@ export default function Product() {
 
                             </Carousel>
                         </div>
-                        <div className='font-serif text-gray-600 px-16 pt-8 '>
+                        <Typography variant='paragraph' className='font-serif text-gray-600 px-16 pt-8 '>
                             Bu şık ve zarif işlemeli yastık, evinize sofistike bir dokunuş katacak. Yüksek kaliteli malzemelerden üretilmiş olan yastığımız, zarafeti ve dayanıklılığı bir araya getiriyor. İnce işçilikle işlenmiş desenler, her detayda özenin görüldüğünü hissettiriyor.
 
                             Yastığımızın yumuşak dolumu, size konforlu bir dinlenme deneyimi sunarken, odanızın dekorasyonuna da zarif bir katkı sağlar. İşlemeli detaylar, yastığımızı sıradanlıktan çıkarırken, çeşitli renk seçenekleriyle de mekânınıza uyum sağlar.
 
                             Bu işlemeli dekoratif yastık, oturma odası koltuklarınıza, yatak odası dekorunuza veya herhangi bir oturma alanına sofistike bir dokunuş eklemek için mükemmel bir seçenektir. Yüksek kaliteli malzemelerle tasarlanmış olması, uzun ömürlü ve kullanışlı bir ürün sunar.
 
-                           
+
                             Ev dekorasyonunuzu tamamlamak ve stilinizi yansıtmak için bu işlemeli dekoratif yastığı bugün sepetinize ekleyin!
-                        </div>
+                        </Typography>
                     </div>
+                </div>
+                <div className=' flex flex-col h-auto overflow-auto max-h-[600px] gap-y-8 items-center px-8 justify-start max-w-[calc(90%)] rounded-[3rem] w-full bg-gray-100'>
+                    <Typography variant='h3' className='pt-8 ' >Müşterilerimizin Görüşleri</Typography>
+                    <Typography variant='paragraph' className=' w-[80%] text-sm text-center opacity-60'>If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).</Typography>
+                    <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div>
+                    <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div>
+                    <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div> <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div> <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div> <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
+                        <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
+                        <div className='flex items-start justify-center'><Typography variant='small'>If everything I did failed - which it doesn't, it actually succeeds - just the fact that I'm willing to fail is an inspiration. People are so scared to lose that they don't even try. Like, one thing people can't say is that I'm not trying, and I'm not trying my hardest, and I'm not trying to do the best way I know how.</Typography></div>
+                        <div className='flex flex-row gap-x-2  pt-2 items-start justify-center'>
+                            <div><Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" variant="rounded" /></div>
+                            <div className='flex flex-col items-start justify-start '>
+                                <Typography variant='lead'>Ryan Samuel</Typography>
+                                <div className='opacity-40'>03 March 2023</div>
+                            </div>
+                        </div>
+                        <div className="divider w-[40%]"></div>
+                    </div>
+                 
+                    
                 </div>
 
 
