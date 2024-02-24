@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { useModal } from '../Context/ModalContext';
 import { GiRolledCloth } from "react-icons/gi";
 import { MdOutlinePattern } from "react-icons/md";
+import { IoIosClose } from "react-icons/io";
 
 
 
@@ -278,15 +279,18 @@ export default function Product() {
                         </div>
                         <div className="divider w-[40%]"></div>
                     </div>
-                 
-                    
+
+
                 </div>
 
 
                 {fullImage != null && fullImage != false &&
-                    <div className='fixed top-0 left-0 z-40 h-screen w-screen backdrop-blur-sm '>
-                        <div onClick={handleCloseModal} ref={modalRef} className='flex items-center justify-center   relative   w-full h-full bg-transparent '>
-                            <img src={fullImage} alt="" className=' object-cover animate-fade    object-center w-auto  max-h-screen h-[calc(100%-2rem)] ' />
+                    <div className='fixed top-0 left-0 z-50 h-screen w-screen backdrop-blur-sm '>
+                        <div onClick={handleCloseModal} ref={modalRef} className='flex items-center justify-center      w-full h-full bg-transparent '>
+                            <div className='w-auto  animate-fade  h-auto relative'>
+                                <img src={fullImage} alt="" className=' object-cover   object-center w-auto  h-auto max-h-screen  ' />
+                                <button onClick={toggleModal} className='absolute right-8 top-8'><IoIosClose size={38} /></button>
+                            </div>
 
 
                         </div>
