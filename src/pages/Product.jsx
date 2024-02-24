@@ -100,9 +100,9 @@ export default function Product() {
                 'pt-10 w-full gap-y-24 flex flex-col items-center justify-center': true,
                 'animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards ': fullImage == null
             })} >
-                <div className=' flex flex-row items-start justify-between max-w-[calc(90%)] h-auto rounded-[3rem] w-full bg-gray-100'>
-                    <div className=' w-1/4 -translate-y-8  h-screen -translate-x-8'>
-                        <div className='  bg-brandGreen flex flex-col justify-between py-8 items-center max-w-xs w-56  h-[80%]  rounded-[3rem]'>
+                <div className=' flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between max-w-[calc(90%)] h-auto rounded-[3rem] w-full bg-gray-100'>
+                    <div className=' md:w-1/4 -translate-y-12 md:-translate-y-8  max-h-screen h-auto md:-translate-x-8'>
+                        <div className='  bg-brandGreen flex  flex-col justify-between py-8 items-center w-auto  md:max-w-xs md:w-56 h-auto  md:h-[80%]  rounded-[3rem]'>
 
                             <Typography variant='h1' className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
                                 {product.productName}
@@ -113,23 +113,26 @@ export default function Product() {
                                 <div className='flex items-center justify-center text-xs text-white opacity-60 '>134 Yoruma Dayalı</div>
                             </div>
                             <div className='px-8 py-4 w-full flex items-center justify-center gap-x-2'>
-                                <ul className='flex flex-col w-full  items-start text-gray-100 justify-center text-left gap-y-3'>
+                                <ul className='flex gap-x-6  md:gap-x-0 md:flex-col w-full  items-start text-gray-100 justify-center text-left gap-y-3'>
                                     <li data-tip="Renkler" className='flex w-full tooltip place-items-center items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><HiOutlineColorSwatch size={30} /> Kırmızı</li>
                                     <li data-tip="Kumaşlar" className='flex w-full tooltip place-items-center items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><GiRolledCloth size={30} /> Polyester</li>
                                     <li data-tip="Desenler" className='flex w-full tooltip place-items-center  items-center gap-x-4 hover:scale-110 cursor-pointer transition-all'><MdOutlinePattern size={30} /></li>
                                 </ul>
                             </div>
-                            <div className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
+                            <div className='px-8 py-4 text-4xl text-white font-semibold flex items-center justify-center gap-x-2'>
                                 {product.price} ₺
                             </div>
+                            <button className='px-4 py-2 text-xl border-2 hover:scale-105 transition-all bg-primary border-gray-100 rounded-2xl text-white font-semibold flex items-center justify-center gap-x-2'>
+                                İletişime Geç
+                            </button>
 
 
                         </div>
                     </div>
-                    <div className='flex -translate-y-8 h-auto  flex-col items-center  w-3/4 justify-center'>
+                    <div className='flex md:-translate-y-8 h-auto  flex-col items-center  w-3/4 justify-center'>
                         <div className="slider-container w-full">
                             <Carousel
-                                className=" rounded-[3rem] w-full h-1/2"
+                                className=" rounded-[3rem] w-full md:h-1/2"
                                 prevArrow={({ handlePrev }) => (
                                     <IconButton
                                         variant="text"
@@ -185,13 +188,13 @@ export default function Product() {
                                         src={image}
                                         alt="Slide"
                                         key={key}
-                                        className="object-cover cursor-pointer  object-center w-full max-h-[15rem] h-full  "
+                                        className="object-cover cursor-pointer  object-center  w-full max-h-[15rem] h-auto  "
                                     />
                                 })}
 
                             </Carousel>
                         </div>
-                        <Typography variant='paragraph' className='font-serif text-gray-600 px-16 pt-8 '>
+                        <Typography variant='paragraph' className='font-serif text-gray-600 md:px-16 pt-8 '>
                             Bu şık ve zarif işlemeli yastık, evinize sofistike bir dokunuş katacak. Yüksek kaliteli malzemelerden üretilmiş olan yastığımız, zarafeti ve dayanıklılığı bir araya getiriyor. İnce işçilikle işlenmiş desenler, her detayda özenin görüldüğünü hissettiriyor.
 
                             Yastığımızın yumuşak dolumu, size konforlu bir dinlenme deneyimi sunarken, odanızın dekorasyonuna da zarif bir katkı sağlar. İşlemeli detaylar, yastığımızı sıradanlıktan çıkarırken, çeşitli renk seçenekleriyle de mekânınıza uyum sağlar.
@@ -204,7 +207,7 @@ export default function Product() {
                     </div>
                 </div>
                 <div className=' flex flex-col h-auto overflow-auto max-h-[600px] gap-y-8 items-center px-8 justify-start max-w-[calc(90%)] rounded-[3rem] w-full bg-gray-100'>
-                    <Typography variant='h3' className='pt-8 ' >Müşterilerimizin Görüşleri</Typography>
+                    <Typography variant='h3' className='pt-8 w-full flex items-center justify-center text-center' >Müşterilerimizin Görüşleri</Typography>
                     <Typography variant='paragraph' className=' w-[80%] text-sm text-center opacity-60'>If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).</Typography>
                     <div className='flex w-full max-w-[95%] items-start justify-start flex-col gap-y-4 '>
                         <div className='flex items-start justify-center'><Rating value={4} readonly /></div>
