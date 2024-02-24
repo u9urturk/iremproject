@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HiOutlineColorSwatch } from "react-icons/hi";
-import { useParams } from 'react-router-dom'
-import { downloadImages, getCategoryByCategoryId, getProductByProductId, getStoragebase } from '../firebase'
+import { Link, useParams } from 'react-router-dom'
+import { downloadImages, getCategoryByCategoryId, getProductByCategoryId, getProductByProductId, getStoragebase } from '../firebase'
 import { Avatar, Carousel, IconButton, Rating, Typography } from '@material-tailwind/react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ import { useModal } from '../Context/ModalContext';
 import { GiRolledCloth } from "react-icons/gi";
 import { MdOutlinePattern } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
+import ListenImages from '../components/ListenImages';
 
 
 
@@ -19,6 +20,8 @@ export default function Product() {
     const [fullImage, setFullImage] = useState(null);
     const modalRef = useRef();
     const [rated, setRated] = useState(4);
+    const [categoryId, setCategoryId] = useState("");
+    const [products, setProducts] = useState([]);
 
 
     const { isAnyModalOpen, openModal, closeModal } = useModal();
@@ -48,6 +51,7 @@ export default function Product() {
 
     const productReaction = () => {
         getProductByProductId(productId.productId).then(res => {
+            setCategoryId(res.categoryId);
             getCategoryByCategoryId(res.categoryId).then((cRes) => {
                 let data = {
                     productId: productId.productId,
@@ -59,6 +63,29 @@ export default function Product() {
 
             });
         })
+
+
+    }
+
+    const productByCategoryIdReaction = () => {
+        getProductByCategoryId(categoryId).then((res) => {
+            res.forEach(async (doc) => {
+                await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
+                    let data = {
+                        productId: doc.id,
+                        categoryName: res.categoryName,
+                        ...doc.data()
+                    }
+
+
+                    setProducts(prevState => [...prevState, data])
+                });
+
+            });
+
+        })
+
+
 
 
     }
@@ -88,11 +115,19 @@ export default function Product() {
         imageReaction();
 
         productReaction();
+     
 
 
     }, [productId])
 
+    useEffect(() => {
+        productByCategoryIdReaction();
+    
+    }, [categoryId])
+    
 
+
+    console.log(products)
 
 
     return (
@@ -205,6 +240,31 @@ export default function Product() {
 
                             Ev dekorasyonunuzu tamamlamak ve stilinizi yansıtmak için bu işlemeli dekoratif yastığı bugün sepetinize ekleyin!
                         </Typography>
+                    </div>
+                </div>
+                <div className=' flex flex-col h-auto max-h-[600px] gap-y-8 items-center px-8 justify-start max-w-[calc(90%)] rounded-[3rem] w-full bg-gray-100'>
+                    <Typography variant='h3' className='pt-8 w-full flex items-center justify-center text-center' >Benzer Ürünler</Typography>
+                    <div className='grid grid-cols-1 place-items-center md:grid-cols-4 gap-y-6  w-full h-[500px]  gap-x-6 overflow-auto '>
+                        {
+                            products.length > 0 && products.map((product, key) => {
+
+                                return <Link to={`product/${product.productId}`} key={key} className="card w-60 md:w-52 transition-all shadow-lg hover:shadow-2xl h-auto cursor-pointer group">
+
+                                    <figure ><ListenImages productId={product.productId}></ListenImages></figure>
+                                    <div className="card-body     ">
+                                        <h2 className="card-title text-md">{product.productName}</h2>
+                                        <h4 className='font-serif  opacity-60'>{product.categoryName}</h4>
+                                        <div className="card-actions relative pt-1 md:pt-2 flex md:flex-col items-center  justify-center">
+
+                                            <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
+                                            <button className=" opacity-100 bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Ürünü İncele</button>
+                                        </div>
+
+
+                                    </div>
+                                </Link>
+                            })
+                        }
                     </div>
                 </div>
                 <div className=' flex flex-col h-auto overflow-auto max-h-[600px] gap-y-8 items-center px-8 justify-start max-w-[calc(90%)] rounded-[3rem] w-full bg-gray-100'>
