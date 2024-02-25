@@ -30,12 +30,12 @@ export default function PropertyOperations() {
                         <img className='image-full object-cover h-64 w-64' src={colorsIcon} alt="" />
                     </div>
                 </Link>
-                <div className='bg-base-100 relative active:scale-95 group h-32 w-64 rounded-2xl B  cursor-pointer transition-all flex items-center justify-center text-3xl font-semibold  '>
+                <Link to={"kumaslar"} className='bg-base-100 relative active:scale-95 group h-32 w-64 rounded-2xl B  cursor-pointer transition-all flex items-center justify-center text-3xl font-semibold  '>
                     <div className='group-hover:opacity-0  duration-500'> KUMAŞLAR </div>
                     <div className='absolute top-0 left-0 w-full h-full items-center justify-center transition-all flex opacity-0 group-hover:opacity-100'>
                         <img className='image-full object-cover h-64 w-64' src={fabricsIcon} alt="" />
                     </div>
-                </div>
+                </Link>
                 <div className='bg-base-100 relative active:scale-95 group h-32 w-64 rounded-2xl B  cursor-pointer transition-all flex items-center justify-center text-3xl font-semibold  '>
                     <div className='group-hover:opacity-0  duration-500'>DESENLER</div>
                     <div className='absolute top-0 left-0 w-full h-full items-center justify-center transition-all flex opacity-0 group-hover:opacity-100'>

@@ -168,10 +168,7 @@ export const addProduct = async (categoryId, productName, price) => {
             theme: "colored",
             transition: Flip
         });
-        setTimeout(() => {
-            window.location.reload()
-
-        }, 2300);
+     
 
         isSuccess = true;
     })
@@ -221,10 +218,7 @@ export const uploadImage = async (productId, file) => {
                     theme: "colored",
                     transition: Flip
                 })
-                setTimeout(() => {
-                    window.location.reload()
-
-                }, 2300);
+              
             }
 
         },
@@ -284,10 +278,7 @@ export const uploadImageBilboard = async (file) => {
                     theme: "colored",
                     transition: Flip
                 })
-                setTimeout(() => {
-                    window.location.reload()
-
-                }, 2300);
+               
             }
 
         },
@@ -326,10 +317,7 @@ export const addCategory = async (categoryName) => {
             theme: "colored",
             transition: Flip
         });
-        setTimeout(() => {
-            window.location.reload()
-
-        }, 2300);
+      
 
         isSuccess = true;
     })
@@ -354,10 +342,7 @@ export const deleteCategoryByCategoryId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-        setTimeout(() => {
-            window.location.reload()
-
-        }, 2300);
+       
 
         isSuccess = true;
     })
@@ -387,10 +372,7 @@ export const updateCategoryByCategoryId = async (categoryId, categoryName) => {
             transition: Flip
         });
 
-        setTimeout(() => {
-            window.location.reload()
-
-        }, 2300);
+  
 
         isSuccess = true;
     })
@@ -500,10 +482,7 @@ export const deleteColorByColorId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-        setTimeout(() => {
-            window.location.reload()
-
-        }, 2300);
+       
 
         isSuccess = true;
     })
@@ -522,6 +501,77 @@ export const getColors = async () => {
 export const getColorsByColorId = async (colorId) => {
 
     const docRef = doc(db, "categories", colorId);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.data();
+}
+
+
+//Fabric Operations
+
+export const addFabric = async (values) => {
+    let isSuccess = false
+    //console.log(categoryName)
+    await addDoc(collection(db, "colors"), {
+        fabricName: values.fabricName,
+        creationTime: Timestamp.fromDate(new Date())
+    }).then(function () {
+        toast.success(`"${values.fabricCode}" isimli kumaş başarıyla eklendi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+
+export const deleteFabricByFabricId = async (data) => {
+    let isSuccess = false
+    // console.log(data)
+
+    await deleteDoc(doc(db, "fabrics", data.fabricId)).then(function () {
+        toast.warning(`"${data.fabricName}" isimli kumaş başarıyla silindi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+      
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+export const getFabrics = async () => {
+
+    const first = query(collection(db, "fabrics"), orderBy("creationTime", "asc"));
+    const querySnapshot = await getDocs(first)
+    return querySnapshot;
+}
+
+export const getFabricsByFabricId = async (fabricId) => {
+
+    const docRef = doc(db, "categories", fabricId);
     const docSnap = await getDoc(docRef);
 
     return docSnap.data();
