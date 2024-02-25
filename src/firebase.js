@@ -509,14 +509,14 @@ export const getColorsByColorId = async (colorId) => {
 
 //Fabric Operations
 
-export const addFabric = async (values) => {
+export const addFabric = async (fabricName) => {
     let isSuccess = false
     //console.log(categoryName)
-    await addDoc(collection(db, "colors"), {
-        fabricName: values.fabricName,
+    await addDoc(collection(db, "fabrics"), {
+        fabricName: fabricName,
         creationTime: Timestamp.fromDate(new Date())
     }).then(function () {
-        toast.success(`"${values.fabricCode}" isimli kumaş başarıyla eklendi. `, {
+        toast.success(`"${fabricName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -562,7 +562,7 @@ export const deleteFabricByFabricId = async (data) => {
 
 }
 
-export const getFabrics = async () => {
+export const getAllFabrics = async () => {
 
     const first = query(collection(db, "fabrics"), orderBy("creationTime", "asc"));
     const querySnapshot = await getDocs(first)
@@ -577,4 +577,74 @@ export const getFabricsByFabricId = async (fabricId) => {
     return docSnap.data();
 }
 
+
+
+//PatternOperations
+export const addPattern = async (values) => {
+    let isSuccess = false
+    //console.log(categoryName)
+    await addDoc(collection(db, "colors"), {
+        colorName: values.colorName,
+        colorCode: values.colorCode,
+        creationTime: Timestamp.fromDate(new Date())
+    }).then(function () {
+        toast.success(`"${values.colorName}" isimli renk başarıyla eklendi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+export const deletePatternByPatternId = async (data) => {
+    let isSuccess = false
+    // console.log(data)
+
+    await deleteDoc(doc(db, "categories", data.colorId)).then(function () {
+        toast.warning(`"${data.colorName}" isimli kategori başarıyla silindi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+       
+
+        isSuccess = true;
+    })
+
+    return isSuccess;
+
+}
+
+export const getPatterns = async () => {
+
+    const first = query(collection(db, "colors"), orderBy("creationTime", "asc"));
+    const querySnapshot = await getDocs(first)
+    return querySnapshot;
+}
+
+export const getPatternByPatternId = async (colorId) => {
+
+    const docRef = doc(db, "categories", colorId);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.data();
+}
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { getCategoryByCategoryId, getProducts, uploadImage } from '../../../firebase';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
-import ListenImages from '../../../components/ListenImages';
 
 export default function Products() {
 
