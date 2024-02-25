@@ -17,10 +17,12 @@ root.render(
         <ModalProvider>
             <BrowserRouter>
                 <ThemeProvider>
-                    <App />
+                    <App/>
                 </ThemeProvider>
             </BrowserRouter>
         </ModalProvider>
+        
     </Provider>
+    
 );
 
