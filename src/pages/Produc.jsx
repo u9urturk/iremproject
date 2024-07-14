@@ -313,10 +313,10 @@ export default function Produc() {
 
                 {fullImage != null && fullImage != false &&
                     <div className='fixed top-0 left-0 z-50 h-screen w-screen backdrop-blur-sm '>
-                        <div onClick={handleCloseModal} ref={modalRef} className='flex items-center justify-center      w-full h-full bg-transparent '>
+                        <div  className='flex items-center justify-center      w-full h-full bg-transparent '>
                             <div className='w-auto  animate-fade  h-auto relative'>
                                 <img src={fullImage} alt="" className=' object-cover   object-center w-auto  h-auto max-h-screen  ' />
-                                <button onClick={toggleModal} className='absolute right-8 top-8'><IoIosClose size={38} /></button>
+                                <button  className='absolute right-8 top-8'><IoIosClose size={38} /></button>
                             </div>
 
 
