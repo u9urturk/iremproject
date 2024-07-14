@@ -4,7 +4,6 @@ import { IoIosClose } from 'react-icons/io';
 import { Link, useParams } from 'react-router-dom';
 import ListenImages from '../components/ListenImages';
 import classNames from 'classnames';
-import { useModal } from '../Context/ModalContext';
 import { downloadImages, getCategoryByCategoryId, getProductByCategoryId, getProductByProductId, getStoragebase } from '../firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { HiOutlineColorSwatch } from 'react-icons/hi';
@@ -21,30 +20,6 @@ export default function Produc() {
     const [categoryId, setCategoryId] = useState("");
     const [products, setProducts] = useState([]);
 
-
-    const { isAnyModalOpen, openModal, closeModal } = useModal();
-
-    useEffect(() => {
-        if (fullImage != null && fullImage != false) {
-            openModal()
-        } else {
-            closeModal()
-        }
-
-        return () => {
-            closeModal()
-        }
-    }, [fullImage])
-
-    const toggleModal = () => {
-        setFullImage(false);
-    };
-
-    const handleCloseModal = (e) => {
-        if (modalRef.current === e.target) {
-            toggleModal();
-        }
-    };
 
 
     const productReaction = () => {
@@ -126,7 +101,7 @@ export default function Produc() {
         !product ? <div className='bg-transparent w-full h-screen'></div> :
             <div className={classNames({
                 'pt-10 w-full gap-y-24 flex flex-col items-center justify-center': true,
-                '': fullImage == null
+                'animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards ': fullImage == null
             })} >
                 <div className=' flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between max-w-[calc(90%)] h-auto rounded-[3rem] w-full bg-gray-100'>
                     <div className=' md:w-1/4 -translate-y-12 md:-translate-y-8  max-h-screen h-auto md:-translate-x-8'>
@@ -339,7 +314,7 @@ export default function Produc() {
                 {fullImage != null && fullImage != false &&
                     <div className='fixed top-0 left-0 z-50 h-screen w-screen backdrop-blur-sm '>
                         <div onClick={handleCloseModal} ref={modalRef} className='flex items-center justify-center      w-full h-full bg-transparent '>
-                            <div className='w-auto    h-auto relative'>
+                            <div className='w-auto  animate-fade  h-auto relative'>
                                 <img src={fullImage} alt="" className=' object-cover   object-center w-auto  h-auto max-h-screen  ' />
                                 <button onClick={toggleModal} className='absolute right-8 top-8'><IoIosClose size={38} /></button>
                             </div>
