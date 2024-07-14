@@ -126,7 +126,7 @@ export default function Produc() {
         !product ? <div className='bg-transparent w-full h-screen'></div> :
             <div className={classNames({
                 'pt-10 w-full gap-y-24 flex flex-col items-center justify-center': true,
-                'animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards ': fullImage == null
+                '': fullImage == null
             })} >
                 <div className=' flex flex-col md:flex-row items-center md:items-start justify-center md:justify-between max-w-[calc(90%)] h-auto rounded-[3rem] w-full bg-gray-100'>
                     <div className=' md:w-1/4 -translate-y-12 md:-translate-y-8  max-h-screen h-auto md:-translate-x-8'>
@@ -339,7 +339,7 @@ export default function Produc() {
                 {fullImage != null && fullImage != false &&
                     <div className='fixed top-0 left-0 z-50 h-screen w-screen backdrop-blur-sm '>
                         <div onClick={handleCloseModal} ref={modalRef} className='flex items-center justify-center      w-full h-full bg-transparent '>
-                            <div className='w-auto  animate-fade  h-auto relative'>
+                            <div className='w-auto    h-auto relative'>
                                 <img src={fullImage} alt="" className=' object-cover   object-center w-auto  h-auto max-h-screen  ' />
                                 <button onClick={toggleModal} className='absolute right-8 top-8'><IoIosClose size={38} /></button>
                             </div>
