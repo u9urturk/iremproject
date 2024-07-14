@@ -25,7 +25,6 @@ export default function Products() {
         })
     }
 
-    console.log(categories)
 
     const productReaction = () => {
         setProducts("");
@@ -93,10 +92,6 @@ export default function Products() {
         }
         return set;
     }
-
-    console.log(selected)
-
-
 
     return (
         <div class="flex flex-col items-center justify-center gap-y-16   ">
