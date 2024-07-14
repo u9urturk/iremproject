@@ -1,29 +1,46 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { downloadImages } from '../firebase';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 export default function Carousel() {
+    let productIdtest = 'y2Ytxh3yBwhV3zQIzRt1';
+    const storage = getStorage();
+    const [data, setData] = useState([])
+    const listen = () => {
+
+        downloadImages(productIdtest).then(res => {
+
+            res.forEach(e => {
+                getDownloadURL(ref(storage, e.fullPath))
+                    .then((path) => {
+                        setData(prevItems => [...prevItems, path])
+                    })
+            });
+
+
+        })
+
+    }
+
+    useEffect(() => {
+        listen()
+    }, [productIdtest])
+
     return (
-        <div><div className="carousel translate-y-2 carousel-center bg-neutral  md:carousel-vertical rounded-box w-auto h-72">
-            <div className="carousel-item h-full cursor-pointer">
-                <img src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.jpg" />
-            </div>
-            <div className="carousel-item h-full">
-                <img src="https://img.daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg" />
-            </div>
-        </div></div>
+        <div className='flex items-center justify-center'>
+            {data.length === 0 ? <span className="loading loading-dots loading-lg"></span>
+                : <div id='carousel' className="carousel translate-y-2 carousel-center bg-neutral  md:carousel-vertical rounded-box w-auto h-72">
+
+                    {data.map((image, key) => {
+                        return <div key={key} className="carousel-item">
+                            <img
+                                src={image}
+                                className="rounded-box w-[348px] h-72" />
+                        </div>
+                    })}
+
+
+                </div>}
+        </div>
     )
 }

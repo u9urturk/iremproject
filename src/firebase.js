@@ -114,11 +114,12 @@ export const downloadImage = async (productId) => {
 }
 
 export const downloadImages = async (productId) => {
-    let data = null;
+    let data=null
     const listRef = ref(storage,productId);
     
     await listAll(listRef).then(async (res) => {
         data=res.items
+
     }).catch((error) => {
         switch (error.code) {
             case 'storage/object-not-found':
@@ -138,7 +139,6 @@ export const downloadImages = async (productId) => {
                 break;
         }
     });
-
    return data;
 
 }
