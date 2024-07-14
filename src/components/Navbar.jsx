@@ -29,7 +29,11 @@ export default function Navbar() {
         <div>
             <div
                 className={classNames({
+<<<<<<< HEAD
                     "fixed z-[5]   duration-1000 pt-4 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
+=======
+                    "fixed z-[1]   duration-1000 pt-4 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
+>>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
 
                     "bg-gradient-to-b from-base-300 bg-base-100 transition-all h-24 ": scrollY != 0,
 
@@ -47,13 +51,22 @@ export default function Navbar() {
                     </div>
                     <div className='hidden md:block'>
                         <div className='flex items-center justify-center '>
+<<<<<<< HEAD
                             <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
+=======
+                        <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
+>>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
                                 <AiOutlineHome size={24}></AiOutlineHome>
                             </Link>
 
                             <Link to={"/yöneticipaneli"} className={classNames({
+<<<<<<< HEAD
                                 'text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200': user,
                                 'hidden': user == false
+=======
+                                'text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200':user,
+                                'hidden':user==false
+>>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
                             })} data-tip="Yönetici Paneli" >
                                 <MdOutlineDashboardCustomize size={24}></MdOutlineDashboardCustomize>
                             </Link>
@@ -66,6 +79,7 @@ export default function Navbar() {
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
 
                     <ul className="fixed bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6">
                         <li>
@@ -117,6 +131,8 @@ export default function Navbar() {
                             </a>
                         </li>
                     </ul>
+=======
+>>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
                 </div>
 
             </div>
