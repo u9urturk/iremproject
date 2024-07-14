@@ -153,7 +153,8 @@ export default function Products() {
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <Link to={`product/${product.productId}`} key={key} className="card w-36 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
+                            return <Link to={`product/${product.productId}`} key={key} 
+                            className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
 
                                 <figure ><ListenImages productId={product.productId}></ListenImages></figure>
                                 <div className="card-body flex items-start justify-start ">
