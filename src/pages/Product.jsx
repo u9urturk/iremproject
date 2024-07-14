@@ -127,7 +127,7 @@ export default function Product() {
     
 
 
-    console.log(products)
+    // console.log(products)
 
 
     return (
