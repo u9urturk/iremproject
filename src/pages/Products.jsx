@@ -100,7 +100,7 @@ export default function Products() {
                     {categories.length == 0 && <div className='py-1 px-2'>Yükleniyor ...</div>}
 
 
-                    {categories.length > 0 && <div className='flex items-center gap-y-2 justify-center flex-wrap gap-x-2'>
+                    {categories.length > 0 && <div className='flex items-center gap-y-2 px-4 justify-start flex-wrap gap-x-2'>
                         <div onClick={() => { productReaction() }} className='flex flex-col w-auto items-center justify-center gap-y-2'>
 
                             <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto  btn-sm sm:btn-sm md:btn-md '>
@@ -146,7 +146,7 @@ export default function Products() {
                 </div>
             </div>
             <div className='flex w-full items-center  justify-center '>
-                <div className='flex items-center gap-x-8 justify-center flex-wrap gap-y-8'>
+                <div className='flex items-center gap-x-4 justify-center flex-wrap gap-y-8'>
                     {products.length == 0 && loadingPage().map(res => {
                         return res.res
                     })}
