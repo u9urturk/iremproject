@@ -3,12 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-<<<<<<< HEAD
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
-=======
-    "@headlessui/react": "^1.7.16",
->>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
     "@material-tailwind/react": "^2.1.8",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -17,10 +13,7 @@
     "classnames": "^2.3.2",
     "firebase": "^10.1.0",
     "formik": "^2.4.2",
-<<<<<<< HEAD
     "heroicons": "^2.1.5",
-=======
->>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",

@@ -4,11 +4,7 @@ import logo from '../materials/logos/logo.svg'
 export default function Footer() {
     return (
         <footer class="body-font">
-<<<<<<< HEAD
             <div class="container px-5 py-8 mb-10 mx-auto flex items-center sm:flex-row flex-col">
-=======
-            <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
->>>>>>> cc6b3c10edcff22eb1436e6cb57dac59b37509aa
                 <a class="flex title-font font-medium items-center md:justify-start justify-center text-brandPink">
                     <img className='w-auto h-24 ' src={logo} alt="logo" />
                     <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
