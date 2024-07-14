@@ -6,7 +6,7 @@ import PatternOperations from "./pages/DevDash/Pages/Components/PatternOperation
 import ProductOperations from "./pages/DevDash/Pages/ProductOperations"
 import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
-import Product from "./pages/Product"
+import Produc from "./pages/Produc"
 import Products from "./pages/Products"
 import PrivateRoute from "./utils"
 
@@ -23,7 +23,7 @@ const routes = [
             
             {
                 path:'product/:productId',
-                element:<Product></Product>
+                element:<Produc></Produc>
             },
             {
                 path:'yöneticipaneli',
