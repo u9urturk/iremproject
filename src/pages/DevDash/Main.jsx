@@ -5,28 +5,29 @@ import { Link, Outlet } from 'react-router-dom';
 
 export default function DevDash() {
     return (
-        <div className='pt-10 bg-200 animate-fade-left animate-ease-in-out animate-normal   w-full h-auto flex items-center justify-center' >
-            <div className=' flex flex-row items-start justify-between max-w-[calc(90%)] h-screen rounded-[3rem] w-full bg-gray-100'>
-                <div className='relative w-1/4'>
-                    <div className='absolute -left-8 -top-8 bg-brandGreen max-w-xs w-auto h-screen rounded-[3rem]'>
-                        <div className='px-8 py-4 text-lg text-white font-semibold flex items-center justify-center gap-x-2'>
-                            <MdOutlineDashboardCustomize size={24}></MdOutlineDashboardCustomize>
-                            Yönetici Paneli
-                        </div>
-                        <ul className="menu bg-transparent flex items-start justify-center text-white w-56 rounded-box">
+        <div className='pt-10 bg-200 relative  w-full h-auto flex items-center justify-center ' >
+            <div className='h-full flex items-center justify-center w-[90%]'>
+                <Outlet></Outlet>
+            </div>
+
+            <div className="drawer absolute left-0 z-10 top-0 w-full ">
+                <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+                <div className="drawer-content">
+                    <label htmlFor="my-drawer" data-tip="İşlemler" className='z-0 cursor-pointer tooltip tooltip-top'>  <MdOutlineDashboardCustomize size={24}></MdOutlineDashboardCustomize></label>
+                </div>
+                <div className="drawer-side">
+                    <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+
+                    <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                        <ul className="menu font-semibold   bg-transparent flex items-start justify-center  w-56 rounded-box">
                             <li><Link to={"kategoriislemleri"}>Kategori İşlemleri</Link></li>
                             <li><Link to={"ozellikislemleri"} >Özellik İşlemleri</Link></li>
                             <li><Link to={"urunislemleri"} >Ürün İşlemleri</Link></li>
                             <li><Link to={"kullaniciislemleri"} >Kullanıcı İşlemleri</Link></li>
                         </ul>
-
-                    </div>
-                </div>
-                <div className='h-full py-8 pr-8 flex items-center justify-center w-3/4'>
-                    <Outlet></Outlet>
+                    </ul>
                 </div>
             </div>
-
         </div>
     )
 }

@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
 import colorsIcon from "../../..//materials/renkler.svg"
 import fabricsIcon from "../../..//materials/kumaslar.svg"
 import patternsIcon from "../../..//materials/desenler.png"
-import ColorOperations from './Components/ColorOperations'
 import { Link } from 'react-router-dom'
 
 
@@ -11,7 +9,6 @@ export default function PropertyOperations() {
 
 
 
-    const [isActiveColor, setisActiveColor] = useState(false);
 
     
 

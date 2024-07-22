@@ -177,17 +177,22 @@ export const addProduct = async (categoryId, productName, price) => {
 }
 
 
-export const uploadImage = async (productId, file) => {
-    // console.log(productId,file);
-    const storageRef = ref(storage, `${productId}/${file.name}`);
+export const uploadImage = async (target=null,productId, file) => {
+    let storageRef=null;
+    if(target!==null){
+        storageRef = ref(storage, `${target}/${productId}/${file.name}`)
+    }else{
+        storageRef = ref(storage, `${productId}/${file.name}`);
+    }
+   
 
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    const uploadTask =  uploadBytesResumable(storageRef, file);
 
     // Register three observers:
     // 1. 'state_changed' observer, called any time the state changes
     // 2. Error observer, called on failure
     // 3. Completion observer, called on successful completion
-    uploadTask.on('state_changed',
+   uploadTask.on('state_changed',
         (snapshot) => {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -197,12 +202,12 @@ export const uploadImage = async (productId, file) => {
                 toast.info("Yükleniyor... ",
                     {
                         position: "top-left",
-                        autoClose: false,
+                        autoClose: 1000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
-                        progress: undefined,
+                        progress: progress,
                         theme: "colored",
                         transition: Flip
                     })
@@ -439,13 +444,13 @@ export const logout = async () => {
 
 //ColorOperations
 export const addColor = async (values) => {
-    let isSuccess = false
-    //console.log(categoryName)
-    await addDoc(collection(db, "colors"), {
-        colorName: values.colorName,
-        colorCode: values.colorCode,
-        creationTime: Timestamp.fromDate(new Date())
-    }).then(function () {
+    try {
+        const docRef = await addDoc(collection(db, "colors"), {
+            colorName: values.colorName,
+            colorCode: values.colorCode,
+            creationTime: Timestamp.fromDate(new Date())
+        });
+
         toast.success(`"${values.colorName}" isimli renk başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
@@ -457,21 +462,33 @@ export const addColor = async (values) => {
             theme: "colored",
             transition: Flip
         });
-        
 
-        isSuccess = true;
-    })
+        return { id: docRef.id }; // Burada docRef kullanılıyor
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        toast.error("Renk eklenirken bir hata oluştu.", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
 
-    return isSuccess;
 
 }
 
 export const deleteColorByColorId = async (data) => {
     let isSuccess = false
-    // console.log(data)
+    console.log(data)
 
-    await deleteDoc(doc(db, "categories", data.colorId)).then(function () {
-        toast.warning(`"${data.colorName}" isimli kategori başarıyla silindi. `, {
+    await deleteDoc(doc(db, "colors", data.colorId)).then(function () {
+        toast.warning(`"${data.colorName}" isimli renk başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -498,7 +515,7 @@ export const getColors = async () => {
     return querySnapshot;
 }
 
-export const getColorsByColorId = async (colorId) => {
+export const getColorByColorId = async (colorId) => {
 
     const docRef = doc(db, "categories", colorId);
     const docSnap = await getDoc(docRef);
@@ -510,12 +527,12 @@ export const getColorsByColorId = async (colorId) => {
 //Fabric Operations
 
 export const addFabric = async (fabricName) => {
-    let isSuccess = false
-    //console.log(categoryName)
-    await addDoc(collection(db, "fabrics"), {
-        fabricName: fabricName,
-        creationTime: Timestamp.fromDate(new Date())
-    }).then(function () {
+    try {
+        const docRef = await addDoc(collection(db, "fabrics"), {
+            fabricName: fabricName,
+            creationTime: Timestamp.fromDate(new Date())
+        });
+
         toast.success(`"${fabricName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
@@ -527,12 +544,24 @@ export const addFabric = async (fabricName) => {
             theme: "colored",
             transition: Flip
         });
-        
 
-        isSuccess = true;
-    })
+        return { id: docRef.id }; // Burada docRef kullanılıyor
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        toast.error("Renk eklenirken bir hata oluştu.", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
 
-    return isSuccess;
 
 }
 
@@ -541,7 +570,7 @@ export const deleteFabricByFabricId = async (data) => {
     let isSuccess = false
     // console.log(data)
 
-    await deleteDoc(doc(db, "fabrics", data.fabricId)).then(function () {
+    await deleteDoc(doc(db, "fabrics", data.id)).then(function () {
         toast.warning(`"${data.fabricName}" isimli kumaş başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
@@ -579,16 +608,23 @@ export const getFabricsByFabricId = async (fabricId) => {
 
 
 
+
+
+
+
+
 //PatternOperations
 export const addPattern = async (values) => {
-    let isSuccess = false
-    //console.log(categoryName)
-    await addDoc(collection(db, "colors"), {
-        colorName: values.colorName,
-        colorCode: values.colorCode,
-        creationTime: Timestamp.fromDate(new Date())
-    }).then(function () {
-        toast.success(`"${values.colorName}" isimli renk başarıyla eklendi. `, {
+    try {
+        const docRef = await addDoc(collection(db, "patterns"), {
+            patternName: values.patternName,
+            creationTime: Timestamp.fromDate(new Date())
+        });
+        const id=docRef.id
+
+        await uploadImage('patterns',id,values.file)
+
+        toast.success(`"${values.patternName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -599,12 +635,23 @@ export const addPattern = async (values) => {
             theme: "colored",
             transition: Flip
         });
-        
 
-        isSuccess = true;
-    })
-
-    return isSuccess;
+        return id; // Burada docRef kullanılıyor
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        toast.error("Renk eklenirken bir hata oluştu.", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
 
 }
 
@@ -612,8 +659,8 @@ export const deletePatternByPatternId = async (data) => {
     let isSuccess = false
     // console.log(data)
 
-    await deleteDoc(doc(db, "categories", data.colorId)).then(function () {
-        toast.warning(`"${data.colorName}" isimli kategori başarıyla silindi. `, {
+    await deleteDoc(doc(db, "patterns", data.id)).then(function () {
+        toast.warning(`"${data.patternName}" isimli desen başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -635,7 +682,7 @@ export const deletePatternByPatternId = async (data) => {
 
 export const getPatterns = async () => {
 
-    const first = query(collection(db, "colors"), orderBy("creationTime", "asc"));
+    const first = query(collection(db, "patterns"), orderBy("creationTime", "asc"));
     const querySnapshot = await getDocs(first)
     return querySnapshot;
 }

@@ -4,22 +4,36 @@ import "../../../../ScrollStyle.css"
 import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
 import classNames from 'classnames';
-import { addColor, getColors } from '../../../../firebase.js';
+import { addColor, deleteColorByColorId, getColors } from '../../../../firebase.js';
 
 export default function ColorOperations() {
-
   const getColorsBase = getColors();
+
   const [colors, setColors] = useState([])
+  const [selectedColor,setSelectedColor] = useState(null);
+
 
   const handleSubmit = async (values, actions) => {
     addColor(values).then(res => {
-      if (res === true) {
-        setColors(prevState => [...prevState, { colorName: values.colorName, colorCode: values.colorCode }])
+      if (res) {
+        setColors(prevState => [...prevState, {colorId:res.id, colorName: values.colorName, colorCode: values.colorCode }]);
+        values.colorName='';
+        values.colorCode='';
       }
     })
   }
 
-  
+  const resetSelectedColor = ()=>{
+    setSelectedColor(null);
+  }
+
+  const deleteSelectedColor = (data)=>{
+    deleteColorByColorId(data).then(res=>{
+      setColors(colors.filter(color=>color.colorId !== data.colorId))
+    })
+  }
+
+
 
 
   //Get Data
@@ -43,20 +57,28 @@ export default function ColorOperations() {
 
   return (
 
-    <div className=' flex-col animate-fade-left animate-ease-in-out animate-normal max-h-screen bg-transparent h-full max-w-screen-2xl w-full flex items-center justify-center '>
-      <h1 className='text-4xl items-center justify-center font-semibold flex  w-full h-[15%]'>
+    <div className=' flex-col animate-fade-left animate-ease-in-out animate-normal max-h-screen
+     bg-transparent  w-full flex items-center justify-center '>
+      <h1 className='text-4xl items-center justify-center font-semibold flex  w-full h-[5%]'>
         RENKLER
       </h1>
-      <div className='w-full h-[85%] flex flex-row items-center justify-center gap-x-12 '>
-        <div className=' w-2/3 place-items-center h-full scroll-invisible m-8 grid grid-cols-5 border-brandGreen rounded-2xl overflow-scroll py-10 gap-2 gap-y-10 border-2 border-spacing-8'>
+      <div className='w-full h-[95%] gap-y-4 flex flex-col items-start justify-start py-8  '>
+        <div className='h-auto w-full flex flex-wrap gap-4 pb-12 px-8 '>
           {
             colors.map((data, key) => {
-              return <div key={key} style={{ backgroundColor: "#" + data.colorCode }} className={`h-14 w-14 tooltip hover:tooltip-top  cursor-pointer transition-all hover:scale-110 rounded-full`} data-tip={data.colorName}></div>
+              return <div key={key} style={{ backgroundColor: "#" + data.colorCode }}
+                className={`h-14 group indicator w-14 relative  tooltip hover:z-10 tooltip-bottom  cursor-pointer 
+                transition-all hover:scale-110 rounded-ss-xl`} data-tip={data.colorName}>
+                <div className="hidden group-hover:block transition-all indicator-item indicator-top">
+                  <button onClick={()=>{document.getElementById('alert').classList.remove('hidden');setSelectedColor(data)}} 
+                  className="btn btn-xs  btn-primary">Sil</button>
+                </div>
+              </div>
             })
           }
 
         </div>
-        <div className='w-1/3 h-full flex flex-col items-center justify-center' >
+        <div className='w-full' >
 
           <Formik
             initialValues={{
@@ -68,13 +90,12 @@ export default function ColorOperations() {
             onSubmit={handleSubmit}
           >
             {({ values }) => (
-              <Form>
-                <div className='flex flex-col gap-y-8 items-center justify-center'>
-                  <Input type="text" name="colorName" className='px-2 py-2 bg-transparent border text-center border-brandGreen rounded-2xl outline-none' placeholder='Renk Adı ' />
-                  <Input type="text" name='colorCode' className='px-2 py-2 bg-transparent border text-center border-brandGreen rounded-2xl outline-none' placeholder='Renk Kodu ' />
-                  <div className='flex flex-col gap-y-2 items-center justify-center'>
-                    <p>Ön İzleme</p>
-                    <div style={{ backgroundColor: "#" + values.colorCode }} className={`w-14 h-14  rounded-full transition-colors`}></div>
+              <Form className='flex flex-row '>
+                <div className='flex w-full flex-row gap-x-8 items-center justify-center'>
+                  <Input type="text" name="colorName" className='input rounded-lg input-bordered w-full max-w-xs' placeholder='Renk Adı ' />
+                  <Input type="text" name='colorCode' className='input  rounded-lg input-bordered w-full max-w-xs' placeholder='Renk Kodu ' />
+                  <div className='flex w-full flex-col gap-y-2 items-center justify-between'>
+                    <div style={{ backgroundColor: "#" + values.colorCode }} className={`w-14 h-14  rounded-ss-xl transition-colors`}></div>
                   </div>
 
                 </div>
@@ -84,7 +105,7 @@ export default function ColorOperations() {
                     "transition-all m-8 w-auto h-auto py-2 px-4 hover:drop-shadow-2xl  text-white font-semibold  rounded-2xl  ": true,
                     "bg-brandGreen hover:scale-110 active:scale-95": values.colorName.length != 0 && values.colorCode.length != 0,
                     "bg-red-700": values.colorName.length == 0 || values.colorCode.length == 0
-                  })}>Yeni Renk Ekle</button>
+                  })}>Ekle</button>
 
               </Form>
             )}
@@ -93,7 +114,31 @@ export default function ColorOperations() {
         </div>
 
       </div>
+
+      <div id='alert' className='fixed hidden  h-screen w-full top-0 left-0'>
+        <div role="alert" className="alert animate-jump-in">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="stroke-info h-6 w-6 shrink-0">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Lütfen işlemi onaylayın</span>
+          <div className='flex gap-x-2'>
+            <button onClick={()=>{document.getElementById('alert').classList.add('hidden');deleteSelectedColor(selectedColor)}}  className="btn btn-sm btn-primary">Onayla</button>
+            <button onClick={()=>{document.getElementById('alert').classList.add('hidden');resetSelectedColor()}}  className="btn btn-sm ">Vazgeç</button>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+
   )
 
 }

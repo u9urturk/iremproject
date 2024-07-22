@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { BsBell } from 'react-icons/bs'
 import { CiSearch } from 'react-icons/ci'
 import Login from './Login'
 import logo from '../materials/logos/logo.svg'
-import { AiOutlineHome } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { useSelector } from 'react-redux'
 export default function Navbar() {
 
@@ -35,7 +32,7 @@ export default function Navbar() {
 
                 })}
             >
-                <div className='w-full flex relative   md:flex-row flex-col  items-center justify-around  py-3 '>
+                <div className='w-full flex items-center relative   md:flex-row flex-col   justify-around  py-3 '>
                     <div className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
                         <img className='w-auto h-24' src={logo} alt="logo" />
                         <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
@@ -45,31 +42,10 @@ export default function Navbar() {
                         <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                         <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                     </div>
-                    <div className='hidden md:block'>
-                        <div className='flex items-center justify-center '>
-                            <Link to={"/"} className='text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200' data-tip="AnaSayfa" >
-                                <AiOutlineHome size={24}></AiOutlineHome>
-                            </Link>
-
-                            <Link to={"/yöneticipaneli"} className={classNames({
-                                'text-brandPink tooltip md:static absolute left-12 top-5 block cursor-pointer transition-all p-3 rounded-full hover:bg-base-200': user,
-                                'hidden': user == false
-                            })} data-tip="Yönetici Paneli" >
-                                <MdOutlineDashboardCustomize size={24}></MdOutlineDashboardCustomize>
-                            </Link>
-
-                            <div className='text-brandPink  tooltip  md:static absolute left-3 top-5 block cursor-pointer  p-3 rounded-full hover:bg-base-200' data-tip="Bildirimler">
-                                <BsBell size={23}></BsBell>
-                            </div>
-                            <div className='flex items-center justify-center md:static   p-3 rounded-full hover:bg-base-200'>
-                                <Login></Login>
-                            </div>
-                        </div>
-                    </div>
-
-                    <ul className="fixed bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6">
+                  
+                    <ul className="fixed md:static md:h-full md:flex items-center justify-center md:bg-transparent  bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6 md:mt-0">
                         <li  >
-                            <Link  to={`/`} className="tooltip" data-tip="Ana Sayfa">
+                            <Link  to={`/`} className="tooltip md:tooltip-bottom" data-tip="Ana Sayfa">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -85,7 +61,7 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <a className="tooltip" data-tip="Bilgilendirme">
+                            <a className="tooltip md:tooltip-bottom" data-tip="Bilgilendirme">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -101,7 +77,10 @@ export default function Navbar() {
                             </a>
                         </li>
                         <li>
-                            <a className="tooltip" data-tip="Yönetim Paneli">
+                            <Link to={"/yöneticipaneli"} className={classNames({
+                                "tooltip md:tooltip-bottom":true,
+                                "hidden":user==false
+                            })} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -114,6 +93,11 @@ export default function Navbar() {
                                         strokeWidth="2"
                                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
+                            </Link>
+                        </li>
+                        <li>
+                            <a className="tooltip md:tooltip-bottom" data-tip={user? "Çıkış yap ": "Giriş yap"}>
+                                <Login></Login>
                             </a>
                         </li>
                     </ul>

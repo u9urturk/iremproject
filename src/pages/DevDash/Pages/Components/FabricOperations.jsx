@@ -1,33 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../../../../components/Input'
 import { Form, Formik } from 'formik'
-import { addFabric, getAllFabrics } from '../../../../firebase'
+import { addFabric, deleteFabricByFabricId, getAllFabrics } from '../../../../firebase'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
+import { Timestamp } from 'firebase/firestore'
+import logo from '../../../../materials/logos/logo.svg'
+
 
 export default function FabricOperations() {
     const [isActive, setisActive] = useState(false)
     const user = useSelector(state => state.auth.user)
     const [fabrics, setFabrics] = useState([]);
+    const [selectedFabric, setSelectedFabric] = useState()
     const handleSubmit = async (values, actions) => {
 
         addFabric(values.fabricName).then(res => {
-            if (res === true) {
+            if (res) {
+                setFabrics(prevState => [...prevState, {id:res.id, fabricName: values.fabricName}]);
                 setisActive(false);
-            }
+              }
         })
     }
 
 
+    const deleteSelectedFabric = (data) => {
+        deleteFabricByFabricId(data).then(res => {
+            setFabrics(fabrics.filter(fabric => fabric.id !== data.id))
+        })
+    }
+
+    const resetSelectedFabric = () => {
+        setSelectedFabric(null);
+    }
+
     const getAllFabricsReaction = () => {
         getAllFabrics().then(res => {
             res.forEach(async (doc) => {
-                console.log(doc.data())
+                //FireBase zaman dönüşümü !! 
+                const fbts = new Timestamp(doc.data().creationTime.seconds, doc.data().creationTime.nanoseconds)
+                const date = fbts.toDate();
+                const readableDate = date.toLocaleString();
 
-
-                 setFabrics(prevState => [...prevState, doc.data()])
+                setFabrics(prevState => [...prevState, { id: doc.id, fabricName: doc.data().fabricName, creationTime: readableDate }])
             })
         })
     }
@@ -35,7 +52,6 @@ export default function FabricOperations() {
     useEffect(() => {
         getAllFabricsReaction()
     }, [])
-
 
     return (
         <div className='flex  animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
@@ -125,7 +141,7 @@ export default function FabricOperations() {
                     </div>
                 </div>
             </div>
-            <div className='h-1/2 w-full flex flex-col gap-y-2 items-start'>
+            <div className='h-1/2 w-full flex flex-col mt-8 gap-y-2 items-start'>
                 <h1 className='text-2xl font-semibold '>
                     Kumaşlar
                 </h1>
@@ -133,31 +149,20 @@ export default function FabricOperations() {
                     <table className="table table-md table-pin-rows table-pin-cols">
                         <thead >
                             <tr>
-                                <th></th>
+
                                 <td>Ürün Adı</td>
-                                <td>Stok</td>
-                                <td>Fiyat</td>
-                                <td>Memnuniyet</td>
-                                <td>Günlük İncelenme Sayısı</td>
-                                <td>Görsel</td>
-                                <th></th>
+                                <td>Oluşturulma Tarihi</td>
+                                <th className='flex items-center justify-center'>Operasyonlar</th>
                             </tr>
                         </thead>
                         <tbody>
                             {fabrics.map((fabric, key) => {
 
                                 return <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
-                                    <th>1</th>
                                     <td>{fabric.fabricName}</td>
-                                    <td>25</td>
-                                    <td></td>
-                                    <td>Mavi Desenli Havlu</td>
-                                    <td>300</td>
-                                    <td>                                  
-                                    </td>
-                                    <td>
-                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
-                                        <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
+                                    <td>{fabric.creationTime}</td>
+                                    <td className='flex items-center justify-center gap-x-2'>
+                                        <div onClick={() => { document.getElementById('alert').showModal(); setSelectedFabric(fabric) }} className='hover:scale-125 transition-all' ><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>                                     
                                     </td>
 
                                 </tr>
@@ -175,6 +180,20 @@ export default function FabricOperations() {
                 </div>
 
             </div>
+            <dialog id="alert" className="modal">
+                <div className="modal-box flex item-center justify-between flex-row  gap-x-2">
+                    <div className='flex items-center justify-center gap-x-4'>
+                        <img className='w-auto h-16' src={logo} alt="logo" />
+                        <p className="text-md">Lütfen işlemi onaylayın</p>
+                    </div>
+                    <div className='flex items-center justify-center gap-x-2'>
+                        <button onClick={() => { deleteSelectedFabric(selectedFabric); document.getElementById('alert').close() }} className="btn btn-sm btn-primary">Onayla</button>
+                        <button onClick={() => { resetSelectedFabric();document.getElementById('alert').close() }} className="btn btn-sm ">Vazgeç</button>
+                    </div>
+
+                </div>
+            </dialog>
+
         </div>
     )
 }
