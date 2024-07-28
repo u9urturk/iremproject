@@ -5,31 +5,39 @@ import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
 import classNames from 'classnames';
 import { addColor, deleteColorByColorId, getColors } from '../../../../firebase.js';
+import VerificationModal from '../../../../components/VerificationModal.jsx';
 
 export default function ColorOperations() {
   const getColorsBase = getColors();
 
   const [colors, setColors] = useState([])
-  const [selectedColor,setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
+
 
 
   const handleSubmit = async (values, actions) => {
     addColor(values).then(res => {
       if (res) {
-        setColors(prevState => [...prevState, {colorId:res.id, colorName: values.colorName, colorCode: values.colorCode }]);
-        values.colorName='';
-        values.colorCode='';
+        setColors(prevState => [...prevState, { colorId: res.id, colorName: values.colorName, colorCode: values.colorCode }]);
+        values.colorName = '';
+        values.colorCode = '';
       }
     })
   }
 
-  const resetSelectedColor = ()=>{
+  const verificationModalClose =()=>{
+    setisVerificationModalOpen(false);
+    resetSelectedColor();
+}
+
+  const resetSelectedColor = () => {
     setSelectedColor(null);
   }
 
-  const deleteSelectedColor = (data)=>{
-    deleteColorByColorId(data).then(res=>{
-      setColors(colors.filter(color=>color.colorId !== data.colorId))
+  const deleteSelectedColor = () => {
+    deleteColorByColorId(selectedColor).then(res => {
+      setColors(colors.filter(color => color.colorId !== selectedColor.colorId))
     })
   }
 
@@ -70,8 +78,8 @@ export default function ColorOperations() {
                 className={`h-14 group indicator w-14 relative  tooltip hover:z-10 tooltip-bottom  cursor-pointer 
                 transition-all hover:scale-110 rounded-ss-xl`} data-tip={data.colorName}>
                 <div className="hidden group-hover:block transition-all indicator-item indicator-top">
-                  <button onClick={()=>{document.getElementById('alert').classList.remove('hidden');setSelectedColor(data)}} 
-                  className="btn btn-xs  btn-primary">Sil</button>
+                  <button onClick={() => {setisVerificationModalOpen(true); setSelectedColor(data) }}
+                    className="btn btn-xs  btn-primary">Sil</button>
                 </div>
               </div>
             })
@@ -115,26 +123,8 @@ export default function ColorOperations() {
 
       </div>
 
-      <div id='alert' className='fixed hidden  h-screen w-full top-0 left-0'>
-        <div role="alert" className="alert animate-jump-in">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="stroke-info h-6 w-6 shrink-0">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <span>Lütfen işlemi onaylayın</span>
-          <div className='flex gap-x-2'>
-            <button onClick={()=>{document.getElementById('alert').classList.add('hidden');deleteSelectedColor(selectedColor)}}  className="btn btn-sm btn-primary">Onayla</button>
-            <button onClick={()=>{document.getElementById('alert').classList.add('hidden');resetSelectedColor()}}  className="btn btn-sm ">Vazgeç</button>
-          </div>
-        </div>
-      </div>
+      <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
+        trueOperation={deleteSelectedColor} ></VerificationModal>
 
     </div>
 

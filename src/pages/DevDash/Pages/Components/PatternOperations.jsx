@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Timestamp } from 'firebase/firestore';
 import logo from '../../../../materials/logos/logo.svg'
+import VerificationModal from '../../../../components/VerificationModal.jsx';
 
 
 
@@ -18,6 +19,8 @@ export default function PatternOperations() {
     const user = useSelector(state => state.auth.user)
     const [patterns, setPatterns] = useState([]);
     const [selectedPattern, setSelectedPattern] = useState()
+    const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
+
     const handleSubmit = async (values, actions) => {
         addPattern(values).then(res => {
             if (res) {
@@ -28,10 +31,15 @@ export default function PatternOperations() {
     }
 
 
-    const deleteSelectedPattern = (data) => {
-        deletePatternByPatternId(data).then(res => {
-            setPatterns(patterns.filter(pattern => pattern.id !== data.id))
+    const deleteSelectedPattern = () => {
+        deletePatternByPatternId(selectedPattern).then(res => {
+            setPatterns(patterns.filter(pattern => pattern.id !== selectedPattern.id))
         })
+    }
+
+    const verificationModalClose =()=>{
+        setisVerificationModalOpen(false);
+        resetSelectedPattern();
     }
 
     const resetSelectedPattern = () => {
@@ -46,7 +54,7 @@ export default function PatternOperations() {
                 const date = fbts.toDate();
                 const readableDate = date.toLocaleString();
 
-                setPatterns(prevState => [...prevState, { id: doc.id, patternName: doc.data().patternName, creationTime: readableDate }])
+                setPatterns(prevState => [...prevState, { id: doc.id, patternName: doc.data().name, creationTime: readableDate }])
             })
         })
     }
@@ -169,11 +177,11 @@ export default function PatternOperations() {
                             {patterns.map((pattern, key) => {
 
                                 return (
-                                    <tr  key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
-                                        <td onClick={()=>{document.getElementById('modal1').showModal();setSelectedPattern(pattern)}}>{pattern.patternName}</td>
+                                    <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
+                                        <td onClick={() => { document.getElementById('modal1').showModal(); setSelectedPattern(pattern) }}>{pattern.patternName}</td>
                                         <td>{pattern.creationTime}</td>
                                         <td className='flex items-center justify-center gap-x-2'>
-                                            <div onClick={() => { document.getElementById('alert').showModal(); setSelectedPattern(pattern) }}
+                                            <div onClick={() => { setisVerificationModalOpen(true); setSelectedPattern(pattern) }}
                                                 className='hover:scale-125 transition-all' >
                                                 <AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                         </td>
@@ -206,17 +214,8 @@ export default function PatternOperations() {
                 </div>
             </dialog>
 
-            selectedPattern && <dialog id="modal1" className="modal">
-                <div class="modal-box w-11/12 max-w-5xl">
-                    <h3 class="text-lg font-bold">{selectedPattern?selectedPattern.patternName:null}</h3>
-                    <p class="py-4">Click the button below to close</p>
-                    <div class="modal-action">
-                        <form method="dialog">
-                            <button  onClick={() => { resetSelectedPattern(); document.getElementById('modal1').close() }} class="btn">Kapat</button>
-                        </form>
-                    </div>
-                </div>
-            </dialog>
+            {selectedPattern && <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
+                trueOperation={deleteSelectedPattern} ></VerificationModal>}
 
         </div>
     )

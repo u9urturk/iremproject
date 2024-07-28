@@ -33,7 +33,7 @@ export default function Products() {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
                     let data = {
                         productId: doc.id,
-                        categoryName: res.categoryName,
+                        categoryName: res.name,
                         ...doc.data()
                     }
                     setProducts(prevState => [...prevState, data])
@@ -119,11 +119,11 @@ export default function Products() {
                                     categories.map((category, key) => {
                                         return <li onClick={
                                             () => {
-                                                setSelected({ categoryName: category.categoryName });
+                                                setSelected({ categoryName: category.name });
                                                 productByCategoryIdReaction(category.categoryId)
                                                 dropdownMenu.classList.add('hidden')
                                                 overlay.classList.add('hidden')
-                                            }} key={key}><a>{category.categoryName}</a></li>
+                                            }} key={key}><a>{category.name}</a></li>
                                     })
                                 }
 
@@ -156,7 +156,7 @@ export default function Products() {
                             return <Link to={`product/${product.productId}`} key={key} 
                             className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
 
-                                <figure ><ListenImages productId={product.productId}></ListenImages></figure>
+                                <figure ><ListenImages target={"productImages"} productId={product.productId}></ListenImages></figure>
                                 <div className="card-body flex items-start justify-start ">
                                     <h2 className="card-title truncate min-w-fit  text-sm">{product.productName}</h2>
                                     <h4 className='font-serif text-xs   opacity-60'>{product.categoryName}</h4>

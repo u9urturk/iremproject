@@ -39,7 +39,7 @@ export default function Products() {
 
     const updateImage = () => {
         if (currentProduct != null && file != null) {
-            uploadImage(currentProduct, file[0]);
+            uploadImage("productImages",currentProduct, file[0]);
             setCurrentProduct(null);
             setFile(null);
         }

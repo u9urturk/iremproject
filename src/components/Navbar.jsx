@@ -5,6 +5,7 @@ import logo from '../materials/logos/logo.svg'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
+
 export default function Navbar() {
 
     const user = useSelector(state => state.auth.user)
@@ -42,10 +43,13 @@ export default function Navbar() {
                         <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                         <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                     </div>
-                  
+
                     <ul className="fixed md:static md:h-full md:flex items-center justify-center md:bg-transparent  bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6 md:mt-0">
+                        <li className='font-semibold text-2xl'>
+                            <Link to={'/dev'}>X</Link>
+                        </li>
                         <li  >
-                            <Link  to={`/`} className="tooltip md:tooltip-bottom" data-tip="Ana Sayfa">
+                            <Link to={`/`} className="tooltip md:tooltip-bottom" data-tip="Ana Sayfa">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -78,8 +82,8 @@ export default function Navbar() {
                         </li>
                         <li>
                             <Link to={"/yöneticipaneli"} className={classNames({
-                                "tooltip md:tooltip-bottom":true,
-                                "hidden":user==false
+                                "tooltip md:tooltip-bottom": true,
+                                "hidden": user == false
                             })} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -96,13 +100,13 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <a className="tooltip md:tooltip-bottom" data-tip={user? "Çıkış yap ": "Giriş yap"}>
+                            <a className="tooltip md:tooltip-bottom" data-tip={user ? "Çıkış yap " : "Giriş yap"}>
                                 <Login></Login>
                             </a>
                         </li>
                     </ul>
                 </div>
-         </div>
-    </div>
+            </div>
+        </div>
     )
 }

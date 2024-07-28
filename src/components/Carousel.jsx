@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { downloadImages } from '../firebase';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
-export default function Carousel() {
-    let productIdtest = 'y2Ytxh3yBwhV3zQIzRt1';
+export default function Carousel(productId) {
     const storage = getStorage();
     const [data, setData] = useState([])
     const listen = () => {
 
-        downloadImages(productIdtest).then(res => {
+        downloadImages('productImages',productId.productId).then(res => {
 
             res.forEach(e => {
                 getDownloadURL(ref(storage, e.fullPath))
@@ -24,8 +23,7 @@ export default function Carousel() {
 
     useEffect(() => {
         listen()
-    }, [productIdtest])
-
+    }, [productId])
     return (
         <div className='flex items-center justify-center'>
             {data.length === 0 ? <span className="loading loading-dots loading-lg"></span>

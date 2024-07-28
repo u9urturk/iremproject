@@ -21,7 +21,7 @@ export default function Categories() {
         categoryReaction()
     }, [])
 
-
+console.log(categories)
     return (
         <Fragment>
             <div className='flex flex-col  gap-y-2 items-center justify-center'>
@@ -34,7 +34,7 @@ export default function Categories() {
                         return <div key={key} className='flex flex-col items-center justify-center gap-y-2'>
                           
                             <div className='btn glass btn-xs sm:btn-sm md:btn-md '>
-                                {data.categoryName}
+                                {data.name}
                             </div>
                         </div>
 

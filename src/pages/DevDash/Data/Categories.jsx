@@ -75,7 +75,7 @@ export default function Categories() {
 
                         return <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
                             <th>1</th>
-                            <td>{data.categoryName}</td>
+                            <td>{data.name}</td>
                             <td>25</td>
                             <td>24.01.2024</td>
                             <td>Mavi Desenli Havlu</td>

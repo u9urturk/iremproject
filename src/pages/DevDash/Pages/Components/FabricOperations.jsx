@@ -5,9 +5,9 @@ import { addFabric, deleteFabricByFabricId, getAllFabrics } from '../../../../fi
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { AiOutlineDelete } from 'react-icons/ai'
-import { RxUpdate } from 'react-icons/rx'
 import { Timestamp } from 'firebase/firestore'
 import logo from '../../../../materials/logos/logo.svg'
+import VerificationModal from '../../../../components/VerificationModal'
 
 
 export default function FabricOperations() {
@@ -15,21 +15,30 @@ export default function FabricOperations() {
     const user = useSelector(state => state.auth.user)
     const [fabrics, setFabrics] = useState([]);
     const [selectedFabric, setSelectedFabric] = useState()
+    const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
     const handleSubmit = async (values, actions) => {
 
         addFabric(values.fabricName).then(res => {
             if (res) {
-                setFabrics(prevState => [...prevState, {id:res.id, fabricName: values.fabricName}]);
+                setFabrics(prevState => [...prevState, 
+                    { id: res.id, fabricName: values.fabricName,creationTime:new Date().toLocaleString() }]);
                 setisActive(false);
-              }
+            }
         })
     }
 
+    
 
-    const deleteSelectedFabric = (data) => {
-        deleteFabricByFabricId(data).then(res => {
-            setFabrics(fabrics.filter(fabric => fabric.id !== data.id))
+
+    const deleteSelectedFabric = () => {
+        deleteFabricByFabricId(selectedFabric).then(res => {
+            setFabrics(fabrics.filter(fabric => fabric.id !== selectedFabric.id))
         })
+    }
+
+    const verificationModalClose =()=>{
+        setisVerificationModalOpen(false);
+        resetSelectedFabric();
     }
 
     const resetSelectedFabric = () => {
@@ -44,7 +53,7 @@ export default function FabricOperations() {
                 const date = fbts.toDate();
                 const readableDate = date.toLocaleString();
 
-                setFabrics(prevState => [...prevState, { id: doc.id, fabricName: doc.data().fabricName, creationTime: readableDate }])
+                setFabrics(prevState => [...prevState, { id: doc.id, fabricName: doc.data().name, creationTime: readableDate }])
             })
         })
     }
@@ -162,7 +171,7 @@ export default function FabricOperations() {
                                     <td>{fabric.fabricName}</td>
                                     <td>{fabric.creationTime}</td>
                                     <td className='flex items-center justify-center gap-x-2'>
-                                        <div onClick={() => { document.getElementById('alert').showModal(); setSelectedFabric(fabric) }} className='hover:scale-125 transition-all' ><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>                                     
+                                        <div onClick={() => { document.getElementById('alert').showModal(); setSelectedFabric(fabric) }} className='hover:scale-125 transition-all' ><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                     </td>
 
                                 </tr>
@@ -180,19 +189,8 @@ export default function FabricOperations() {
                 </div>
 
             </div>
-            <dialog id="alert" className="modal">
-                <div className="modal-box flex item-center justify-between flex-row  gap-x-2">
-                    <div className='flex items-center justify-center gap-x-4'>
-                        <img className='w-auto h-16' src={logo} alt="logo" />
-                        <p className="text-md">Lütfen işlemi onaylayın</p>
-                    </div>
-                    <div className='flex items-center justify-center gap-x-2'>
-                        <button onClick={() => { deleteSelectedFabric(selectedFabric); document.getElementById('alert').close() }} className="btn btn-sm btn-primary">Onayla</button>
-                        <button onClick={() => { resetSelectedFabric();document.getElementById('alert').close() }} className="btn btn-sm ">Vazgeç</button>
-                    </div>
-
-                </div>
-            </dialog>
+            <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
+                trueOperation={deleteSelectedFabric} ></VerificationModal>
 
         </div>
     )

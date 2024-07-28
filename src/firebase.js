@@ -81,9 +81,9 @@ export const getProductByProductId = async (productId) => {
     return docSnap.data();
 }
 
-export const downloadImage = async (productId) => {
+export const downloadImage = async (tg,productId) => {
     let url = null
-    const listRef = ref(storage, productId);
+    const listRef = ref(storage,`${tg}/${productId}`);
     await listAll(listRef).then(async (res) => {
         await getDownloadURL(ref(storage, res.items[0].fullPath))
             .then((path) => {
@@ -113,10 +113,10 @@ export const downloadImage = async (productId) => {
 
 }
 
-export const downloadImages = async (productId) => {
+export const downloadImages = async (tg,productId) => {
     let data=null
-    const listRef = ref(storage,productId);
-    
+    const listRef = ref(storage,`${tg}/${productId}`);
+    console.log(`${tg}/${productId}`)
     await listAll(listRef).then(async (res) => {
         data=res.items
 
@@ -149,12 +149,15 @@ export const downloadImages = async (productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (categoryId, productName, price) => {
+export const addProduct = async (productName, price,selectedCategory,selectedColor,selectedFabric,selectedPattern) => {
     let isSuccess = false;
-    await addDoc(collection(db, "products"), {
-        categoryId: categoryId,
+    await addDoc(collection(db, "products"), {   
         productName: productName,
         price: price,
+        categoryId: selectedCategory.id,
+        colorId:selectedColor.id,
+        fabricId:selectedFabric.id,
+        patternId:selectedPattern.id,
         creationTime: Timestamp.fromDate(new Date())
     }).then(function () {
         toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
@@ -308,7 +311,7 @@ export const addCategory = async (categoryName) => {
     let isSuccess = false
     //console.log(categoryName)
     await addDoc(collection(db, "categories"), {
-        categoryName: categoryName,
+        name: categoryName,
         creationTime: Timestamp.fromDate(new Date())
     }).then(function () {
         toast.success(`"${categoryName}" isimli kategori başarıyla eklendi. `, {
@@ -446,7 +449,7 @@ export const logout = async () => {
 export const addColor = async (values) => {
     try {
         const docRef = await addDoc(collection(db, "colors"), {
-            colorName: values.colorName,
+            name: values.colorName,
             colorCode: values.colorCode,
             creationTime: Timestamp.fromDate(new Date())
         });
@@ -517,7 +520,7 @@ export const getColors = async () => {
 
 export const getColorByColorId = async (colorId) => {
 
-    const docRef = doc(db, "categories", colorId);
+    const docRef = doc(db, "colors", colorId);
     const docSnap = await getDoc(docRef);
 
     return docSnap.data();
@@ -529,7 +532,7 @@ export const getColorByColorId = async (colorId) => {
 export const addFabric = async (fabricName) => {
     try {
         const docRef = await addDoc(collection(db, "fabrics"), {
-            fabricName: fabricName,
+            name: fabricName,
             creationTime: Timestamp.fromDate(new Date())
         });
 
@@ -600,7 +603,7 @@ export const getAllFabrics = async () => {
 
 export const getFabricsByFabricId = async (fabricId) => {
 
-    const docRef = doc(db, "categories", fabricId);
+    const docRef = doc(db, "fabrics", fabricId);
     const docSnap = await getDoc(docRef);
 
     return docSnap.data();
@@ -617,7 +620,7 @@ export const getFabricsByFabricId = async (fabricId) => {
 export const addPattern = async (values) => {
     try {
         const docRef = await addDoc(collection(db, "patterns"), {
-            patternName: values.patternName,
+            name: values.patternName,
             creationTime: Timestamp.fromDate(new Date())
         });
         const id=docRef.id
@@ -689,7 +692,7 @@ export const getPatterns = async () => {
 
 export const getPatternByPatternId = async (colorId) => {
 
-    const docRef = doc(db, "categories", colorId);
+    const docRef = doc(db, "patterns", colorId);
     const docSnap = await getDoc(docRef);
 
     return docSnap.data();

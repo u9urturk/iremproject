@@ -4,11 +4,12 @@ import { downloadImage } from '../firebase';
 import classNames from 'classnames';
 
 
-export default function ListenImages({productId}) {
+export default function ListenImages({productId,target}) {
     const [image, setImage] = useState(null);
+    const tg=target;
 
     const listen = () => {
-        downloadImage(productId).then((res)=>{
+        downloadImage(tg,productId).then((res)=>{
             setImage(res)
         })
     }

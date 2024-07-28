@@ -1,7 +1,9 @@
+import Dev from "./components/Dev"
 import DevDash from "./pages/DevDash/Main"
 import CategoryOperations from "./pages/DevDash/Pages/CategoryOperations"
 import ColorOperations from "./pages/DevDash/Pages/Components/ColorOperations"
 import FabricOperations from "./pages/DevDash/Pages/Components/FabricOperations"
+import OrderManagment from "./pages/DevDash/Pages/Components/OrderManagment"
 import PatternOperations from "./pages/DevDash/Pages/Components/PatternOperations"
 import ProductOperations from "./pages/DevDash/Pages/ProductOperations"
 import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
@@ -20,6 +22,10 @@ const routes = [
                 element: <Products></Products>,
               
             },
+            {
+                path:'dev',
+                element:<Dev></Dev>
+            },
             
             {
                 path:'product/:productId',
@@ -29,6 +35,10 @@ const routes = [
                 path:'yöneticipaneli',
                 element:<DevDash></DevDash>,
                 children:[
+                    {
+                        index:true,
+                        element:<OrderManagment></OrderManagment>
+                    },
                     {
                         path:'kategoriislemleri',
                         element:<CategoryOperations></CategoryOperations>
