@@ -3,14 +3,19 @@ import logo from '../materials/logos/logo.svg'
 
 
 
-export default function VerificationModal({ isActive, onClose, operationName ,trueOperation }) {
+export default function VerificationModal({ isActive, onClose, operationName, trueOperation }) {
 
     useEffect(() => {
-      if(isActive === true){
-        document.getElementById('alert').showModal();
-      }
+        if (isActive === true) {
+            document.getElementById('alert').showModal();
+        } else if (isActive === false) {
+            document.getElementById('alert').close();
+
+        }
+        else {
+            document.getElementById('alert').close();
+        }
     }, [isActive])
-    
 
     return (
         <dialog id="alert" className="modal">
@@ -20,8 +25,8 @@ export default function VerificationModal({ isActive, onClose, operationName ,tr
                     <p className="text-md">Lütfen işlemi onaylayın</p>
                 </div>
                 <div className='flex items-center justify-center gap-x-2'>
-                    <button onClick={() => {trueOperation(); document.getElementById('alert').close() }} className="btn btn-sm btn-primary">Onayla</button>
-                    <button onClick={() => { onClose();document.getElementById('alert').close() }} className="btn btn-sm ">Vazgeç</button>
+                    <button onClick={() => { trueOperation(); onClose() }} className="btn btn-sm btn-primary">Onayla</button>
+                    <button onClick={() => { onClose(); }} className="btn btn-sm ">Vazgeç</button>
                 </div>
 
             </div>

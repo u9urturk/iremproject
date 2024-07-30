@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getCategories, getCategoryByCategoryId, getProductByCategoryId, getProducts } from '../firebase'
 import ListenImages from '../components/ListenImages'
 import { Link } from 'react-router-dom'
+import ProductRating from '../components/ProductRaiting';
 
 export default function Products() {
     const dropdownMenu = document.querySelector('.dropdown-content');
@@ -112,7 +113,7 @@ export default function Products() {
                         {/* <!-- Overlay --> */}
                         <div id="overlay" class="fixed  inset-0 bg-black bg-opacity-50 hidden"></div>
                         <div className="dropdown  z-[2]  btn w-auto  btn-sm sm:btn-sm md:btn-md">
-                            <div onClick={()=>{ overlay.classList.remove('hidden'); dropdownMenu.classList.remove('hidden')}} tabIndex={0} role="button" className=" flex items-center justify-center btn-sm sm:btn-sm md:btn-md">{selected.categoryName}</div>
+                            <div onClick={() => { overlay.classList.remove('hidden'); dropdownMenu.classList.remove('hidden') }} tabIndex={0} role="button" className=" flex items-center justify-center btn-sm sm:btn-sm md:btn-md">{selected.categoryName}</div>
                             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow">
                                 {
 
@@ -153,17 +154,19 @@ export default function Products() {
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <Link to={`product/${product.productId}`} key={key} 
-                            className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
+                            return <Link to={`product/${product.productId}`} key={key}
+                                className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
 
                                 <figure ><ListenImages target={"productImages"} productId={product.productId}></ListenImages></figure>
-                                <div className="card-body flex items-start justify-start ">
-                                    <h2 className="card-title truncate min-w-fit  text-sm">{product.productName}</h2>
-                                    <h4 className='font-serif text-xs   opacity-60'>{product.categoryName}</h4>
-                                    <div className="card-actions relative pt-1 md:pt-2 flex md:flex-col items-center  justify-center">
-
-                                        <div className='w-full h-auto'><div className=" badge  text-xs  md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
-                                        <button className=" opacity-100 bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-3xl py-2 px-2  w-full  text-xs md:text-md ">Ürünü İncele</button>
+                                <div className="card-body">
+                                    <div>
+                                        <h2 className="card-title truncate min-w-fit  text-md">{product.productName}</h2>
+                                        <h4 className='font-serif text-xs   opacity-60'>{product.categoryName}</h4>
+                                    </div>
+                                    <ProductRating size={"xs"} initialRating={3}/>
+                                    <div className='w-full h-auto'><div className=" badge  text-xs rounded-md md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
+                                    <div className="card-actions w-full">
+                                        <button className=" opacity-100 w-full bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-md py-2 px-2  text-xs md:text-md ">Ürünü İncele</button>
                                     </div>
 
 

@@ -4,8 +4,9 @@ import VerificationModal from '../../../components/VerificationModal';
 import CategoryUpdate from '../../../components/CategoryUpdate';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
+import { Timestamp } from 'firebase/firestore';
 
-export default function Categories() {
+export default function Categories({selectCategory}) {
     const getCategoriesBase = getCategories();
     const [categories, setCategories] = useState([])
     const [currentCategory, setcurrentCategory] = useState(false)
@@ -21,14 +22,38 @@ export default function Categories() {
         setisCategoryUpdateModalOpen(false);
     }
 
+    useEffect(() => {
+      if(selectCategory !== null && selectCategory !== undefined){
+        categoryChangedOperation(selectCategory)
+      }
+    }, [selectCategory])
 
+    const categoryChangedOperation = async (select) => {
+        try {
+        
+            let data = {
+                id:select.id,
+                name:select.name,
+                creationTime:select.creationTime
+            };
+
+            setCategories(prevState => [...prevState, data]);
+        } catch (error) {
+            console.error("Error in categoryChangedOperation method!:", error);
+        }
+    }
+
+    
 
     const categoryReaction = () => {
         getCategoriesBase.then(res => {
-            res.forEach((doc) => {
-                let data = { categoryId: doc.id, ...doc.data() }
-                // console.log(doc.data())
-                setCategories(prevState => [...prevState, data])
+            res.forEach(async (doc) => {
+                //FireBase zaman dönüşümü !! 
+                const fbts = new Timestamp(doc.data().creationTime.seconds, doc.data().creationTime.nanoseconds)
+                const date = fbts.toDate();
+                const readableDate = date.toLocaleString();
+
+                setCategories(prevState => [...prevState, { id: doc.id, name: doc.data().name, creationTime: readableDate }])
             })
         })
 
@@ -46,6 +71,7 @@ export default function Categories() {
     const deleteCategory = () => {
         deleteCategoryByCategoryId(currentCategory).then(res => {
             if (res === true) {
+                setCategories(categories.filter(category=>category.id !== currentCategory.id));
                 setisVerificationModalOpen(false);
             }
         })
@@ -61,26 +87,19 @@ export default function Categories() {
             <table className="table table-md table-pin-rows table-pin-cols">
                 <thead >
                     <tr>
-                        <th></th>
                         <td>Kategori</td>
-                        <td>Ürün Sayısı</td>
                         <td>Son Güncellenme Tarihi</td>
-                        <td>Favori Ürün</td>
-                        <td>Günlük İncelenme Sayısı</td>
-                        <th></th>
+                        <th>Operasyonlar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {categories.map((data, key) => {
 
                         return <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
-                            <th>1</th>
                             <td>{data.name}</td>
-                            <td>25</td>
-                            <td>24.01.2024</td>
-                            <td>Mavi Desenli Havlu</td>
-                            <td>300</td>
-                            <td>
+                            <td>{data.creationTime}</td>
+
+                            <td className='flex items-center justify-start flex-row gap-x-4 '>
                                 <div onClick={() => { selectCurrentCategory(data, "delete") }} className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={16} color='red'  ></AiOutlineDelete></div>
                                 <div onClick={() => { selectCurrentCategory(data, "update") }} className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={16} color='green' ></RxUpdate></div>
                             </td>

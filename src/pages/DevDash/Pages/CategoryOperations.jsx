@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Categories from '../Data/Categories'
 import CategoryAdd from '../../../components/CategoryAdd'
 
 export default function CategoryOperations() {
+    const [category, setCategory] = useState()
+    const handleStateChange = (select)=>{
+        setCategory(select);
+    }
+    
     return (
         <div className='flex animate-fade-down animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
             <div className='flex flex-col w-full h-1/2 gap-y-8 items-center justify-center'>
@@ -10,10 +15,10 @@ export default function CategoryOperations() {
                     <h1 className='text-2xl font-semibold'>
                         Kategori İşlemleri
                     </h1>
-                    <CategoryAdd></CategoryAdd>
+                    <CategoryAdd onStateChange={handleStateChange}></CategoryAdd>
                 </div>
                 <div className='w-full'>
-                    <div className="stats shadow">
+                    <div className="stats shadow flex flex-col gap-y-8 md:gap-y-0 md:flex-row">
 
                         <div className="stat">
                             <div className="stat-figure text-secondary">
@@ -25,7 +30,7 @@ export default function CategoryOperations() {
                         </div>
 
                         <div className="stat">
-                            <div className="stat-figure text-secondary">
+                            <div className="stat-figure  text-secondary">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                             </div>
                             <div className="stat-title">En Çok İncelenen Kategori</div>
@@ -49,7 +54,7 @@ export default function CategoryOperations() {
                 <h1 className='text-2xl font-semibold '>
                     Kategoriler
                 </h1>
-                <Categories></Categories>
+                <Categories selectCategory={category}></Categories>
 
             </div>
         </div>

@@ -24,7 +24,8 @@ export default function PatternOperations() {
     const handleSubmit = async (values, actions) => {
         addPattern(values).then(res => {
             if (res) {
-                setPatterns(prevState => [...prevState, { id: res.id, patternName: values.patternName }]);
+                console.log(res)
+                setPatterns(prevState => [...prevState, { id: res, patternName: values.patternName,creationTime:new Date().toLocaleString() }]);
                 setisActive(false);
             }
         })
@@ -62,7 +63,7 @@ export default function PatternOperations() {
     useEffect(() => {
         getAllPatternReaction()
     }, [])
-
+    console.log(selectedPattern)
     return (
         <div className='flex  animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
             <div className='flex flex-col w-full h-1/2 gap-y-8 items-center justify-center'>
@@ -79,7 +80,7 @@ export default function PatternOperations() {
                     {
                         isActive === true && <div className='fixed top-0 animate-fade left-0 h-screen w-full z-10  backdrop-blur-sm'>
                             <div className='h-full w-full flex items-center justify-center '>
-                                <div className='relative flex flex-col items-center pb-8  bg-gradient-to-tl from-[#b7bac3] to-bg-base-300 rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
+                                <div className='relative flex flex-col items-center pb-8  bg-gradient-to-b from-neutral to-base-100 shadow-2xl rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
                                     <div className='flex items-center justify-center gap-x-3'>
                                         <div className='space-x-1'>
                                             <strong className='text-2xl font-medium font-serif tracking-widest'>Desen bilgileri</strong>
@@ -127,7 +128,7 @@ export default function PatternOperations() {
 
                 </div>
                 <div className='w-full'>
-                    <div className="stats shadow">
+                    <div className="stats shadow flex flex-col gap-y-8 md:gap-y-0 md:flex-row">
 
                         <div className="stat">
                             <div className="stat-figure text-secondary">
@@ -178,7 +179,7 @@ export default function PatternOperations() {
 
                                 return (
                                     <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
-                                        <td onClick={() => { document.getElementById('modal1').showModal(); setSelectedPattern(pattern) }}>{pattern.patternName}</td>
+                                        <td onClick={() => { setisVerificationModalOpen(true); setSelectedPattern(pattern) }}>{pattern.patternName}</td>
                                         <td>{pattern.creationTime}</td>
                                         <td className='flex items-center justify-center gap-x-2'>
                                             <div onClick={() => { setisVerificationModalOpen(true); setSelectedPattern(pattern) }}
@@ -200,19 +201,7 @@ export default function PatternOperations() {
                 </div>
 
             </div>
-            <dialog id="alert" className="modal">
-                <div className="modal-box flex item-center justify-between flex-row  gap-x-2">
-                    <div className='flex items-center justify-center gap-x-4'>
-                        <img className='w-auto h-16' src={logo} alt="logo" />
-                        <p className="text-md">Lütfen işlemi onaylayın</p>
-                    </div>
-                    <div className='flex items-center justify-center gap-x-2'>
-                        <button onClick={() => { deleteSelectedPattern(selectedPattern); document.getElementById('alert').close() }} className="btn btn-sm btn-primary">Onayla</button>
-                        <button onClick={() => { resetSelectedPattern(); document.getElementById('alert').close() }} className="btn btn-sm ">Vazgeç</button>
-                    </div>
-
-                </div>
-            </dialog>
+           
 
             {selectedPattern && <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
                 trueOperation={deleteSelectedPattern} ></VerificationModal>}

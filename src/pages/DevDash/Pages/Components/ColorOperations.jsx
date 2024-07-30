@@ -19,7 +19,7 @@ export default function ColorOperations() {
   const handleSubmit = async (values, actions) => {
     addColor(values).then(res => {
       if (res) {
-        setColors(prevState => [...prevState, { colorId: res.id, colorName: values.colorName, colorCode: values.colorCode }]);
+        setColors(prevState => [...prevState, { colorId: res.id, name: values.colorName, colorCode: values.colorCode }]);
         values.colorName = '';
         values.colorCode = '';
       }
@@ -29,6 +29,7 @@ export default function ColorOperations() {
   const verificationModalClose =()=>{
     setisVerificationModalOpen(false);
     resetSelectedColor();
+    console.log('Ok')
 }
 
   const resetSelectedColor = () => {
@@ -76,7 +77,7 @@ export default function ColorOperations() {
             colors.map((data, key) => {
               return <div key={key} style={{ backgroundColor: "#" + data.colorCode }}
                 className={`h-14 group indicator w-14 relative  tooltip hover:z-10 tooltip-bottom  cursor-pointer 
-                transition-all hover:scale-110 rounded-ss-xl`} data-tip={data.colorName}>
+                transition-all hover:scale-110 rounded-ss-xl`} data-tip={data.name}>
                 <div className="hidden group-hover:block transition-all indicator-item indicator-top">
                   <button onClick={() => {setisVerificationModalOpen(true); setSelectedColor(data) }}
                     className="btn btn-xs  btn-primary">Sil</button>

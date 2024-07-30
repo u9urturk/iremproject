@@ -1,13 +1,13 @@
 import React, { useState, Fragment, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { addProduct, getAllFabrics, getCategories, getColors, getPatterns } from '../firebase'
+import { addProduct, getAllFabrics, getCategories, getColors, getPatterns, getProductByProductId } from '../firebase'
 import { Form, Formik } from 'formik'
 import Input from './Input'
 import classNames from 'classnames'
 import SelectionList from '../pages/DevDash/Pages/Components/SelectionList'
 
 
-export default function ProductAdd() {
+export default function ProductAdd({ productStateChange }) {
     const [isActive, setisActive] = useState(false)
     const getCategoriesBase = getCategories();
     const user = useSelector(state => state.auth.user)
@@ -20,6 +20,8 @@ export default function ProductAdd() {
     const [colors, setColors] = useState([])
     const [fabrics, setFabrics] = useState([])
     const [patterns, setPatterns] = useState([])
+
+    const [productStateChanged, setProductStateChanged] = useState()
 
 
 
@@ -47,8 +49,8 @@ export default function ProductAdd() {
                 setCategories(prevState => [...prevState, data])
             })
         })
-        
-        
+
+
     }
 
     const colorReaction = () => {
@@ -60,7 +62,7 @@ export default function ProductAdd() {
             })
         })
 
-        
+
     }
 
 
@@ -72,7 +74,7 @@ export default function ProductAdd() {
                 setFabrics(prevState => [...prevState, data])
             })
         })
-        
+
     }
 
 
@@ -85,7 +87,7 @@ export default function ProductAdd() {
             })
         })
 
-       
+
     }
 
 
@@ -99,15 +101,25 @@ export default function ProductAdd() {
 
     const handleSubmit = async (values, actions) => {
 
-        addProduct( values.productName, values.price,selectedCategory,selectedColor,selectedFabric,selectedPattern).then(res => {
-            if (res === true) {
-                setisActive(false);
-            }
+        await addProduct(values.productName, values.price, selectedCategory, selectedColor, selectedFabric, selectedPattern).then(res => {
+            let productId = res.id
+            getProductByProductId(productId).then(res => {
+                if (productStateChange) {
+                    setProductStateChanged({ data: res, productId: productId })
+                }
+            })
+
         })
+        setisActive(false);
+
     }
-    console.log(
-        categories,colors,fabrics,patterns
-    )
+
+    useEffect(() => {
+        if (productStateChange) {
+            productStateChange(productStateChanged);
+        }
+    }, [isActive, productStateChanged])
+
     return (
         <div>
             {user && <div className='flex items-center justify-center gap-x-2'>
@@ -118,13 +130,7 @@ export default function ProductAdd() {
                 isActive === true && <div className='fixed top-0 animate-fade left-0 h-screen w-full  z-20'>
                     <div className='h-full w-full flex items-center justify-center '>
                         <div className='relative flex flex-col items-center pb-8 bg-gradient-to-b from-neutral to-base-100 shadow-2xl  rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
-                            <div className='flex items-center justify-center gap-x-3'>
-                                <div className='space-x-1'>
-                                    <strong className='text-2xl font-medium font-serif tracking-widest'>Ürün bilgileri</strong>
-
-
-                                </div>
-                            </div>
+                            <strong className='text-3xl font-semibold mt-8'>Ürün bilgileri</strong>
                             <Formik
                                 initialValues={{
                                     productName: '',
@@ -137,12 +143,9 @@ export default function ProductAdd() {
                                 {({ values }) => (
                                     <Form>
                                         <div className='flex flex-col items-center justify-center gap-y-3'>
-                                            <div className='w-full h-auto' >
-
-                                            </div>
                                             <div className='flex flex-col items-center justify-center w-48 gap-2'>
-                                                <Input type="text" name="productName" className='p-2  focus:outline-brand-color  w-48 text-base rounded-md  transition-all h-10 outline-none hover:text-sm ' label='Ürün Adı' />
-                                                <Input type="number" name="price" className='p-2  focus:outline-brand-color  w-48 text-base rounded-md  transition-all h-10 outline-none hover:text-sm ' label={values.price.length == 0 ? 'Fiyat' : '₺'} />
+                                                <Input type="text" name="productName" className='input input-bordered rounded-md w-full max-w-xs ' label='Ürün Adı' />
+                                                <Input type="number" name="price" className='input input-bordered rounded-md w-full max-w-xs ' label={values.price.length == 0 ? 'Fiyat' : '₺'} />
                                                 <SelectionList definition={'Kategori'} data={categories} onSelectionChange={handleSelectCategoryChange}></SelectionList>
                                                 <SelectionList definition={'Renk'} data={colors} onSelectionChange={handleSelectColorChange}></SelectionList>
                                                 <SelectionList definition={'Kumaş'} data={fabrics} onSelectionChange={handleSelectFabricChange}></SelectionList>
@@ -152,7 +155,7 @@ export default function ProductAdd() {
                                             </div>
                                             <div className='flex items-center justify-center gap-x-4'>
                                                 {
-                                                    selectedCategory  && <button type='submit' disabled={selectedCategory.id == undefined || values.productName.length == 0 || values.price.length == 0} className={classNames({
+                                                    selectedCategory && <button type='submit' disabled={selectedCategory.id == undefined || values.productName.length == 0 || values.price.length == 0} className={classNames({
                                                         'px-6 py-1  md:bg-brandGray rounded-md transition-all active:scale-90': true,
                                                         ' md:hover:bg-green-600': selectedCategory.id != undefined && values.productName.length != 0 && values.price.length != 0,
                                                         'opacity-25': selectedCategory.id == undefined || values.productName.length == 0 || values.price.length == 0

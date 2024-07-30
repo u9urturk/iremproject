@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged,GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
@@ -10,24 +9,92 @@ import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFire
 
 const firebaseConfig = {
     apiKey: "AIzaSyBssFu2VLMd1kXD99rb-TvFxBXXelCf_Ws",
-  authDomain: "iremceyizevi-6265d.firebaseapp.com",
-  projectId: "iremceyizevi-6265d",
-  storageBucket: "iremceyizevi-6265d.appspot.com",
-  messagingSenderId: "398714082560",
-  appId: "1:398714082560:web:c8ce37c349b03d710a8fe5",
-  measurementId: "G-VCQFBWR9ZJ"
+    authDomain: "iremceyizevi-6265d.firebaseapp.com",
+    projectId: "iremceyizevi-6265d",
+    storageBucket: "iremceyizevi-6265d.appspot.com",
+    messagingSenderId: "398714082560",
+    appId: "1:398714082560:web:c8ce37c349b03d710a8fe5",
 };
 
 
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 const storage = getStorage();
 
 
+const googleProvider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+
+const signInWithGoogle = async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        // İsteğe bağlı: kullanıcı bilgilerini işleyin
+        const user = result.user;
+        toast.success(`Hoş geldin ${user.displayName}`, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        return user;
+    } catch (error) {
+        // Hata mesajını göster
+        console.error("Google ile giriş hatası: ", error);
+        toast.error(`Google ile giriş hatası: ${"Giriş yapılamadı"}`, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
+};
+
+const signInWithFacebook = async () => {
+    try {
+        const result = await signInWithPopup(auth, facebookProvider);
+        // İsteğe bağlı: kullanıcı bilgilerini işleyin
+        const user = result.user;
+        toast.success("Facebook ile giriş başarılı!", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+        return user;
+    } catch (error) {
+        // Hata mesajını göster
+        console.error("Facebook ile giriş hatası: ", error);
+        toast.error(`Facebook ile giriş hatası: ${error.message}`, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
+};
 
 onAuthStateChanged(auth, user => {
     userHendle(user || false)
@@ -81,9 +148,9 @@ export const getProductByProductId = async (productId) => {
     return docSnap.data();
 }
 
-export const downloadImage = async (tg,productId) => {
+export const downloadImage = async (tg, productId) => {
     let url = null
-    const listRef = ref(storage,`${tg}/${productId}`);
+    const listRef = ref(storage, `${tg}/${productId}`);
     await listAll(listRef).then(async (res) => {
         await getDownloadURL(ref(storage, res.items[0].fullPath))
             .then((path) => {
@@ -113,12 +180,12 @@ export const downloadImage = async (tg,productId) => {
 
 }
 
-export const downloadImages = async (tg,productId) => {
-    let data=null
-    const listRef = ref(storage,`${tg}/${productId}`);
+export const downloadImages = async (tg, productId) => {
+    let data = null
+    const listRef = ref(storage, `${tg}/${productId}`);
     console.log(`${tg}/${productId}`)
     await listAll(listRef).then(async (res) => {
-        data=res.items
+        data = res.items
 
     }).catch((error) => {
         switch (error.code) {
@@ -139,7 +206,7 @@ export const downloadImages = async (tg,productId) => {
                 break;
         }
     });
-   return data;
+    return data;
 
 }
 
@@ -149,17 +216,18 @@ export const downloadImages = async (tg,productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (productName, price,selectedCategory,selectedColor,selectedFabric,selectedPattern) => {
-    let isSuccess = false;
-    await addDoc(collection(db, "products"), {   
-        productName: productName,
-        price: price,
-        categoryId: selectedCategory.id,
-        colorId:selectedColor.id,
-        fabricId:selectedFabric.id,
-        patternId:selectedPattern.id,
-        creationTime: Timestamp.fromDate(new Date())
-    }).then(function () {
+export const addProduct = async (productName, price, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
+
+    try {
+        const docRef = await addDoc(collection(db, "products"), {
+            productName: productName,
+            price: price,
+            categoryId: selectedCategory.id,
+            colorId: selectedColor.id,
+            fabricId: selectedFabric.id,
+            patternId: selectedPattern.id,
+            creationTime: Timestamp.fromDate(new Date())
+        })
         toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
@@ -171,31 +239,68 @@ export const addProduct = async (productName, price,selectedCategory,selectedCol
             theme: "colored",
             transition: Flip
         });
-     
+
+        return { id: docRef.id }; // Burada docRef kullanılıyor
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        toast.error("Ürün eklenirken bir hata oluştu.", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
+
+
+}
+
+export const deleteProductByProductId = async (data) => {
+    let isSuccess = false
+
+    await deleteDoc(doc(db, "products", data.productId)).then(function () {
+        toast.warning(`"${data.productName}" isimli renk başarıyla silindi. `, {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+
 
         isSuccess = true;
     })
 
     return isSuccess;
+
 }
 
 
-export const uploadImage = async (target=null,productId, file) => {
-    let storageRef=null;
-    if(target!==null){
+export const uploadImage = async (target = null, productId, file) => {
+    let storageRef = null;
+    if (target !== null) {
         storageRef = ref(storage, `${target}/${productId}/${file.name}`)
-    }else{
+    } else {
         storageRef = ref(storage, `${productId}/${file.name}`);
     }
-   
 
-    const uploadTask =  uploadBytesResumable(storageRef, file);
+
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
     // Register three observers:
     // 1. 'state_changed' observer, called any time the state changes
     // 2. Error observer, called on failure
     // 3. Completion observer, called on successful completion
-   uploadTask.on('state_changed',
+    uploadTask.on('state_changed',
         (snapshot) => {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -226,7 +331,7 @@ export const uploadImage = async (target=null,productId, file) => {
                     theme: "colored",
                     transition: Flip
                 })
-              
+
             }
 
         },
@@ -286,7 +391,7 @@ export const uploadImageBilboard = async (file) => {
                     theme: "colored",
                     transition: Flip
                 })
-               
+
             }
 
         },
@@ -308,13 +413,13 @@ export const uploadImageBilboard = async (file) => {
 
 //CategoryOperations
 export const addCategory = async (categoryName) => {
-    let isSuccess = false
-    //console.log(categoryName)
-    await addDoc(collection(db, "categories"), {
-        name: categoryName,
-        creationTime: Timestamp.fromDate(new Date())
-    }).then(function () {
-        toast.success(`"${categoryName}" isimli kategori başarıyla eklendi. `, {
+    try {
+        const docRef = await addDoc(collection(db, "categories"), {
+            name: categoryName,
+            creationTime: Timestamp.fromDate(new Date())
+        });
+
+        toast.success(`"${categoryName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -325,20 +430,33 @@ export const addCategory = async (categoryName) => {
             theme: "colored",
             transition: Flip
         });
-      
 
-        isSuccess = true;
-    })
+        return { id: docRef.id }; // Burada docRef kullanılıyor
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        toast.error("Renk eklenirken bir hata oluştu.", {
+            position: "top-left",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip
+        });
+    }
 
-    return isSuccess;
+  
 
 }
 
 export const deleteCategoryByCategoryId = async (data) => {
     let isSuccess = false
-    // console.log(data)
+     console.log(data)
 
-    await deleteDoc(doc(db, "categories", data.categoryId)).then(function () {
+    await deleteDoc(doc(db, "categories", data.id)).then(function () {
         toast.warning(`"${data.categoryName}" isimli kategori başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
@@ -350,7 +468,7 @@ export const deleteCategoryByCategoryId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-       
+
 
         isSuccess = true;
     })
@@ -380,7 +498,7 @@ export const updateCategoryByCategoryId = async (categoryId, categoryName) => {
             transition: Flip
         });
 
-  
+
 
         isSuccess = true;
     })
@@ -410,7 +528,7 @@ export const login = async (email, password) => {
         .catch((error) => {
             console.log(error.code)
             const errorCode = error.code;
-            if (errorCode === "auth/invalid-email" || errorCode === "auth/wrong-password") {
+            if (errorCode) {
                 toast.error('Kullanıcı giriş bilgileri hatalı !', {
                     position: "top-left",
                     autoClose: 2000,
@@ -426,6 +544,8 @@ export const login = async (email, password) => {
         })
 
 }
+
+
 
 export const logout = async () => {
     await signOut(auth);
@@ -488,10 +608,9 @@ export const addColor = async (values) => {
 
 export const deleteColorByColorId = async (data) => {
     let isSuccess = false
-    console.log(data)
 
     await deleteDoc(doc(db, "colors", data.colorId)).then(function () {
-        toast.warning(`"${data.colorName}" isimli renk başarıyla silindi. `, {
+        toast.warning(`"${data.name}" isimli renk başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -502,7 +621,7 @@ export const deleteColorByColorId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-       
+
 
         isSuccess = true;
     })
@@ -585,7 +704,7 @@ export const deleteFabricByFabricId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-      
+
 
         isSuccess = true;
     })
@@ -623,9 +742,9 @@ export const addPattern = async (values) => {
             name: values.patternName,
             creationTime: Timestamp.fromDate(new Date())
         });
-        const id=docRef.id
+        const id = docRef.id
 
-        await uploadImage('patterns',id,values.file)
+        await uploadImage('patterns', id, values.file)
 
         toast.success(`"${values.patternName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
@@ -674,7 +793,7 @@ export const deletePatternByPatternId = async (data) => {
             theme: "colored",
             transition: Flip
         });
-       
+
 
         isSuccess = true;
     })
@@ -697,4 +816,8 @@ export const getPatternByPatternId = async (colorId) => {
 
     return docSnap.data();
 }
+
+
+export { auth, signInWithGoogle, signInWithFacebook };
+
 

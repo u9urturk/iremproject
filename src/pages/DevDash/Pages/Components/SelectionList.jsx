@@ -14,7 +14,6 @@ export default function SelectionList({ data = [] , onSelectionChange ,definitio
         const selectedItem = data.find(item => item.id === String(event.target.value));
         setselectData(selectedItem);
     };
-    console.log(selectData)
   
     return (
         <select onChange={handleChange} className="select rounded-md w-full">

@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ProductAdd from '../../../components/ProductAdd'
-import Categories from '../Data/Categories'
 import Products from '../Data/Products'
 
 export default function ProductOperations() {
+    const [productChanged, setProductChanged] = useState();
+  
+    const handleProductStateChange=(data)=>{
+        setProductChanged(data);
+    }
+
   return (
     <div className='flex animate-fade-down animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
             <div className='flex flex-col w-full h-1/2 gap-y-8 items-center justify-center'>
@@ -11,10 +16,10 @@ export default function ProductOperations() {
                     <h1 className='text-2xl font-semibold'>
                         Ürün İşlemleri
                     </h1>
-                    <ProductAdd></ProductAdd>
+                    <ProductAdd productStateChange={handleProductStateChange}></ProductAdd>
                 </div>
                 <div className='w-full'>
-                    <div className="stats shadow">
+                    <div className="stats shadow flex flex-col gap-y-8 md:gap-y-0 md:flex-row">
 
                         <div className="stat">
                             <div className="stat-figure text-secondary">
@@ -50,7 +55,7 @@ export default function ProductOperations() {
                 <h1 className='text-2xl font-semibold '>
                     Kategoriler
                 </h1>
-                <Products></Products>
+                <Products productChanged={productChanged}></Products>
 
             </div>
         </div>

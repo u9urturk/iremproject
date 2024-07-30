@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { Timestamp } from 'firebase/firestore'
-import logo from '../../../../materials/logos/logo.svg'
 import VerificationModal from '../../../../components/VerificationModal'
 
 
@@ -20,30 +19,32 @@ export default function FabricOperations() {
 
         addFabric(values.fabricName).then(res => {
             if (res) {
-                setFabrics(prevState => [...prevState, 
-                    { id: res.id, fabricName: values.fabricName,creationTime:new Date().toLocaleString() }]);
+                setFabrics(prevState => [...prevState,
+                { id: res.id, fabricName: values.fabricName, creationTime: new Date().toLocaleString() }]);
                 setisActive(false);
             }
         })
     }
 
-    
+
 
 
     const deleteSelectedFabric = () => {
         deleteFabricByFabricId(selectedFabric).then(res => {
             setFabrics(fabrics.filter(fabric => fabric.id !== selectedFabric.id))
+            resetSelectedFabric();
+            console.log("ok")
         })
     }
 
-    const verificationModalClose =()=>{
+    const verificationModalClose = () => {
         setisVerificationModalOpen(false);
-        resetSelectedFabric();
     }
 
     const resetSelectedFabric = () => {
         setSelectedFabric(null);
     }
+
 
     const getAllFabricsReaction = () => {
         getAllFabrics().then(res => {
@@ -74,14 +75,12 @@ export default function FabricOperations() {
                     </div>}
 
                     {
-                        isActive === true && <div className='fixed top-0 animate-fade left-0 h-screen w-full z-10  backdrop-blur-sm'>
+                        isActive === true && <div className='fixed top-0 animate-fade left-0 h-screen w-full z-10'>
                             <div className='h-full w-full flex items-center justify-center '>
-                                <div className='relative flex flex-col items-center pb-8  bg-gradient-to-tl from-[#b7bac3] to-bg-base-300 rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
-                                    <div className='flex items-center justify-center gap-x-3'>
+                                <div className='relative flex flex-col items-center pb-8  bg-gradient-to-b from-neutral to-base-100 shadow-2xl rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
+                                    <div className='flex items-center justify-center gap-x-3 '>
                                         <div className='space-x-1'>
-                                            <strong className='text-2xl font-medium font-serif tracking-widest'>Kumaş bilgileri</strong>
-
-
+                                            <strong className='text-2xl font-medium font-serif'>Kumaş bilgileri</strong>
                                         </div>
                                     </div>
                                     <Formik
@@ -118,7 +117,7 @@ export default function FabricOperations() {
 
                 </div>
                 <div className='w-full'>
-                    <div className="stats shadow">
+                    <div className="stats shadow flex flex-col gap-y-8 md:gap-y-0 md:flex-row">
 
                         <div className="stat">
                             <div className="stat-figure text-secondary">
@@ -171,7 +170,7 @@ export default function FabricOperations() {
                                     <td>{fabric.fabricName}</td>
                                     <td>{fabric.creationTime}</td>
                                     <td className='flex items-center justify-center gap-x-2'>
-                                        <div onClick={() => { document.getElementById('alert').showModal(); setSelectedFabric(fabric) }} className='hover:scale-125 transition-all' ><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
+                                        <div onClick={() => { setSelectedFabric(fabric); setisVerificationModalOpen(true); }} className='hover:scale-125 transition-all' ><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                     </td>
 
                                 </tr>

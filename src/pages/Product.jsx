@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Carousel from '../components/Carousel'
 import { useParams } from 'react-router-dom';
 import { getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
+import ProductRating from '../components/ProductRaiting';
 
 export default function Product() {
 
@@ -30,7 +31,6 @@ export default function Product() {
     getProductReaction();
   }, [productId])
 
-  console.log(product)
   if (product) {
     return (
       <div className='container px-8 mx-auto text-4xl text-red-900'>
@@ -39,30 +39,24 @@ export default function Product() {
             <figure className='w-full  md:w-1/4'>
               <Carousel productId={productId}></Carousel>
             </figure>
-            <div className="card-body w-full md:w-3/4">
-              <div className='flex flex-col md:flex-row items-center md:justify-between'>
+            <div className="card-body w-full flex items-center justify-center gap-y-8 md:gap-y-0 md:w-3/4">
+              <div className='flex w-full flex-col md:flex-row items-center md:pb-4  md:px-2 md:justify-between'>
                 <h2 className="card-title  text-4xl">{product.name}</h2>
                 <div>
-                  <div className="rating gap-1">
-                    <input type="radio" name="rating-3" className="mask mask-heart bg-red-400" />
-                    <input type="radio" name="rating-3" className="mask mask-heart bg-orange-400" defaultChecked />
-                    <input type="radio" name="rating-3" className="mask mask-heart bg-yellow-400" />
-                    <input type="radio" name="rating-3" className="mask mask-heart bg-lime-400" />
-                    <input type="radio" name="rating-3" className="mask mask-heart bg-green-400" />
-                  </div>
+                  <ProductRating initialRating={3} size={'md'}></ProductRating>
                 </div>
               </div>
-              <p className='text-sm opacity-95 text-brandBlue'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>
-              <div className="card-actions w-full justify-between">
-                <div className='text-base'>
+              <p className='text-sm pl-8 opacity-95 '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>
+              <div className="card-actions flex items-center w-full justify-center md:justify-between gap-y-8">
+                <div className='text-base flex items-center justify-between flex-row gap-x-8 font-semibold'>
                   <div>{product.color}</div>
                   <div>{product.fabric}</div>
                   <div>{product.pattern}</div>
 
                 </div>
-                <div>
-                  <div>{product.price} </div>
-                  <button className="btn btn-primary">Sepete Ekle</button>
+                <div className='flex w-full justify-between items-center ' >
+                  <div className='flex items-center justify-center text-3xl font-semibold'>{product.price} ₺ </div>
+                  <button className="btn rounded-md btn-primary">Sepete Ekle</button>
                 </div>
 
               </div>

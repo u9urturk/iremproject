@@ -1,15 +1,57 @@
 import React, { useEffect, useState } from 'react'
-import { getCategoryByCategoryId, getProducts, uploadImage } from '../../../firebase';
+import { deleteProductByProductId, getCategoryByCategoryId, getProducts, uploadImage } from '../../../firebase';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
+import VerificationModal from '../../../components/VerificationModal';
 
-export default function Products() {
+export default function Products(productChanged) {
 
     const getProductsBase = getProducts();
     const [products, setProducts] = useState([])
     const [file, setFile] = useState(null)
     const [currentProduct, setCurrentProduct] = useState(null)
+    const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
+
     const [categoryName, setCategoryName] = useState("")
+    useEffect(() => {
+        if (productChanged !== undefined && productChanged !== null) {
+            productChangedOperation(productChanged);
+
+        }
+    }, [productChanged])
+
+    const verificationModalClose = () => {
+        setisVerificationModalOpen(false);
+    }
+
+    const deleteSelectedProduct = ()=>{
+        deleteProductByProductId(currentProduct).then(res=>{
+            setProducts(products.filter(e => e.productId !== currentProduct.productId));
+            setCurrentProduct(null);
+        })
+    }
+
+
+    const productChangedOperation = async (dataChanged) => {
+        if (dataChanged.productChanged && dataChanged.productChanged.data && dataChanged.productChanged.data.categoryId) {
+            try {
+                const res = await getCategoryByCategoryId(dataChanged.productChanged.data.categoryId);
+                const categoryName = res.categoryName;
+
+                let data = {
+                    productId: dataChanged.productChanged.productId,
+                    categoryName: categoryName,
+                    ...dataChanged.productChanged.data
+                };
+
+                setProducts(prevState => [...prevState, data]);
+            } catch (error) {
+                console.error("Error fetching category by categoryId:", error);
+            }
+        } else {
+            console.error("dataChanged or dataChanged.data or dataChanged.data.categoryId is undefined");
+        }
+    }
 
 
 
@@ -39,7 +81,7 @@ export default function Products() {
 
     const updateImage = () => {
         if (currentProduct != null && file != null) {
-            uploadImage("productImages",currentProduct, file[0]);
+            uploadImage("productImages", currentProduct, file[0]);
             setCurrentProduct(null);
             setFile(null);
         }
@@ -82,7 +124,7 @@ export default function Products() {
                                 </div>
                             </td>
                             <td>
-                                <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
+                                <div onClick={() => { setisVerificationModalOpen(true); setCurrentProduct(product) }} className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Sil'><AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                 <div className='cursor-pointer hover:scale-125 active:scale-100 transition-all' title='Güncelle'><RxUpdate size={18} color='green' ></RxUpdate></div>
                             </td>
 
@@ -97,7 +139,8 @@ export default function Products() {
 
             </table>
 
-
+            <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
+                trueOperation={deleteSelectedProduct} ></VerificationModal>
         </div>
     )
 }
