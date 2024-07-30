@@ -98,10 +98,10 @@ export default function FabricOperations() {
 
                                                     <Input type="text" name="fabricName" className='p-2  focus:outline-brand-color  w-48 text-base rounded-md  transition-all h-10 outline-none hover:text-sm ' label='Kumaş Adı' />
                                                     <div className='flex pt-10 items-center justify-center gap-x-4'>
-                                                        <button type='submit' disabled={values.fabricName.length == 0} className={classNames({
+                                                        <button type='submit' disabled={values.fabricName.length === 0} className={classNames({
                                                             'px-6 py-1  md:bg-brandGray rounded-md transition-all active:scale-90': true,
-                                                            ' md:hover:bg-green-600': values.fabricName.length != 0,
-                                                            'opacity-25': values.fabricName.length == 0
+                                                            ' md:hover:bg-green-600': values.fabricName.length !== 0,
+                                                            'opacity-25': values.fabricName.length === 0
                                                         })}>Kumaş Ekle</button>
                                                         <button typeof='button' onClick={() => { setisActive(false) }} className='px-6 py-1 bg-red-600 bg-opacity-70 md:bg-brandGray rounded-md md:hover:bg-red-600 transition-all active:scale-90'>Vazgeç</button>
                                                     </div>

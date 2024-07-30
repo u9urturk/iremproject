@@ -16,7 +16,7 @@ export default function Input({ label, type = "text", ...props }) {
             setType('password')
 
         }
-    }, [show])
+    }, [show,type])
 
     return (
         <label className='relative  rounded-md   '>

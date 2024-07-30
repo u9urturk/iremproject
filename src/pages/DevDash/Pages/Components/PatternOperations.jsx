@@ -5,11 +5,10 @@ import "../../../../ScrollStyle.css"
 import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
 import classNames from 'classnames';
-import { addColor, addPattern, deletePatternByPatternId, getColors, getPatterns } from '../../../../firebase.js';
+import {  addPattern, deletePatternByPatternId,getPatterns } from '../../../../firebase.js';
 import { useSelector } from 'react-redux';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Timestamp } from 'firebase/firestore';
-import logo from '../../../../materials/logos/logo.svg'
 import VerificationModal from '../../../../components/VerificationModal.jsx';
 
 

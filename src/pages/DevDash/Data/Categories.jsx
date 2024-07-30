@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { deleteCategoryByCategoryId, getCategories } from '../../../firebase';
 import VerificationModal from '../../../components/VerificationModal';
 import CategoryUpdate from '../../../components/CategoryUpdate';
@@ -7,7 +7,6 @@ import { RxUpdate } from 'react-icons/rx'
 import { Timestamp } from 'firebase/firestore';
 
 export default function Categories({selectCategory}) {
-    const getCategoriesBase = getCategories();
     const [categories, setCategories] = useState([])
     const [currentCategory, setcurrentCategory] = useState(false)
     const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
@@ -45,8 +44,9 @@ export default function Categories({selectCategory}) {
 
     
 
-    const categoryReaction = () => {
-        getCategoriesBase.then(res => {
+    const categoryReaction = useCallback(
+      () => {
+        getCategories().then(res => {
             res.forEach(async (doc) => {
                 //FireBase zaman dönüşümü !! 
                 const fbts = new Timestamp(doc.data().creationTime.seconds, doc.data().creationTime.nanoseconds)
@@ -56,8 +56,10 @@ export default function Categories({selectCategory}) {
                 setCategories(prevState => [...prevState, { id: doc.id, name: doc.data().name, creationTime: readableDate }])
             })
         })
-
-    }
+      },
+      [],
+    )
+    
 
     const selectCurrentCategory = (selectedCurrentCategory, type) => {
         if (type === "delete") {
@@ -80,7 +82,7 @@ export default function Categories({selectCategory}) {
 
     useEffect(() => {
         categoryReaction()
-    }, [])
+    }, [categoryReaction])
 
     return (
         <div className="overflow-scroll w-full h-auto">

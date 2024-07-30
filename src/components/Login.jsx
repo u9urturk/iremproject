@@ -17,7 +17,7 @@ export default function Login() {
     const user = useSelector(state => state.auth.user)
 
 
-    const { isAnyModalOpen, openModal, closeModal } = useModal();
+    const {openModal, closeModal } = useModal();
 
     useEffect(() => {
         if (isActive) {
@@ -29,7 +29,7 @@ export default function Login() {
         return () => {
             closeModal()
         }
-    }, [isActive])
+    }, [isActive,closeModal,openModal])
 
     const handleSubmit = async (values, actions) => {
         login(values.username, values.password)

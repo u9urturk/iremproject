@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
-import { getAuth, onAuthStateChanged,GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
@@ -173,6 +173,10 @@ export const downloadImage = async (tg, productId) => {
             case 'storage/unknown':
                 // Unknown error occurred, inspect the server response
                 break;
+
+            default:
+                // default code
+                break;
         }
     });
 
@@ -183,7 +187,6 @@ export const downloadImage = async (tg, productId) => {
 export const downloadImages = async (tg, productId) => {
     let data = null
     const listRef = ref(storage, `${tg}/${productId}`);
-    console.log(`${tg}/${productId}`)
     await listAll(listRef).then(async (res) => {
         data = res.items
 
@@ -204,6 +207,10 @@ export const downloadImages = async (tg, productId) => {
             case 'storage/unknown':
                 // Unknown error occurred, inspect the server response
                 break;
+
+            default:
+                // default code
+                break;
         }
     });
     return data;
@@ -216,7 +223,7 @@ export const downloadImages = async (tg, productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (productName, price, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
+export const addProduct = async (productName, rating = 1, price, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
 
     try {
         const docRef = await addDoc(collection(db, "products"), {
@@ -226,6 +233,7 @@ export const addProduct = async (productName, price, selectedCategory, selectedC
             colorId: selectedColor.id,
             fabricId: selectedFabric.id,
             patternId: selectedPattern.id,
+            rating: rating,
             creationTime: Timestamp.fromDate(new Date())
         })
         toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
@@ -306,7 +314,7 @@ export const uploadImage = async (target = null, productId, file) => {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-            if (progress == 0 && snapshot.state == "running") {
+            if (progress === 0 && snapshot.state === "running") {
                 toast.info("Yükleniyor... ",
                     {
                         position: "top-left",
@@ -319,7 +327,7 @@ export const uploadImage = async (target = null, productId, file) => {
                         theme: "colored",
                         transition: Flip
                     })
-            } else if (progress == 100 && snapshot.state == "running") {
+            } else if (progress === 100 && snapshot.state === "running") {
                 toast.success("Başarıyla Yüklendi", {
                     position: "top-left",
                     autoClose: 1500,
@@ -366,7 +374,7 @@ export const uploadImageBilboard = async (file) => {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-            if (progress == 0 && snapshot.state == "running") {
+            if (progress === 0 && snapshot.state === "running") {
                 toast.info("Yükleniyor... ",
                     {
                         position: "top-left",
@@ -379,7 +387,7 @@ export const uploadImageBilboard = async (file) => {
                         theme: "colored",
                         transition: Flip
                     })
-            } else if (progress == 100 && snapshot.state == "running") {
+            } else if (progress === 100 && snapshot.state === "running") {
                 toast.success("Başarıyla Yüklendi", {
                     position: "top-left",
                     autoClose: 1500,
@@ -448,13 +456,12 @@ export const addCategory = async (categoryName) => {
         });
     }
 
-  
+
 
 }
 
 export const deleteCategoryByCategoryId = async (data) => {
     let isSuccess = false
-     console.log(data)
 
     await deleteDoc(doc(db, "categories", data.id)).then(function () {
         toast.warning(`"${data.categoryName}" isimli kategori başarıyla silindi. `, {

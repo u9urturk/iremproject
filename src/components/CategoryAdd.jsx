@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { addCategory, login, logout } from '../firebase'
+import { addCategory } from '../firebase'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { Form, Formik } from 'formik'
 import Input from './Input'

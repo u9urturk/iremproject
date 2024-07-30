@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Carousel from '../components/Carousel'
 import { useParams } from 'react-router-dom';
 import { getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
@@ -9,27 +9,32 @@ export default function Product() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null)
 
-  const getProductReaction = () => {
-    getProductByProductId(productId).then(async res => {
-      const colorPromise = getColorByColorId(res.colorId);
-      const fabricPromise = getFabricsByFabricId(res.fabricId);
-      const patternPromise = getPatternByPatternId(res.patternId);
-
-      const [color, fabric, pattern] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
-
-      setProduct({
-        name: res.productName,
-        price: res.price,
-        color: color.name,
-        fabric: fabric.name,
-        pattern: pattern.name
-      });
-    })
-  }
+  const getProductReaction = useCallback(
+    () => {
+      getProductByProductId(productId).then(async res => {
+        const colorPromise = getColorByColorId(res.colorId);
+        const fabricPromise = getFabricsByFabricId(res.fabricId);
+        const patternPromise = getPatternByPatternId(res.patternId);
+  
+        const [color, fabric, pattern] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
+  
+        setProduct({
+          name: res.productName,
+          price: res.price,
+          color: color.name,
+          fabric: fabric.name,
+          pattern: pattern.name,
+          rating:Math.round(res.rating)
+        });
+      })
+    },
+    [productId],
+  )
+  
 
   useEffect(() => {
     getProductReaction();
-  }, [productId])
+  }, [getProductReaction])
 
   if (product) {
     return (
@@ -43,7 +48,7 @@ export default function Product() {
               <div className='flex w-full flex-col md:flex-row items-center md:pb-4  md:px-2 md:justify-between'>
                 <h2 className="card-title  text-4xl">{product.name}</h2>
                 <div>
-                  <ProductRating initialRating={3} size={'md'}></ProductRating>
+                  <ProductRating id={productId} initialRating={product.rating} size={'md'}></ProductRating>
                 </div>
               </div>
               <p className='text-sm pl-8 opacity-95 '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>

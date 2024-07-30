@@ -31,7 +31,7 @@ export default function Navbar() {
                 className={classNames({
                     "fixed z-[5]  duration-1000 pt-4 md:pt-1 w-full body-font h-20 flex flex-col items-center justify-center  transition-all": true,
 
-                    "bg-gradient-to-b from-base-300 bg-base-100 transition-all h-24 ": scrollY != 0,
+                    "bg-gradient-to-b from-base-300 bg-base-100 transition-all h-24 ": scrollY !== 0,
 
                 })}
             >
@@ -69,7 +69,7 @@ export default function Navbar() {
                         <li>
                             <Link to={"/yöneticipaneli"} className={classNames({
                                 "tooltip md:tooltip-bottom": true,
-                                "hidden": user == false
+                                "hidden": user === false
                             })} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -91,9 +91,9 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <a className="tooltip md:tooltip-bottom" data-tip={user ? "Çıkış yap " : "Giriş yap"}>
+                            <div className="tooltip md:tooltip-bottom" data-tip={user ? "Çıkış yap " : "Giriş yap"}>
                                 <Login></Login>
-                            </a>
+                            </div>
                         </li>
                     </ul>
                 </div>

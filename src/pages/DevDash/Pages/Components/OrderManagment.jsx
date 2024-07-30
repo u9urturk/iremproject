@@ -52,11 +52,11 @@ export default function OrderManagment() {
                         <ul
                             tabIndex={0}
                             className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow">
-                            <li><a>Sipariş numarası</a></li>
-                            <li><a>Müşteri adı</a></li>
-                            <li><a>Tarih</a></li>
-                            <li><a>Toplam</a></li>
-                            <li><a>Durum</a></li>
+                            <li><div>Sipariş numarası</div></li>
+                            <li><div>Müşteri adı</div></li>
+                            <li><div>Tarih</div></li>
+                            <li><div>Toplam</div></li>
+                            <li><div>Durum</div></li>
                         </ul>
                     </div>
                 </div>

@@ -1,5 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import baseImage from '../materials/baseImages/420x260.webp'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { downloadImage } from '../firebase';
 import classNames from 'classnames';
 
@@ -8,15 +7,19 @@ export default function ListenImages({productId,target}) {
     const [image, setImage] = useState(null);
     const tg=target;
 
-    const listen = () => {
+    const listen =useCallback(
+      () => {
         downloadImage(tg,productId).then((res)=>{
             setImage(res)
         })
-    }
+      },
+      [productId,tg],
+    )
+    
 
     useEffect(() => {
         listen()
-    }, [productId])
+    }, [productId,listen])
 
     return (
         <Fragment>

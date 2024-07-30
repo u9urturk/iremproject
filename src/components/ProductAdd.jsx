@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { addProduct, getAllFabrics, getCategories, getColors, getPatterns, getProductByProductId } from '../firebase'
 import { Form, Formik } from 'formik'
@@ -9,7 +9,6 @@ import SelectionList from '../pages/DevDash/Pages/Components/SelectionList'
 
 export default function ProductAdd({ productStateChange }) {
     const [isActive, setisActive] = useState(false)
-    const getCategoriesBase = getCategories();
     const user = useSelector(state => state.auth.user)
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [selectedColor, setSelectedColor] = useState(null)
@@ -41,17 +40,19 @@ export default function ProductAdd({ productStateChange }) {
         setSelectedPattern(selected)
     }
 
-    const categoryReaction = () => {
-        getCategoriesBase.then(res => {
+    const categoryReaction =useCallback(
+      () => {
+        getCategories().then(res => {
             res.forEach((doc) => {
                 let data = { id: doc.id, ...doc.data() }
                 // console.log(doc.data())
                 setCategories(prevState => [...prevState, data])
             })
         })
-
-
-    }
+      },
+      [],
+    )
+    
 
     const colorReaction = () => {
         getColors().then(res => {
@@ -97,7 +98,7 @@ export default function ProductAdd({ productStateChange }) {
         fabricReaction();
         patternReaction();
 
-    }, [])
+    }, [categoryReaction])
 
     const handleSubmit = async (values, actions) => {
 
@@ -118,7 +119,7 @@ export default function ProductAdd({ productStateChange }) {
         if (productStateChange) {
             productStateChange(productStateChanged);
         }
-    }, [isActive, productStateChanged])
+    }, [isActive, productStateChanged,productStateChange])
 
     return (
         <div>
@@ -145,7 +146,7 @@ export default function ProductAdd({ productStateChange }) {
                                         <div className='flex flex-col items-center justify-center gap-y-3'>
                                             <div className='flex flex-col items-center justify-center w-48 gap-2'>
                                                 <Input type="text" name="productName" className='input input-bordered rounded-md w-full max-w-xs ' label='Ürün Adı' />
-                                                <Input type="number" name="price" className='input input-bordered rounded-md w-full max-w-xs ' label={values.price.length == 0 ? 'Fiyat' : '₺'} />
+                                                <Input type="number" name="price" className='input input-bordered rounded-md w-full max-w-xs ' label={values.price.length === 0 ? 'Fiyat' : '₺'} />
                                                 <SelectionList definition={'Kategori'} data={categories} onSelectionChange={handleSelectCategoryChange}></SelectionList>
                                                 <SelectionList definition={'Renk'} data={colors} onSelectionChange={handleSelectColorChange}></SelectionList>
                                                 <SelectionList definition={'Kumaş'} data={fabrics} onSelectionChange={handleSelectFabricChange}></SelectionList>
@@ -155,10 +156,10 @@ export default function ProductAdd({ productStateChange }) {
                                             </div>
                                             <div className='flex items-center justify-center gap-x-4'>
                                                 {
-                                                    selectedCategory && <button type='submit' disabled={selectedCategory.id == undefined || values.productName.length == 0 || values.price.length == 0} className={classNames({
+                                                    selectedCategory && <button type='submit' disabled={selectedCategory.id === undefined || values.productName.length === 0 || values.price.length === 0} className={classNames({
                                                         'px-6 py-1  md:bg-brandGray rounded-md transition-all active:scale-90': true,
-                                                        ' md:hover:bg-green-600': selectedCategory.id != undefined && values.productName.length != 0 && values.price.length != 0,
-                                                        'opacity-25': selectedCategory.id == undefined || values.productName.length == 0 || values.price.length == 0
+                                                        ' md:hover:bg-green-600': selectedCategory.id !== undefined && values.productName.length !== 0 && values.price.length !== 0,
+                                                        'opacity-25': selectedCategory.id === undefined || values.productName.length === 0 || values.price.length === 0
                                                     })}>Ürün Ekle</button>
                                                 }
                                                 <button typeof='button' onClick={() => { setisActive(false) }} className='px-6 py-1 bg-red-600 bg-opacity-70 md:bg-brandGray rounded-md md:hover:bg-red-600 transition-all active:scale-90'>Vazgeç</button>

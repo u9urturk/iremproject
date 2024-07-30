@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { deleteProductByProductId, getCategoryByCategoryId, getProducts, uploadImage } from '../../../firebase';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
@@ -6,13 +6,12 @@ import VerificationModal from '../../../components/VerificationModal';
 
 export default function Products(productChanged) {
 
-    const getProductsBase = getProducts();
+
     const [products, setProducts] = useState([])
     const [file, setFile] = useState(null)
     const [currentProduct, setCurrentProduct] = useState(null)
     const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
 
-    const [categoryName, setCategoryName] = useState("")
     useEffect(() => {
         if (productChanged !== undefined && productChanged !== null) {
             productChangedOperation(productChanged);
@@ -24,8 +23,8 @@ export default function Products(productChanged) {
         setisVerificationModalOpen(false);
     }
 
-    const deleteSelectedProduct = ()=>{
-        deleteProductByProductId(currentProduct).then(res=>{
+    const deleteSelectedProduct = () => {
+        deleteProductByProductId(currentProduct).then(res => {
             setProducts(products.filter(e => e.productId !== currentProduct.productId));
             setCurrentProduct(null);
         })
@@ -57,40 +56,53 @@ export default function Products(productChanged) {
 
 
 
-    const productReaction = () => {
-        getProductsBase.then(res => {
-            res.forEach(async (doc) => {
-                await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
-                    setCategoryName(res.categoryName);
-                });
-                let data = {
-                    productId: doc.id,
-                    categoryName: categoryName,
-                    ...doc.data()
-                }
+    const productReaction = useCallback(
+        async () => {
+            try {
+                // Ürünleri al
+                const products = await getProducts();
+                console.log(products)
+                // Her ürün için kategori adını güncelle ve veriyi topla
+                const updatedProducts = await Promise.all(products.docs.map(async (doc) => {
+                    // Kategoriyi al
+                    const category = await getCategoryByCategoryId(doc.data().categoryId);
+                    // Ürünü güncelle
+                    return {
+                        productId: doc.id,
+                        categoryName: category.categoryName,
+                        ...doc.data()
+                    };
+                }));
+                // Ürünleri state'e ayarla
+                setProducts(updatedProducts);
+            } catch (error) {
+                console.error('Error fetching products or categories:', error);
+            }
+        },
+        [] // Bağımlılık dizisi boş çünkü `categoryName`'i bağımlılık dizisinde kullanmak yerine her ürün için güncellenir
+    );
 
-
-                setProducts(prevState => [...prevState, data])
-            })
-        })
-    }
 
     useEffect(() => {
         productReaction()
-    }, [])
+    }, [productReaction])
 
-    const updateImage = () => {
-        if (currentProduct != null && file != null) {
-            uploadImage("productImages", currentProduct, file[0]);
-            setCurrentProduct(null);
-            setFile(null);
-        }
-    }
+    const updateImage = useCallback(
+        () => {
+            if (currentProduct != null && file != null) {
+                uploadImage("productImages", currentProduct, file[0]);
+                setCurrentProduct(null);
+                setFile(null);
+            }
+        },
+        [currentProduct, file],
+    )
+
 
 
     useEffect(() => {
         updateImage()
-    }, [file])
+    }, [file, updateImage])
 
 
     return (

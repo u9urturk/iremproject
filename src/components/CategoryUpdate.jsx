@@ -1,11 +1,7 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { addCategory, updateCategoryByCategoryId } from '../firebase'
-import { AiOutlineCloseCircle } from 'react-icons/ai'
+import React from 'react'
+import {  updateCategoryByCategoryId } from '../firebase'
 import { Form, Formik } from 'formik'
 import Input from './Input'
-import Button from './Button'
-import { LoginSchema } from '../Validation'
 import classNames from 'classnames'
 
 export default function CategoryUpdate({ isActive, onClose, data }) {
