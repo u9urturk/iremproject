@@ -1,7 +1,7 @@
 import { useRoutes } from 'react-router-dom';
 import './App.css';
 import routes from './routes';
-import { ToastContainer } from 'react-toastify';
+import { Flip, ToastContainer } from 'react-toastify';
 import Navbar from './components/Navbar';
 import Testimonial from './components/Testimonial';
 import Footer from './components/Footer';
@@ -22,15 +22,14 @@ function App() {
       <Footer></Footer>
       <ToastContainer
         position="top-left"
-        autoClose={2000}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        autoClose={1500}
+        hideProgressBar={false}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+        progress={undefined}
         theme="colored"
+        transition={Flip}
       />
 
     </div>

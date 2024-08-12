@@ -3,6 +3,13 @@ import Carousel from '../components/Carousel'
 import { useParams } from 'react-router-dom';
 import { getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
 import ProductRating from '../components/ProductRaiting';
+import { IoColorPaletteOutline } from "react-icons/io5";
+import { GiRolledCloth } from "react-icons/gi";
+import { MdOutlinePattern } from "react-icons/md";
+import CustomerReviews from '../components/CustomerReviews';
+
+
+
 
 export default function Product() {
 
@@ -15,22 +22,22 @@ export default function Product() {
         const colorPromise = getColorByColorId(res.colorId);
         const fabricPromise = getFabricsByFabricId(res.fabricId);
         const patternPromise = getPatternByPatternId(res.patternId);
-  
+
         const [color, fabric, pattern] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
-  
+
         setProduct({
           name: res.productName,
           price: res.price,
           color: color.name,
           fabric: fabric.name,
           pattern: pattern.name,
-          rating:Math.round(res.rating)
+          rating: Math.round(res.rating)
         });
       })
     },
     [productId],
   )
-  
+
 
   useEffect(() => {
     getProductReaction();
@@ -38,9 +45,9 @@ export default function Product() {
 
   if (product) {
     return (
-      <div className='container px-8 mx-auto text-4xl text-red-900'>
-        <section class="py-12">
-          <div className="card flex flex-col md:flex-row items-center justify-center lg:card-side bg-base-100 shadow-xl">
+      <div className='container px-8 mx-auto shado text-4xl text-red-900'>
+        <section class="py-12 ">
+          <div className="card flex flex-col md:flex-row items-center justify-center lg:card-side bg-base-100 ">
             <figure className='w-full  md:w-1/4'>
               <Carousel productId={productId}></Carousel>
             </figure>
@@ -51,13 +58,24 @@ export default function Product() {
                   <ProductRating id={productId} initialRating={product.rating} size={'md'}></ProductRating>
                 </div>
               </div>
-              <p className='text-sm pl-8 opacity-95 '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>
-              <div className="card-actions flex items-center w-full justify-center md:justify-between gap-y-8">
-                <div className='text-base flex items-center justify-between flex-row gap-x-8 font-semibold'>
-                  <div>{product.color}</div>
-                  <div>{product.fabric}</div>
-                  <div>{product.pattern}</div>
-
+              <p className='text-base pl-8 opacity-95 '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>
+              <div className="card-actions pt-8 flex items-center w-full justify-center md:justify-between gap-y-8">
+                <div className='text-base flex pt-4 pr-4 rounded-tr-3xl border-t-2 border-t-base-300 border-r-base-300 border-r-2 items-center justify-center flex-col gap-y-4 font-semibold'>
+                  <strong>Özellikler</strong>
+                  <div className='flex items-center justify-between flex-row gap-x-8 font-semibold'>
+                    <div  data-tip="Renk" className='flex items-center tooltip justify-center flex-col'>
+                      <IoColorPaletteOutline size={30} />
+                      <div>{product.color}</div>
+                    </div>
+                    <div  data-tip="Kumaş" className='flex items-center tooltip justify-center flex-col'>
+                      <GiRolledCloth  size={30} />
+                      <div>{product.fabric}</div>
+                    </div>
+                    <div  data-tip="Desen" className='flex items-center tooltip justify-center flex-col'>
+                      <MdOutlinePattern  size={30} />
+                      <div>{product.pattern}</div>
+                    </div>
+                  </div>
                 </div>
                 <div className='flex w-full justify-between items-center ' >
                   <div className='flex items-center justify-center text-3xl font-semibold'>{product.price} ₺ </div>
@@ -69,26 +87,9 @@ export default function Product() {
           </div>
         </section>
 
-        <section class="bg-gray-200 py-12">
+        <section class="py-8 px-8 shadow-inner shadow-base-300 rounded-2xl">
           <div class="container mx-auto">
-            <h2 class="text-2xl font-bold mb-4 text-center">Customer Reviews</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="bg-white rounded-lg p-4 mb-4">
-                <h3 class="font-semibold">John Doe</h3>
-                <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  convallis risus et massa consectetur, vel ullamcorper arcu ultricies.</p>
-              </div>
-              <div class="bg-white rounded-lg p-4 mb-4">
-                <h3 class="font-semibold">Jane Smith</h3>
-                <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  convallis risus et massa consectetur, vel ullamcorper arcu ultricies.</p>
-              </div>
-              <div class="bg-white rounded-lg p-4 mb-4">
-                <h3 class="font-semibold">Michael Johnson</h3>
-                <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  convallis risus et massa consectetur, vel ullamcorper arcu ultricies.</p>
-              </div>
-            </div>
+            <CustomerReviews></CustomerReviews>
           </div>
         </section>
       </div>

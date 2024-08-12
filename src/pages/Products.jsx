@@ -132,18 +132,18 @@ export default function Products() {
                                                 productByCategoryIdReaction(category.categoryId)
                                                 dropdownMenu.classList.add('hidden')
                                                 overlay.classList.add('hidden')
-                                            }} key={key}>{category.name}</li>
+                                            }} key={key}><div>{category.name}</div></li>
                                     })
                                 }
 
                             </ul>
                         </div>
 
-                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto  btn-sm sm:btn-sm md:btn-md '>
+                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='hidden btn w-auto  btn-sm sm:btn-sm md:btn-md '>
                             Renkler
                         </div>
 
-                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto  btn-sm sm:btn-sm md:btn-md '>
+                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='hidden btn w-auto  btn-sm sm:btn-sm md:btn-md '>
                             Desenler
                         </div>
 

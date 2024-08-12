@@ -25,6 +25,41 @@ const db = getFirestore(app);
 const storage = getStorage();
 
 
+
+async function addComment({ rating, date, comment, customerId, productId }) {
+    const db = getFirestore();
+    try {
+        await addDoc(collection(db, "comments"), {
+            rating,
+            date,
+            comment,
+            customerId,
+            productId
+        });
+        toast.success('Yorum başarıyla eklendi!');
+    } catch (e) {
+        toast.error('Yorum eklenirken hata oluştu!');
+        console.error("Yorum eklenirken hata oluştu: ", e);
+
+    }
+}
+
+async function getCommentsByProductId(productId) {
+    const db = getFirestore();
+    const q = query(collection(db, "comments"), where("productId", "==", productId));
+    
+    try {
+        const querySnapshot = await getDocs(q);
+        const comments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return comments;
+    } catch (e) {
+        console.error("Yorumlar getirilirken hata oluştu: ", e);
+        return [];
+    }
+}
+
+
+
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
@@ -825,6 +860,9 @@ export const getPatternByPatternId = async (colorId) => {
 }
 
 
-export { auth, signInWithGoogle, signInWithFacebook };
+export { auth, signInWithGoogle,
+     signInWithFacebook,
+     addComment,
+     getCommentsByProductId};
 
 

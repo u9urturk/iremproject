@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const ProductRating = ({ initialRating,size,id}) => {
+const ProductRating = ({ initialRating,size,id,gap=0}) => {
     const [rating, setRating] = useState(initialRating);
 
     useEffect(() => {
@@ -8,7 +8,7 @@ const ProductRating = ({ initialRating,size,id}) => {
     }, [initialRating]);
 
     return (
-        <div className={`rating  rating-${size}`}>
+        <div className={`rating flex gap-x-${gap}   rating-${size}`}>
             {[1, 2, 3, 4, 5].map((value) => (
                 <input
                     key={value}
