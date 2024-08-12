@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import { useSelector } from 'react-redux'
 import { login, logout, signInWithFacebook, signInWithGoogle } from '../firebase'
 import { AiOutlineCloseCircle, AiOutlineLogin, AiOutlineLogout } from 'react-icons/ai'
@@ -7,7 +7,6 @@ import Input from './Input'
 import Button from './Button'
 import { LoginSchema } from '../Validation'
 import logo from '../materials/logos/logo.svg'
-import { useModal } from '../Context/ModalContext'
 import { Link } from 'react-router-dom'
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
 
@@ -17,19 +16,8 @@ export default function Login() {
     const user = useSelector(state => state.auth.user)
 
 
-    const {openModal, closeModal } = useModal();
 
-    useEffect(() => {
-        if (isActive) {
-            openModal()
-        } else {
-            closeModal()
-        }
-
-        return () => {
-            closeModal()
-        }
-    }, [isActive,closeModal,openModal])
+   
 
     const handleSubmit = async (values, actions) => {
         login(values.username, values.password)

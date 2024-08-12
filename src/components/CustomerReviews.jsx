@@ -48,19 +48,19 @@ export default function CustomerReviews({ getProduct = 'qI5vt8uQXKtDnWNXrcog' })
     }, [fetchComments, getProduct]);
 
     const ratingsData = [
-        { stars: 5, count: 75},
-        { stars: 4, count: 15},
-        { stars: 3, count: 55},
-        { stars: 2, count: 3},
-        { stars: 1, count: 23},
+        { stars: 5, count: 75 },
+        { stars: 4, count: 15 },
+        { stars: 3, count: 55 },
+        { stars: 2, count: 3 },
+        { stars: 1, count: 23 },
 
     ];
 
     const totalStars = ratingsData.reduce((total, rating) => total + rating.stars * rating.count, 0);
     const totalCount = ratingsData.reduce((total, rating) => total + rating.count, 0);
     const averageRating = totalStars / totalCount;
-    const getPercentage = (count)=>{
-        let percentage = (count*100)/totalCount
+    const getPercentage = (count) => {
+        let percentage = (count * 100) / totalCount
         return percentage;
 
     }
@@ -70,7 +70,7 @@ export default function CustomerReviews({ getProduct = 'qI5vt8uQXKtDnWNXrcog' })
 
 
     return (
-        <div className="container mx-auto p-4 h-screen overflow-y-auto">
+        <div className="container mx-auto p-4 h-screen">
             {loading && (
                 <div className="flex items-center justify-center py-4">
                     <span className="loading loading-spinner loading-lg"></span>
@@ -105,15 +105,44 @@ export default function CustomerReviews({ getProduct = 'qI5vt8uQXKtDnWNXrcog' })
                                 <ProductRating gap={2} initialRating={5}></ProductRating>
                                 <p className='text-sm'> {totalCount} Değerlendirme</p>
                             </div>
-                            <div className="rating-actions flex items-center justify-center flex-col gap-y-4 ">
+                            <div className="rating-actions  dropdown  dropdown-bottom dropdown-end flex items-center justify-center flex-col gap-y-4 ">
                                 <button onClick={() => document.getElementById('handleComment').showModal()} className='btn btn-sm w-full rounded-md btn-primary'>Değerlendir</button>
-                                <button className='btn btn-sm rounded-md btn-secondary'>Tüm Değerlendirmeler</button>
+                                <button className='btn btn-sm  rounded-md btn-secondary'>Tüm Değerlendirmeler</button>
+                                <div className='flex items-center justify-center w-full'>
+                                    <div tabIndex={0} role="button" className="btn rounded-lg w-full  font-semibold  btn-outline">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="h-4 w-4"
+                                        >
+                                            <path d="m21 16-4 4-4-4"></path>
+                                            <path d="M17 20V4"></path>
+                                            <path d="m3 8 4-4 4 4"></path>
+                                            <path d="M7 4v16"></path>
+                                        </svg>Sırala</div>
+                                    <ul
+                                        tabIndex={0}
+                                        className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow">
+                                        <li><div>Değerlendirme</div></li>    
+                                        <li><div>Tarih</div></li>        
+    
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {reviewData.map((review) => (
-                        <ReviewCard key={review.id} user={user} review={review}></ReviewCard>
-                    ))}
+                    <div className=' h-screen overflow-y-auto'>
+                        {reviewData.map((review) => (
+                            <ReviewCard key={review.id} user={user} review={review}></ReviewCard>
+                        ))}
+                    </div>
                 </div>
             )}
             <dialog id="handleComment" className="modal">
@@ -167,6 +196,13 @@ export default function CustomerReviews({ getProduct = 'qI5vt8uQXKtDnWNXrcog' })
                                 className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 Yorum Gönder
+                            </button>
+                            <button
+                            onClick={()=>document.getElementById('handleComment').close()}
+                                type="button"
+                                className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                                Vazgeç
                             </button>
                         </div>
                     </form>
