@@ -3,7 +3,6 @@ import './App.css';
 import routes from './routes';
 import { Flip, ToastContainer } from 'react-toastify';
 import Navbar from './components/Navbar';
-import Testimonial from './components/Testimonial';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -18,7 +17,6 @@ function App() {
 
       {showRoutes}
 
-      <Testimonial></Testimonial>
       <Footer></Footer>
       <ToastContainer
         position="top-left"

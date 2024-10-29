@@ -101,8 +101,9 @@ export default function ProductAdd({ productStateChange }) {
     }, [categoryReaction])
 
     const handleSubmit = async (values, actions) => {
+        console.log(values.explanation)
 
-        await addProduct(values.productName, values.price, selectedCategory, selectedColor, selectedFabric, selectedPattern).then(res => {
+        await addProduct(values.productName,1,values.price,values.explanation, selectedCategory, selectedColor, selectedFabric, selectedPattern).then(res => {
             let productId = res.id
             getProductByProductId(productId).then(res => {
                 if (productStateChange) {
@@ -135,7 +136,8 @@ export default function ProductAdd({ productStateChange }) {
                             <Formik
                                 initialValues={{
                                     productName: '',
-                                    price: ''
+                                    price: '',
+                                    explanation: ''
 
                                 }}
 
@@ -144,13 +146,14 @@ export default function ProductAdd({ productStateChange }) {
                                 {({ values }) => (
                                     <Form>
                                         <div className='flex flex-col items-center justify-center gap-y-3'>
-                                            <div className='flex flex-col items-center justify-center w-48 gap-2'>
-                                                <Input type="text" name="productName" className='input input-bordered rounded-md w-full max-w-xs ' label='Ürün Adı' />
-                                                <Input type="number" name="price" className='input input-bordered rounded-md w-full max-w-xs ' label={values.price.length === 0 ? 'Fiyat' : '₺'} />
+                                            <div className='flex flex-col items-center justify-center w-full gap-2'>
+                                                <Input type="text" name="productName" className='input input-bordered rounded-md w-full  ' label='Ürün Adı' />
+                                                <Input type="number" name="price" className='input input-bordered rounded-md w-full  ' label={values.price.length === 0 ? 'Fiyat' : '₺'} />
                                                 <SelectionList definition={'Kategori'} data={categories} onSelectionChange={handleSelectCategoryChange}></SelectionList>
                                                 <SelectionList definition={'Renk'} data={colors} onSelectionChange={handleSelectColorChange}></SelectionList>
                                                 <SelectionList definition={'Kumaş'} data={fabrics} onSelectionChange={handleSelectFabricChange}></SelectionList>
                                                 <SelectionList definition={'Desen'} data={patterns} onSelectionChange={handleSelectPatternChange}></SelectionList>
+                                                <Input type='text' name="explanation" className="input input-bordered rounded-md w-full " placeholder="Ürün açıklaması"></Input>
 
 
                                             </div>

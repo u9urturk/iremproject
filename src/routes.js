@@ -1,4 +1,7 @@
 import Dev from "./components/Dev"
+import CookiePolicy from "./components/policy/CookiePolicy "
+import PrivacyPolicy from "./components/policy/PrivacyPolicy "
+import UserAgreement from "./components/policy/UserAgreement"
 import DevDash from "./pages/DevDash/Main"
 import CategoryOperations from "./pages/DevDash/Pages/CategoryOperations"
 import ColorOperations from "./pages/DevDash/Pages/Components/ColorOperations"
@@ -68,7 +71,19 @@ const routes = [
                         element:<CategoryOperations></CategoryOperations>
                     }
                 ]
-            }
+            },
+            {
+                path:'useragreement',
+                element:<UserAgreement></UserAgreement>
+            },
+            {
+                path:'privacypolicy',
+                element:<PrivacyPolicy></PrivacyPolicy>
+            },
+            {
+                path:'cookiepolicy',
+                element:<CookiePolicy></CookiePolicy>
+            },
         ]
     }
 ]

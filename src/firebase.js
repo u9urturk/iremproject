@@ -258,8 +258,8 @@ export const downloadImages = async (tg, productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (productName, rating = 1, price, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
-
+export const addProduct = async (productName, rating = 1, price,explanation, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
+    console.log(explanation)
     try {
         const docRef = await addDoc(collection(db, "products"), {
             productName: productName,
@@ -269,7 +269,8 @@ export const addProduct = async (productName, rating = 1, price, selectedCategor
             fabricId: selectedFabric.id,
             patternId: selectedPattern.id,
             rating: rating,
-            creationTime: Timestamp.fromDate(new Date())
+            creationTime: Timestamp.fromDate(new Date()),
+            explanation:explanation
         })
         toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
             position: "top-left",

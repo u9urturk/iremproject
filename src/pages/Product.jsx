@@ -31,7 +31,8 @@ export default function Product() {
           color: color.name,
           fabric: fabric.name,
           pattern: pattern.name,
-          rating: Math.round(res.rating)
+          rating: Math.round(res.rating),
+          explanation:res.explanation
         });
       })
     },
@@ -45,7 +46,7 @@ export default function Product() {
 
   if (product) {
     return (
-      <div className='container px-8 mx-auto shado text-4xl text-red-900'>
+      <div className='container md:px-8 md:mx-auto  text-4xl text-red-900'>
         <section class="py-12 ">
           <div className="card flex flex-col md:flex-row items-center justify-center lg:card-side bg-base-100 ">
             <figure className='w-full  md:w-1/4'>
@@ -58,9 +59,9 @@ export default function Product() {
                   <ProductRating id={productId} initialRating={product.rating} size={'md'}></ProductRating>
                 </div>
               </div>
-              <p className='text-base pl-8 opacity-95 '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet vitae consectetur sunt cumque expedita nostrum ab molestiae voluptatum sequi. Soluta natus aspernatur qu</p>
-              <div className="card-actions pt-8 flex items-center w-full justify-center md:justify-between gap-y-8">
-                <div className='text-base flex pt-4 pr-4 rounded-tr-3xl border-t-2 border-t-base-300 border-r-base-300 border-r-2 items-center justify-center flex-col gap-y-4 font-semibold'>
+              <p className='text-base pl-8 opacity-95 '>{product.explanation}</p>
+              <div className="card-actions pt-8 pl-8 flex items-center w-full justify-center md:justify-between gap-y-8">
+                <div className='text-base flex p-4 lg:border-l-0 border-l-2 rounded-tl-3xl border-l-base-300 rounded-tr-3xl border-t-2 border-t-base-300 border-r-base-300 border-r-2 items-center justify-center flex-col gap-y-4 font-semibold'>
                   <strong>Özellikler</strong>
                   <div className='flex items-center justify-between flex-row gap-x-8 font-semibold'>
                     <div  data-tip="Renk" className='flex items-center tooltip justify-center flex-col'>
@@ -87,9 +88,9 @@ export default function Product() {
           </div>
         </section>
 
-        <section class="py-8 px-8 shadow-inner shadow-base-300 rounded-2xl">
-          <div class="container mx-auto">
-            <CustomerReviews></CustomerReviews>
+        <section class="py-8 h-full w-full px-8 shadow-inner shadow-base-300 rounded-2xl">
+          <div class="md:container h-full w-full md:mx-auto">
+            <CustomerReviews getProductId={productId}></CustomerReviews>
           </div>
         </section>
       </div>

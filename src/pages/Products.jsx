@@ -5,15 +5,10 @@ import { Link } from 'react-router-dom'
 import ProductRating from '../components/ProductRaiting';
 
 export default function Products() {
-    const dropdownMenu = document.querySelector('.dropdown-content');
-    const overlay = document.querySelector('#overlay');
-
     
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
-    const [selected, setSelected] = useState({
-        categoryName: "Kategoriler"
-    })
+    const [selected, setSelected] = useState()
 
     const categoryReaction = useCallback(
         () => {
@@ -39,7 +34,9 @@ export default function Products() {
                         let data = {
                             productId: doc.id,
                             categoryName: res.name,
-                            productName: doc.data().productName, price: doc.data().price, rating: Math.round(doc.data().rating)
+                            productName: doc.data().productName,
+                            price: doc.data().price, 
+                            rating: Math.round(doc.data().rating)
 
                         }
                         setProducts(prevState => [...prevState, data])
@@ -60,13 +57,12 @@ export default function Products() {
         getProductByCategoryId(categoryId).then((res) => {
             res.forEach(async (doc) => {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
+                    
                     let data = {
                         productId: doc.id,
-                        categoryName: res.categoryName,
+                        categoryName: res.name,
                         ...doc.data()
                     }
-
-
                     setProducts(prevState => [...prevState, data])
                 });
 
@@ -79,11 +75,18 @@ export default function Products() {
 
     }
 
-    useEffect(() => {
+    useEffect(() => {  {
+        categories.map((category, key) => {
+           return <div  className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId===category.categoryId?"bg-yellow-800":null} `} onClick={
+               () => {
+                   setSelected({ categoryId:category.categoryId});
+                   productByCategoryIdReaction(category.categoryId)
+               }} key={key}><div>{category.name}</div></div>
+       })
+   }
         categoryReaction()
         productReaction()
     }, [categoryReaction,productReaction])
-
 
     const loadingPage = () => {
         const set = []
@@ -102,6 +105,7 @@ export default function Products() {
         return set;
     }
 
+
     return (
         <div class="flex flex-col items-center justify-center gap-y-16   ">
             <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
@@ -110,46 +114,20 @@ export default function Products() {
 
 
                     {categories.length > 0 && <div className='flex items-center gap-y-2 px-4 justify-start flex-wrap gap-x-2'>
-                        <div onClick={() => { productReaction() }} className='flex flex-col w-auto items-center justify-center gap-y-2'>
-
+                        <div onClick={() => { productReaction() }} className='flex flex-wrap gap-x-2 w-auto items-center justify-center gap-y-2'>
                             <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto  btn-sm sm:btn-sm md:btn-md '>
                                 Tüm Ürünler
                             </div>
-
                         </div>
-
-                        {/* <!-- Overlay --> */}
-                        <div id="overlay" class="fixed  inset-0 bg-black bg-opacity-50 hidden"></div>
-                        <div className="dropdown  z-[2]  btn w-auto  btn-sm sm:btn-sm md:btn-md">
-                            <div onClick={() => { overlay.classList.remove('hidden'); dropdownMenu.classList.remove('hidden') }} tabIndex={0} role="button" className=" flex items-center justify-center btn-sm sm:btn-sm md:btn-md">{selected.categoryName}</div>
-                            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow">
-                                {
-
-                                    categories.map((category, key) => {
-                                        return <li onClick={
-                                            () => {
-                                                setSelected({ categoryName: category.name });
-                                                productByCategoryIdReaction(category.categoryId)
-                                                dropdownMenu.classList.add('hidden')
-                                                overlay.classList.add('hidden')
-                                            }} key={key}><div>{category.name}</div></li>
-                                    })
-                                }
-
-                            </ul>
-                        </div>
-
-                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='hidden btn w-auto  btn-sm sm:btn-sm md:btn-md '>
-                            Renkler
-                        </div>
-
-                        <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='hidden btn w-auto  btn-sm sm:btn-sm md:btn-md '>
-                            Desenler
-                        </div>
-
-
-
-
+                        {
+                                 categories.map((category, key) => {
+                                    return <div  className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId===category.categoryId?"bg-yellow-800":null} `} onClick={
+                                        () => {
+                                            setSelected({ categoryId:category.categoryId});
+                                            productByCategoryIdReaction(category.categoryId)
+                                        }} key={key}><div>{category.name}</div></div>
+                                })
+                            }
 
                     </div>}
                 </div>
