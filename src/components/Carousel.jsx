@@ -29,7 +29,6 @@ export default function Carousel(productId) {
         listen()
     }, [productId, listen])
 
-    console.log(data)
 
     return (
         <div className='w-full flex items-center justify-center h-auto'>

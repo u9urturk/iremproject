@@ -26,6 +26,23 @@ const storage = getStorage();
 
 
 
+async function getUserbyId(id) {
+    try {
+        const userRef = doc(db, "users", id); // "users" koleksiyonundan belirli bir belgeye referans oluşturulur
+        const userSnap = await getDoc(userRef); // Belgeyi getirir
+        
+        if (userSnap.exists()) {
+          return userSnap.data(); // Kullanıcı verilerini döndür
+        } else {
+          console.log("Kullanıcı bulunamadı.");
+          return null;
+        }
+      } catch (error) {
+        console.error("Kullanıcı verisi getirilirken hata oluştu: ", error);
+        return null;
+      }
+}
+
 async function addComment({ rating, date, comment, customerId, productId }) {
     const db = getFirestore();
     try {
@@ -864,6 +881,7 @@ export const getPatternByPatternId = async (colorId) => {
 export { auth, signInWithGoogle,
      signInWithFacebook,
      addComment,
-     getCommentsByProductId};
+     getCommentsByProductId,
+     getUserbyId};
 
 

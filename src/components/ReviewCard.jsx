@@ -1,16 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProductRaiting from './ProductRaiting'
+import { getUserbyId } from '../firebase'
 
 export default function ReviewCard({ review }) {
+    const [customer, setCustomer] = useState()
+    const getUser = () => {
+        getUserbyId(review.customerId).then(res => {
+            setCustomer(res)
+        })
+    }
+    useEffect(() => {
 
+        getUser()
+    }, [review])
 
-  
     return (
         <div className="card bg-base-100 shadow-xl">
             <div className="bg-white min-w-[190px] rounded-md  p-6">
                 <div className="flex items-center mb-4">
                     <div>
-                        <p className="text-lg font-semibold">{review.customerId}</p>
+                        <p className="text-lg font-semibold">{customer?.name}</p>
                         <div className="flex items-center">
                             <ProductRaiting initialRating={review.rating} id={review.id}></ProductRaiting>
 

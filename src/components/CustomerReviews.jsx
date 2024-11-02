@@ -141,7 +141,7 @@ export default function CustomerReviews({getProductId} ) {
                             </div>
                         )}
                         {reviewData.map((review) => (
-                            <ReviewCard key={review.id} user={user} review={review}></ReviewCard>
+                            <ReviewCard key={review.id}  review={review}></ReviewCard>
                         ))}
                     </div>
                 </div>
