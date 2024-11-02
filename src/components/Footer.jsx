@@ -15,7 +15,7 @@ export default function Footer() {
                     </div>
 
                 </nav>
-                <nav className='flex items-center justify-center'>
+                <nav className='flex flex-col md:flex-row items-center justify-center'>
 
                     <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
                         <div class="text-brandPink">
@@ -43,7 +43,7 @@ export default function Footer() {
 
 
                 </nav>
-                <nav class="text-sm text-brandPink sm:ml-4 sm:pl-4  sm:py-2 sm:mt-0 mt-4">
+                <nav class="text-sm text-brandPink sm:ml-4 sm:pl-4 mb-8 sm:py-2 sm:mt-0 mt-4">
                     <h6 className="footer-title">Politikalar</h6>
                     <Link className='hover:scale-105 transition-transform' to={'useragreement'} >Kullanıcı Sözleşmesi</Link>
                     <Link className='hover:scale-105 transition-transform' to={'privacypolicy'} >Gizlilik Politikası</Link>

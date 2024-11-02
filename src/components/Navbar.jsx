@@ -41,7 +41,7 @@ export default function Navbar() {
                         <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
 
                     </div>
-                    <div className='hidden shadow-inner shadow-base-300 md:flex lg:-translate-x-16  py-3 px-3 rounded-lg items-center justify-center '>
+                    <div className='hidden shadow-inner shadow-base-300  lg:-translate-x-16  py-3 px-3 rounded-lg items-center justify-center '>
                         <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                         <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                     </div>
