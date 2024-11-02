@@ -3,7 +3,7 @@ import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 
 
 
@@ -75,6 +75,31 @@ async function getCommentsByProductId(productId) {
     }
 }
 
+async function saveUserToFirestore(userData) {
+    const { localId, email, displayName, emailVerified } = userData;
+    const userRef = doc(db, "users", localId);
+
+    try {
+        // Kullanıcının var olup olmadığını kontrol et
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+            console.log("Kullanıcı zaten mevcut, tekrar kaydedilmeyecek.");
+        } else {
+            // Kullanıcı mevcut değilse, yeni bir kayıt oluştur
+            await setDoc(userRef, {
+                email: email,
+                displayName: displayName,
+                emailVerified: emailVerified,
+                createdAt: new Date().toISOString()
+            });
+            console.log("Yeni kullanıcı başarıyla kaydedildi.");
+        }
+    } catch (error) {
+        console.error("Kullanıcı kontrol veya kaydetme işleminde hata oluştu: ", error);
+    }
+}
+
 
 
 const googleProvider = new GoogleAuthProvider();
@@ -83,8 +108,16 @@ const facebookProvider = new FacebookAuthProvider();
 const signInWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
-        // İsteğe bağlı: kullanıcı bilgilerini işleyin
         const user = result.user;
+        
+        // Firestore'a kullanıcı verisini kaydet
+        await saveUserToFirestore({
+            localId: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            emailVerified: user.emailVerified
+        });
+
         toast.success(`Hoş geldin ${user.displayName}`, {
             position: "top-left",
             autoClose: 1500,
@@ -96,9 +129,9 @@ const signInWithGoogle = async () => {
             theme: "colored",
             transition: Flip
         });
+
         return user;
     } catch (error) {
-        // Hata mesajını göster
         console.error("Google ile giriş hatası: ", error);
         toast.error(`Google ile giriş hatası: ${"Giriş yapılamadı"}`, {
             position: "top-left",
