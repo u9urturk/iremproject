@@ -19,7 +19,7 @@ export default function ReviewCard({ review }) {
             <div className="bg-white min-w-[190px] rounded-md  p-6">
                 <div className="flex items-center mb-4">
                     <div>
-                        <p className="text-lg font-semibold">{customer?.name}</p>
+                        <p className="text-lg font-semibold">{customer?.displayName}</p>
                         <div className="flex items-center">
                             <ProductRaiting initialRating={review.rating} id={review.id}></ProductRaiting>
 
