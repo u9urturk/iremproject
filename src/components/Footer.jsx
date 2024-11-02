@@ -7,7 +7,7 @@ export default function Footer() {
         <footer class="body-font flex items-center justify-center flex-col">
 
 
-            <div className="footer w-full flex items-center justify-around  bg-base-100 text-neutral-content p-10">
+            <div className="footer w-full flex flex-col  md:flex-row items-center justify-around  bg-base-100 text-neutral-content p-10">
                 <nav>
                     <div class="flex title-font font-medium items-center md:justify-start justify-center text-brandPink">
                         <img className='w-auto h-24 ' src={logo} alt="logo" />
