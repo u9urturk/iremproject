@@ -59,7 +59,7 @@ export default function Carousel(productId) {
 
                 </div>
                 <div onClick={() => { document.getElementById("my_modal_4").close() }}
-                    className='absolute top-5 right-5 hover:scale-110 transition-transform cursor-pointer text-gray-100'>
+                    className='absolute bottom-10 md:top-5 md:bottom-0 right-5 transition-transform cursor-pointer text-gray-100'>
                     <BiArrowBack />
                 </div>
             </dialog>
