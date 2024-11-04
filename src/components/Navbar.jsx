@@ -36,20 +36,23 @@ export default function Navbar() {
                 })}
             >
                 <div className='w-full flex items-center relative   md:flex-row flex-col   justify-around  py-3 '>
-                    <div className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
+                    <Link to={"/"} className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
                         <img className='w-auto h-24' src={logo} alt="logo" />
                         <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
 
-                    </div>
+                    </Link>
                     <div className='hidden shadow-inner shadow-base-300  lg:-translate-x-16  py-3 px-3 rounded-lg items-center justify-center '>
                         <div className='text-brandPink '><CiSearch size={24}></CiSearch></div>
                         <input className='w-56 outline-none pl-2 text-brandPink placeholder:text-brandPink bg-transparent  rounded-lg' placeholder='Ürün arayın...' type="text" />
                     </div>
+                    <div className=' hidden md:flex items-center justify-center gap-x-8 text-sm font-semibold'>
+                        <Link className='hover:scale-110 transition-transform'>Kategoriler</Link>
+                        <Link className='hover:scale-110 transition-transform'>Ürünler</Link>
+                        <Link className='hover:scale-110 transition-transform'>Galeri</Link>
+                        <Link className='hover:scale-110 transition-transform'>Hakkında</Link>
+                    </div>
 
                     <ul className="fixed md:static md:h-full md:flex items-center justify-center md:bg-transparent   bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6 md:mt-0">
-                        <li className='hidden font-semibold text-2xl'>
-                            <Link to={'/dev'}>X</Link>
-                        </li>
                         <li  >
                             <Link to={`/`} className="tooltip md:tooltip-bottom" data-tip="Ana Sayfa">
                                 <svg

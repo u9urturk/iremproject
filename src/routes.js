@@ -11,8 +11,8 @@ import PatternOperations from "./pages/DevDash/Pages/Components/PatternOperation
 import ProductOperations from "./pages/DevDash/Pages/ProductOperations"
 import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
+import Main from "./pages/Main"
 import Product from "./pages/Product"
-import Products from "./pages/Products"
 import PrivateRoute from "./utils"
 
 const routes = [
@@ -22,7 +22,7 @@ const routes = [
         children: [
             {
                 index: true,
-                element: <Products></Products>,
+                element: <Main></Main>,
               
             },
             {

@@ -7,6 +7,9 @@ import { BrowserRouter } from 'react-router-dom';
 import store from './store';
 import 'react-toastify/dist/ReactToastify.css'
 import { ThemeProvider } from "@material-tailwind/react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { ScrollProvider } from './context/ScrollContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,7 +18,9 @@ root.render(
 
         <BrowserRouter>
             <ThemeProvider>
-                <App />
+                <ScrollProvider>
+                    <App />
+                </ScrollProvider>
             </ThemeProvider>
         </BrowserRouter>
 

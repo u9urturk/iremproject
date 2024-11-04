@@ -54,7 +54,7 @@ export default function Carousel(productId) {
                     <img
                         alt={"CurrentImage"}
                         src={currentImage}
-                        className="w-[95%] h-screen  object-contain" />
+                        className="w-[95%] h-[calc(100vh-64px)]  object-contain" />
 
                 </div>
                 <div onClick={() => { document.getElementById("my_modal_4").close() }}

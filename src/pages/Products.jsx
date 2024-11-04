@@ -1,11 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { getCategories, getCategoryByCategoryId, getProductByCategoryId, getProducts } from '../firebase'
 import ListenImages from '../components/ListenImages'
 import { Link } from 'react-router-dom'
 import ProductRating from '../components/ProductRaiting';
+import { useScroll } from '../context/ScrollContext';
 
-export default function Products() {
-    
+export default function Products({ id }) {
+
+    const ref = useRef(null);
+    const { registerRef } = useScroll();
+
+    useEffect(() => {
+        registerRef(id, ref.current);
+    }, [id, registerRef]);
+
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [selected, setSelected] = useState()
@@ -35,7 +43,7 @@ export default function Products() {
                             productId: doc.id,
                             categoryName: res.name,
                             productName: doc.data().productName,
-                            price: doc.data().price, 
+                            price: doc.data().price,
                             rating: Math.round(doc.data().rating)
 
                         }
@@ -47,7 +55,7 @@ export default function Products() {
                 })
             })
         },
-        [ ],
+        [],
     )
 
 
@@ -57,7 +65,7 @@ export default function Products() {
         getProductByCategoryId(categoryId).then((res) => {
             res.forEach(async (doc) => {
                 await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
-                    
+
                     let data = {
                         productId: doc.id,
                         categoryName: res.name,
@@ -75,18 +83,19 @@ export default function Products() {
 
     }
 
-    useEffect(() => {  {
-        categories.map((category, key) => {
-           return <div  className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId===category.categoryId?"bg-yellow-800":null} `} onClick={
-               () => {
-                   setSelected({ categoryId:category.categoryId});
-                   productByCategoryIdReaction(category.categoryId)
-               }} key={key}><div>{category.name}</div></div>
-       })
-   }
+    useEffect(() => {
+        {
+            categories.map((category, key) => {
+                return <div className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId === category.categoryId ? "bg-yellow-800" : null} `} onClick={
+                    () => {
+                        setSelected({ categoryId: category.categoryId });
+                        productByCategoryIdReaction(category.categoryId)
+                    }} key={key}><div>{category.name}</div></div>
+            })
+        }
         categoryReaction()
         productReaction()
-    }, [categoryReaction,productReaction])
+    }, [categoryReaction, productReaction])
 
     const loadingPage = () => {
         const set = []
@@ -107,7 +116,7 @@ export default function Products() {
 
 
     return (
-        <div class="flex flex-col items-center justify-center gap-y-16   ">
+        <div ref={ref} class="flex mt-16 flex-col items-center justify-center gap-y-16   ">
             <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
                 <div className='flex flex-col z-[1]  gap-y-2 items-center justify-center'>
                     {categories.length === 0 && <div className='py-1 px-2'>Yükleniyor ...</div>}
@@ -120,14 +129,14 @@ export default function Products() {
                             </div>
                         </div>
                         {
-                                 categories.map((category, key) => {
-                                    return <div  className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId===category.categoryId?"bg-yellow-800":null} `} onClick={
-                                        () => {
-                                            setSelected({ categoryId:category.categoryId});
-                                            productByCategoryIdReaction(category.categoryId)
-                                        }} key={key}><div>{category.name}</div></div>
-                                })
-                            }
+                            categories.map((category, key) => {
+                                return <div className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId === category.categoryId ? "bg-yellow-800" : null} `} onClick={
+                                    () => {
+                                        setSelected({ categoryId: category.categoryId });
+                                        productByCategoryIdReaction(category.categoryId)
+                                    }} key={key}><div>{category.name}</div></div>
+                            })
+                        }
 
                     </div>}
                 </div>
