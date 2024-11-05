@@ -25,7 +25,7 @@ export default function HeroSection() {
                 <p className='pt-4 opacity-60 font-medium'>Evinize sıcaklık, her anınıza değer katacak ürünler.
 
                     En güzel başlangıçlar için en özel seçimler burada!</p>
-                <button onClick={() => scrollTo("section1")} className='mt-4 btn btn-primary text-gray-100  flex items-center justify-center rounded-none'>Ürünleri İncele</button>
+                <button onClick={() => scrollTo("section1")} className='mt-4 btn bg-brandGreen text-gray-100  flex items-center justify-center rounded-none'>Ürünleri İncele</button>
             </div>
             <div className='md:w-[30%] flex items-center justify-center'>
                 <div className="stats flex flex-row md:flex-col m-2 shadow">
