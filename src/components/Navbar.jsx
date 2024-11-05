@@ -6,18 +6,34 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { LuShoppingCart } from "react-icons/lu";
+import { isAdmin } from '../firebase'
 
 
 export default function Navbar() {
 
     const user = useSelector(state => state.auth.user)
     const [scrollY, setScrollY] = useState(0);
+    const [isAdminUser, setIsAdminUser] = useState(false)
 
     const handleScroll = () => {
         setScrollY(window.scrollY);
     };
+    useEffect(() => {
+        if (user) {
+            isAdmin(user?.uid).then(res => {
+                setIsAdminUser(true);
+                console.log(res)
+            })
+        }else if(user===null){
+            setIsAdminUser(false)
+        }
+
+
+    }, [user])
+
 
     useEffect(() => {
+
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -70,10 +86,8 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/yöneticipaneli"} className={classNames({
-                                "tooltip md:tooltip-bottom": true,
-                                "hidden": user === false
-                            })} data-tip="Yönetim Paneli">
+                            <Link to={"/yöneticipaneli"} 
+                            className={`tooltip  md:tooltip-bottom ${isAdminUser?"block":"hidden"}`} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"

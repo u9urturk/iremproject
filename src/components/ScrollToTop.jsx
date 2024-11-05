@@ -37,7 +37,7 @@ export default function ScrollToTop() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="bg-brandGreen text-white p-3 rounded-full shadow-lg hover:scale-110 transition duration-300"
+          className="bg-brandGreen z-50 text-white p-3 rounded-full shadow-lg hover:scale-110 transition duration-300"
         >
           <FcUpload size={20} />
 

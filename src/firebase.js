@@ -201,6 +201,12 @@ export const getCategories = async () => {
     return querySnapshot;
 }
 
+export const isAdmin  = async(uid)=>{
+    const docRef = doc(db,"users",uid);
+    const docSnap = (await getDoc(docRef)).data();
+    return docSnap.role === "admin";
+}
+
 export const getCategoryByCategoryId = async (categoryId) => {
 
     const docRef = doc(db, "categories", categoryId);
@@ -641,7 +647,9 @@ export const login = async (email, password) => {
 
 
 export const logout = async () => {
-    await signOut(auth);
+    await signOut(auth).then(res=>{
+        userHendle(null);
+    })
     toast.info("Oturum Kapatıldı", {
         position: "top-left",
         autoClose: 2000,

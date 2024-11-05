@@ -19,6 +19,5 @@ const auth = createSlice({
 
 
 
-
 export const {setUser}  = auth.actions
 export default auth.reducer

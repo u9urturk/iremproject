@@ -11,7 +11,7 @@ export default function Footer() {
                 <nav>
                     <div class="flex title-font font-medium items-center md:justify-start justify-center text-brandPink">
                         <img className='w-auto h-24 ' src={logo} alt="logo" />
-                        <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
+                        <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz&Nakış Evi</p></span>
                     </div>
 
                 </nav>
