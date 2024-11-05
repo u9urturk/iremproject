@@ -38,7 +38,7 @@ export default function Navbar() {
                 <div className='w-full flex items-center relative   md:flex-row flex-col   justify-around  py-3 '>
                     <Link to={"/"} className='flex items-center justify-center gap-x-2 pb-4 md:pb-0' >
                         <img className='w-auto h-24' src={logo} alt="logo" />
-                        <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
+                        <span class="ml-3 text-3xl text-brandPink font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz & Nakış Evi</p></span>
 
                     </Link>
                     <div className='hidden shadow-inner shadow-base-300  lg:-translate-x-16  py-3 px-3 rounded-lg items-center justify-center '>
