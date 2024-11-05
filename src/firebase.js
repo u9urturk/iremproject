@@ -76,7 +76,7 @@ async function getCommentsByProductId(productId) {
 }
 
 async function saveUserToFirestore(userData) {
-    const { localId, email, displayName, emailVerified } = userData;
+    const { localId, email, displayName, emailVerified,photoURL} = userData;
     const userRef = doc(db, "users", localId);
 
     try {
@@ -91,6 +91,7 @@ async function saveUserToFirestore(userData) {
                 email: email,
                 displayName: displayName,
                 emailVerified: emailVerified,
+                photoURL:photoURL,
                 createdAt: new Date().toISOString()
             });
             console.log("Yeni kullanıcı başarıyla kaydedildi.");
@@ -109,13 +110,15 @@ const signInWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
+        console.log(user)
         
         // Firestore'a kullanıcı verisini kaydet
         await saveUserToFirestore({
             localId: user.uid,
             email: user.email,
             displayName: user.displayName,
-            emailVerified: user.emailVerified
+            emailVerified: user.emailVerified,
+            photoURL:user.photoURL
         });
 
         toast.success(`Hoş geldin ${user.displayName}`, {
@@ -204,7 +207,13 @@ export const getCategories = async () => {
 export const isAdmin  = async(uid)=>{
     const docRef = doc(db,"users",uid);
     const docSnap = (await getDoc(docRef)).data();
-    return docSnap.role === "admin";
+    return docSnap.role?docSnap.role === "admin":"customer"
+}
+
+export const getUserByUid  = async(uid)=>{
+    const docRef = doc(db,"users",uid);
+    const docSnap = (await getDoc(docRef)).data();
+    return docSnap;
 }
 
 export const getCategoryByCategoryId = async (categoryId) => {

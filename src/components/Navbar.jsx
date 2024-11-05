@@ -7,6 +7,8 @@ import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { LuShoppingCart } from "react-icons/lu";
 import { isAdmin } from '../firebase'
+import { LuUserCog } from "react-icons/lu";
+
 
 
 export default function Navbar() {
@@ -21,10 +23,13 @@ export default function Navbar() {
     useEffect(() => {
         if (user) {
             isAdmin(user?.uid).then(res => {
-                setIsAdminUser(true);
-                console.log(res)
+                if (res === true) {
+                    setIsAdminUser(true);
+                } else {
+                    setIsAdminUser(false);
+                }
             })
-        }else if(user===null){
+        } else if (user === null) {
             setIsAdminUser(false)
         }
 
@@ -86,8 +91,8 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/yöneticipaneli"} 
-                            className={`tooltip  md:tooltip-bottom ${isAdminUser?"block":"hidden"}`} data-tip="Yönetim Paneli">
+                            <Link to={"/yöneticipaneli"}
+                                className={`tooltip  md:tooltip-bottom ${isAdminUser ? "block" : "hidden"}`} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -102,9 +107,14 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                         </li>
-                        <li>
+                        <li className='tooltip md:tooltip-bottom' data-tip={"Sepetim"}>
                             <Link>
                                 <LuShoppingCart size={22} />
+                            </Link>
+                        </li>
+                        <li  className={`${user?"block":"hidden"} tooltip md:tooltip-bottom`} data-tip={"Profile"}>
+                            <Link to={"profile"}>
+                                <LuUserCog size={22} />
                             </Link>
                         </li>
                         <li>

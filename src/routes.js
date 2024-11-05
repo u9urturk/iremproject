@@ -1,4 +1,3 @@
-import Dev from "./components/Dev"
 import CookiePolicy from "./components/policy/CookiePolicy "
 import PrivacyPolicy from "./components/policy/PrivacyPolicy "
 import UserAgreement from "./components/policy/UserAgreement"
@@ -13,6 +12,8 @@ import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
 import Main from "./pages/Main"
 import Product from "./pages/Product"
+import IndexProfile from "./pages/profile/IndexProfile"
+import MainProfile from "./pages/profile/MainProfile"
 import PrivateRoute from "./utils"
 
 const routes = [
@@ -26,14 +27,25 @@ const routes = [
               
             },
             {
-                path:'dev',
-                element:<Dev></Dev>
-            },
-            
-            {
                 path:'product/:productId',
                 element:<Product></Product>
             },
+            {
+                path:"profile",
+                element:<MainProfile></MainProfile>,
+                children:[
+                    {
+                        index:true,
+                        element:<IndexProfile></IndexProfile>
+
+                    },
+                    {
+                        
+                    }
+                ]
+                
+            }
+            ,
             {
                 path:'yöneticipaneli',
                 element:<DevDash></DevDash>,
