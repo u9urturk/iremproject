@@ -3,7 +3,7 @@ import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 
 
 
@@ -24,6 +24,112 @@ const auth = getAuth();
 const db = getFirestore(app);
 const storage = getStorage();
 
+
+// Sepet Operasyonları
+// Sepete Ürün Ekleme
+export const addToCartFb = async (userId, productId, productData, quantity = 1) => {
+    try {
+        const cartRef = doc(db, "users", userId, "cart", productId);
+        // Ürünün mevcut olup olmadığını kontrol et
+        const existingProductSnap = await getDoc(cartRef);
+
+        if (existingProductSnap&&existingProductSnap.exists()) {
+            // Ürün zaten varsa miktarını artır
+            await updateDoc(cartRef, {
+                quantity: increment(quantity),
+                updatedAt: new Date().toISOString()
+            });
+        } else {
+            // Ürün yoksa yeni bir ürün olarak ekle
+            const newCartItem = {
+                ...productData,
+                quantity: quantity,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            await setDoc(cartRef, newCartItem);
+        }
+        showToast('success', 'Ürün sepete başarıyla eklendi');
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Ürün sepete eklenirken bir hata oluştu');
+        console.error('Add to Cart Error:', error);
+        throw error;
+    }
+};
+
+// Sepeti Getirme
+export const getCart = async (userId) => {
+    try {
+        const cartRef = collection(db, "users", userId, "cart");
+        const cartSnap = await getDocs(cartRef);
+
+        const cartItems = cartSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return { success: true, cartItems };
+    } catch (error) {
+        showToast('error', 'Sepet getirilirken bir hata oluştu');
+        console.error('Get Cart Error:', error);
+        throw error;
+    }
+};
+
+// Sepetteki Ürünü Güncelleme
+export const updateCartItem = async (userId, productId, quantity) => {
+    try {
+        const cartRef = doc(db, "users", userId, "cart", productId);
+
+        if (quantity > 0) {
+            // Miktar güncelle
+            await updateDoc(cartRef, {
+                quantity: quantity,
+                updatedAt: new Date().toISOString()
+            });
+            showToast('success', 'Sepet öğesi başarıyla güncellendi');
+        } else {
+            // Miktar sıfır veya daha az ise ürünü sepetten çıkar
+            await deleteDoc(cartRef);
+            showToast('success', 'Ürün sepetten çıkarıldı');
+        }
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Sepet güncellenirken bir hata oluştu');
+        console.error('Update Cart Item Error:', error);
+        throw error;
+    }
+};
+
+// Sepetten Ürün Silme
+export const removeCartItem = async (userId, productId) => {
+    try {
+        const cartRef = doc(db, "users", userId, "cart", productId);
+
+        await deleteDoc(cartRef);
+        showToast('success', 'Ürün sepetten başarıyla çıkarıldı');
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Ürün sepetten çıkarılırken bir hata oluştu');
+        console.error('Remove Cart Item Error:', error);
+        throw error;
+    }
+};
+
+// Sepeti Temizleme
+export const clearCartFb = async (userId) => {
+    try {
+        const cartRef = collection(db, "users", userId, "cart");
+        const cartSnap = await getDocs(cartRef);
+        // const batch = db.batch();
+        cartSnap.docs.forEach((doc) => removeCartItem(userId,doc.id));
+        // await batch.commit();
+
+        showToast('success', 'Sepet başarıyla temizlendi');
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Sepet temizlenirken bir hata oluştu');
+        console.error('Clear Cart Error:', error);
+        throw error;
+    }
+};
 
 
 async function getUserbyId(id) {
@@ -60,6 +166,8 @@ async function addComment({ rating, date, comment, customerId, productId }) {
 
     }
 }
+
+
 
 async function getCommentsByProductId(productId) {
     const db = getFirestore();
@@ -209,6 +317,334 @@ export const isAdmin  = async(uid)=>{
     const docSnap = (await getDoc(docRef)).data();
     return docSnap.role?docSnap.role === "admin":"customer"
 }
+
+
+//AddressOperations
+
+const showToast = (type, message) => {
+    const toastConfig = {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    };
+
+    switch(type) {
+        case 'success':
+            toast.success(message, toastConfig);
+            break;
+        case 'error':
+            toast.error(message, toastConfig);
+            break;
+        case 'warning':
+            toast.warning(message, toastConfig);
+            break;
+        default:
+            toast.info(message, toastConfig);
+    }
+};
+
+//Sipariş Operasyonları
+
+// Sipariş Ekleme (Create Order)
+export const createOrder = async (userId, orderData) => {
+    try {
+        const ordersRef = collection(db, "users", userId, "orders");
+
+        const newOrder = {
+            ...orderData,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        const docRef = await addDoc(ordersRef, newOrder);
+        showToast('success', 'Sipariş başarıyla eklendi');
+
+        return {
+            success: true,
+            orderId: docRef.id,
+            order: newOrder
+        };
+    } catch (error) {
+        showToast('error', 'Sipariş eklenirken bir hata oluştu');
+        console.error('Create Order Error:', error);
+        throw error;
+    }
+};
+
+// Tek Sipariş Okuma (Read Order)
+export const readOrder = async (userId, orderId) => {
+    try {
+        const orderRef = doc(db, "users", userId, "orders", orderId);
+        const orderSnap = await getDoc(orderRef);
+
+        if (orderSnap.exists()) {
+            showToast('success', 'Sipariş başarıyla getirildi');
+            return {
+                success: true,
+                order: orderSnap.data()
+            };
+        } else {
+            showToast('error', 'Sipariş bulunamadı');
+            return { success: false, order: null };
+        }
+    } catch (error) {
+        showToast('error', 'Sipariş getirilirken bir hata oluştu');
+        console.error('Read Order Error:', error);
+        throw error;
+    }
+};
+
+// Sipariş Güncelleme (Update Order)
+export const updateOrder = async (userId, orderId, updatedData) => {
+    try {
+        const orderRef = doc(db, "users", userId, "orders", orderId);
+
+        await updateDoc(orderRef, {
+            ...updatedData,
+            updatedAt: new Date().toISOString()
+        });
+
+        showToast('success', 'Sipariş başarıyla güncellendi');
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Sipariş güncellenirken bir hata oluştu');
+        console.error('Update Order Error:', error);
+        throw error;
+    }
+};
+
+// Sipariş Silme (Delete Order)
+export const deleteOrder = async (userId, orderId) => {
+    try {
+        const orderRef = doc(db, "users", userId, "orders", orderId);
+
+        await deleteDoc(orderRef);
+        showToast('success', 'Sipariş başarıyla silindi');
+
+        return { success: true };
+    } catch (error) {
+        showToast('error', 'Sipariş silinirken bir hata oluştu');
+        console.error('Delete Order Error:', error);
+        throw error;
+    }
+};
+
+// Yeni adres ekleme
+export const createAddress = async (userId, addressData) => {
+    try {
+        const addressesRef = collection(db, "users", userId, "addresses");
+        
+        const newAddress = {
+            ...addressData,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        
+        const docRef = await addDoc(addressesRef, newAddress);
+        showToast('success', 'Adres başarıyla eklendi');
+        
+        return {
+            success: true,
+            addressId: docRef.id,
+            address: newAddress
+        };
+    } catch (error) {
+        showToast('error', 'Adres eklenirken bir hata oluştu');
+        console.error('Create Address Error:', error);
+        throw error;
+    }
+};
+
+// Kullanıcının tüm adreslerini getirme
+export const getUserAddresses = async (userId) => {
+    try {
+        const addressesRef = collection(db, "users", userId, "addresses");
+        const querySnapshot = await getDocs(addressesRef);
+        
+        const addresses = [];
+        querySnapshot.forEach((doc) => {
+            addresses.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        return {
+            success: true,
+            addresses: addresses
+        };
+    } catch (error) {
+        showToast('error', 'Adresler yüklenirken bir hata oluştu');
+        console.error('Get Addresses Error:', error);
+        throw error;
+    }
+};
+
+// Tek bir adresi getirme
+export const getAddressById = async (userId, addressId) => {
+    try {
+        const addressRef = doc(db, "users", userId, "addresses", addressId);
+        const addressDoc = await getDoc(addressRef);
+        
+        if (!addressDoc.exists()) {
+            showToast('warning', 'Adres bulunamadı');
+            return {
+                success: false
+            };
+        }
+        
+        return {
+            success: true,
+            address: {
+                id: addressDoc.id,
+                ...addressDoc.data()
+            }
+        };
+    } catch (error) {
+        showToast('error', 'Adres bilgileri alınırken bir hata oluştu');
+        console.error('Get Address Error:', error);
+        throw error;
+    }
+};
+
+// Adres güncelleme
+export const updateAddress = async (userId, addressId, updateData) => {
+    try {
+        const addressRef = doc(db, "users", userId, "addresses", addressId);
+        
+        const updates = {
+            ...updateData,
+            updatedAt: new Date().toISOString()
+        };
+        
+        await updateDoc(addressRef, updates);
+        showToast('success', 'Adres başarıyla güncellendi');
+        
+        return {
+            success: true,
+            updatedFields: Object.keys(updateData)
+        };
+    } catch (error) {
+        showToast('error', 'Adres güncellenirken bir hata oluştu');
+        console.error('Update Address Error:', error);
+        throw error;
+    }
+};
+
+// Adres silme
+export const deleteAddress = async (userId, addressId) => {
+    try {
+        const addressRef = doc(db, "users", userId, "addresses", addressId);
+        await deleteDoc(addressRef);
+        
+        showToast('success', 'Adres başarıyla silindi');
+        
+        return {
+            success: true,
+            deletedAddressId: addressId
+        };
+    } catch (error) {
+        showToast('error', 'Adres silinirken bir hata oluştu');
+        console.error('Delete Address Error:', error);
+        throw error;
+    }
+};
+
+// Varsayılan adres ayarlama
+export const setDefaultAddress = async (userId, addressId) => {
+    try {
+        // Önce tüm adresleri varsayılan olmaktan çıkar
+        const addressesRef = collection(db, "users", userId, "addresses");
+        const q = query(addressesRef, where("isDefault", "==", true));
+        const querySnapshot = await getDocs(q);
+        
+        const batch = [];
+        querySnapshot.forEach((doc) => {
+            const addressRef = doc(db, "users", userId, "addresses", doc.id);
+            batch.push(updateDoc(addressRef, { isDefault: false }));
+        });
+        
+        await Promise.all(batch);
+        
+        // Seçilen adresi varsayılan yap
+        const newDefaultAddressRef = doc(db, "users", userId, "addresses", addressId);
+        await updateDoc(newDefaultAddressRef, { 
+            isDefault: true,
+            updatedAt: new Date().toISOString()
+        });
+        
+        showToast('success', 'Varsayılan adres güncellendi');
+        
+        return {
+            success: true,
+            defaultAddressId: addressId
+        };
+    } catch (error) {
+        showToast('error', 'Varsayılan adres ayarlanırken bir hata oluştu');
+        console.error('Set Default Address Error:', error);
+        throw error;
+    }
+};
+
+
+
+//UserOperations
+
+export const updateUserProfile = async (
+    uid,
+    {
+        displayName,
+        email,
+        emailVerified,
+        phoneNumber,
+        phoneVerified,
+        county,
+        district
+    }
+) => {
+    try {
+        // Referans oluştur
+        const userRef = doc(db, "users", uid);
+        
+        // Güncellenecek verileri hazırla
+        const updateData = {};
+        
+        // Sadece tanımlı olan alanları güncelleme verisine ekle
+        if (displayName !== undefined) updateData.displayName = displayName;
+        if (email !== undefined) updateData.email = email;
+        if (emailVerified !== undefined) updateData.emailVerified = emailVerified;
+        if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
+        if (phoneVerified !== undefined) updateData.phoneVerified = phoneVerified;
+        if (county !== undefined) updateData.county = county;
+        if (district !== undefined) updateData.district = district;
+        
+        // Güncelleme timestamp'i ekle
+        updateData.updatedAt = new Date().toISOString();
+        
+        // Firestore'da güncelleme işlemini gerçekleştir
+        await updateDoc(userRef, updateData).then(res=>{
+            toast.success("Profil bilgileri güncellendi.")
+        })
+        
+        return {
+            success: true,
+            message: "Kullanıcı bilgileri başarıyla güncellendi",
+            updatedFields: Object.keys(updateData)
+        };
+        
+    } catch (error) {
+        toast.error("Profil bilgileri güncellenemedi !")
+        console.log(error.message)
+        return {
+            success: false,
+            message: "Kullanıcı bilgileri güncellenirken bir hata oluştu",
+            error: error.message
+        };
+    }
+};
 
 export const getUserByUid  = async(uid)=>{
     const docRef = doc(db,"users",uid);

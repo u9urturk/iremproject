@@ -12,6 +12,7 @@ import PropertyOperations from "./pages/DevDash/Pages/PropertyOperations"
 import Layout from "./pages/Layout"
 import Main from "./pages/Main"
 import Product from "./pages/Product"
+import AddressManager from "./pages/profile/AddressManager"
 import IndexProfile from "./pages/profile/IndexProfile"
 import MainProfile from "./pages/profile/MainProfile"
 import PrivateRoute from "./utils"
@@ -40,7 +41,9 @@ const routes = [
 
                     },
                     {
-                        
+                        path:"address",
+                        element:<AddressManager></AddressManager>
+
                     }
                 ]
                 

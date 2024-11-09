@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaRegBell, FaCheckCircle } from "react-icons/fa";
-import { getUserByUid } from '../../firebase';
+import { getUserByUid, updateUserProfile } from '../../firebase';
 import { useSelector } from 'react-redux';
 
 
@@ -9,11 +9,11 @@ export default function IndexProfile() {
   const user = useSelector(state => state.auth.user)
   const [form, setForm] = useState(
     {
-      name: "Uğur Türk",
-      email: "u9urturk@gmail.com",
-      phone: "5380497824",
-      district: "Akyazı",
-      county: "Sakarya",
+      name: "",
+      email: "",
+      phoneNumber: "",
+      district: "",
+      county: "",
       emailVerified:false,
       phoneVerified:false,
       photoURL:""
@@ -23,10 +23,11 @@ export default function IndexProfile() {
   useEffect(() => {
     if(user){
       getUserByUid(user.uid).then(res=>{
+        console.log(res)
         setForm({
-          name:res.displayName,
+          displayName:res.displayName,
           email:res.email,
-          phone:res.phone?res.phone:"",
+          phoneNumber:res.phoneNumber?res.phoneNumber:"",
           county:res.county?res.county:"",
           district:res.district?res.district:"",
           emailVerified:res.emailVerified?res.emailVerified:false,
@@ -38,6 +39,10 @@ export default function IndexProfile() {
   }, [user])
   
 
+  const handleUpdateProfile=async ()=>{
+    await updateUserProfile(user.uid,form);
+  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +52,7 @@ export default function IndexProfile() {
     }));
   };
   return (
-    <div className='w-full flex rounded-md items-center justify-center flex-col h-auto'>
+    <div className='w-full animate-fade-left flex rounded-md items-center justify-center flex-col h-auto'>
       <div className=' p-2 m-8 w-[95%] tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
         <span>Profil</span>
         <div className='flex items-center justify-center gap-x-2'>
@@ -69,8 +74,8 @@ export default function IndexProfile() {
           <div>
             <strong>Ad-Soyad</strong>
             <input type="text"
-              name="name"
-              value={form.name}
+              name="displayName"
+              value={form.displayName}
               onChange={handleChange}
               placeholder="Ad" className='w-full rounded input' />
           </div>
@@ -91,8 +96,8 @@ export default function IndexProfile() {
             <strong>Telefon Numarası</strong>
             <div className='flex items-center justify-center gap-x-8'>
               <input type="tel"
-                name="phone"
-                value={form.phone}
+                name="phoneNumber"
+                value={form.phoneNumber}
                 onChange={handleChange}
                 placeholder="Telefon" className='w-full rounded input' />
               <span className={`cursor-pointer tooltip ${form.emailVerified?"tooltip-success":"tooltip-warning"}`} data-tip={`${form.phoneVerified?"Numara Doğrulandı.":"Numara Doğrulanmadı."}`}>
@@ -118,7 +123,7 @@ export default function IndexProfile() {
           </div>
         </form>
         <div className='flex items-center py-4 w-full justify-end '>
-          <button className='btn text-gray-100 btn-accent rounded'>Bilgileri Güncelle</button>
+          <button onClick={handleUpdateProfile} className='btn text-gray-100 btn-accent rounded'>Bilgileri Güncelle</button>
         </div>
       </div>
     </div>

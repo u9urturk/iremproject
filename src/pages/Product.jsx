@@ -1,20 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Carousel from '../components/Carousel'
 import { useParams } from 'react-router-dom';
-import { getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
+import { addToCart, getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
 import ProductRating from '../components/ProductRaiting';
 import { IoColorPaletteOutline } from "react-icons/io5";
 import { GiRolledCloth } from "react-icons/gi";
 import { MdOutlinePattern } from "react-icons/md";
 import CustomerReviews from '../components/CustomerReviews';
+import { useSelector } from 'react-redux';
+import { useCart } from '../context/CartContext';
 
 
 
 
 export default function Product() {
-
+  const user = useSelector(state => state.auth.user)
   const { productId } = useParams();
   const [product, setProduct] = useState(null)
+  const {addToCart} = useCart();
 
   const getProductReaction = useCallback(
     () => {
@@ -39,11 +42,16 @@ export default function Product() {
     [productId],
   )
 
+  const handleAddToCart = ()=>{
+    addToCart(productId,product)
+  }
+
 
   useEffect(() => {
     getProductReaction();
   }, [getProductReaction])
 
+  console.log(productId,product)
   if (product) {
     return (
       <div className='container md:px-8 md:mx-auto  text-4xl text-red-900'>
@@ -80,7 +88,7 @@ export default function Product() {
                 </div>
                 <div className='flex w-full justify-between items-center ' >
                   <div className='flex items-center justify-center text-3xl font-semibold'>{product.price} ₺ </div>
-                  <button className="btn rounded-md btn-primary">Sepete Ekle</button>
+                  <button onClick={handleAddToCart} className="btn rounded-md btn-primary">Sepete Ekle</button>
                 </div>
 
               </div>

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import { LuShoppingCart } from "react-icons/lu";
 import { isAdmin } from '../firebase'
 import { LuUserCog } from "react-icons/lu";
+import { useCart } from '../context/CartContext'
 
 
 
@@ -16,6 +17,13 @@ export default function Navbar() {
     const user = useSelector(state => state.auth.user)
     const [scrollY, setScrollY] = useState(0);
     const [isAdminUser, setIsAdminUser] = useState(false)
+    const { items, totalQuantity, totalAmount, removeFromCart, clearCart } = useCart();
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!isDropdownOpen);
+    };
+
 
     const handleScroll = () => {
         setScrollY(window.scrollY);
@@ -107,12 +115,73 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                         </li>
-                        <li className='tooltip md:tooltip-bottom' data-tip={"Sepetim"}>
+                        <li onClick={toggleDropdown} className='relative tooltip md:tooltip-bottom indicator' data-tip={"Sepetim"}>
                             <Link>
+                                <span className="indicator-item badge badge-secondary">{totalQuantity}</span>
                                 <LuShoppingCart size={22} />
                             </Link>
+                            {/* Sepet Dropdown */}
+                            {isDropdownOpen && (
+                                <div className="dropdown-content absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4">
+                                    <h2 className="text-lg font-semibold text-gray-800 mb-4">Sepet</h2>
+
+                                    {items.length > 0 ? (
+                                        <div>
+                                            {/* Ürün Listesi */}
+                                            <ul className="space-y-3 max-h-60 overflow-y-auto">
+                                                {items.map((item) => (
+                                                    <li key={item.id} className="flex justify-between items-center">
+                                                        <div className="flex items-center space-x-3">
+                                                            <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-md" />
+                                                            <div>
+                                                                <p className="font-medium text-gray-800">{item.name}</p>
+                                                                <p className="text-sm text-gray-600">{item.price}₺ x {item.quantity}</p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            className="text-red-500 text-sm"
+                                                            onClick={() => removeFromCart(item.id)}
+                                                        >
+                                                            Kaldır
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+
+                                            {/* Toplam Tutar */}
+                                            <div className="mt-4 flex justify-between items-center border-t pt-4">
+                                                <span className="text-gray-800 font-semibold">Toplam:</span>
+                                                <span className="text-gray-800 font-semibold">{totalAmount}₺</span>
+                                            </div>
+
+                                            {/* Checkout ve Sepeti Temizle Butonları */}
+                                            <div className="mt-4 flex space-x-2">
+                                                <Link
+                                                    to="/checkout"
+                                                    className="btn btn-primary flex-1"
+                                                    onClick={() => setDropdownOpen(false)}
+                                                >
+                                                    Satın Al
+                                                </Link>
+                                                <button
+                                                    className="btn btn-outline btn-error flex-1"
+                                                    onClick={() => {
+                                                        clearCart();
+                                                        setDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    Sepeti Temizle
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-600 text-center">Sepetiniz boş</p>
+                                    )}
+                                </div>
+                            )}
                         </li>
-                        <li  className={`${user?"block":"hidden"} tooltip md:tooltip-bottom`} data-tip={"Profile"}>
+
+                        <li className={`${user ? "block" : "hidden"} tooltip md:tooltip-bottom`} data-tip={"Profile"}>
                             <Link to={"profile"}>
                                 <LuUserCog size={22} />
                             </Link>

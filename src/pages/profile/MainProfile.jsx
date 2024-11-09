@@ -1,5 +1,5 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 
 export default function MainProfile() {
   return (
@@ -9,7 +9,7 @@ export default function MainProfile() {
           <li className='cursor-pointer hover:scale-110 transition-transform'>Favoriler</li>
           <li className='cursor-pointer hover:scale-110 transition-transform'>Siparişler</li>
           <li className='cursor-pointer hover:scale-110 transition-transform'>İadeler</li>
-          <li className='cursor-pointer hover:scale-110 transition-transform'>Adreslerim</li>
+          <Link to={"address"} className='cursor-pointer hover:scale-110 transition-transform'>Adreslerim</Link>
           <li className='cursor-pointer hover:scale-110 transition-transform'>Bildirimlerim</li>
         </ul>
       </div>
