@@ -361,21 +361,21 @@ export default function ProductDetail({ product }) {
                         >
                             <div className="absolute top-4 right-4 flex gap-2">
                                 <button
-                                    className="btn btn-circle btn-sm"
-                                    onClick={() => { handleZoomOut() }}
+                                    className="btn cursor-pointer z-10 btn-circle btn-sm"
+                                    onClick={ handleZoomOut }
                                     disabled={zoomLevel <= 1}
                                 >
                                     -
                                 </button>
                                 <button
-                                    className="btn btn-circle btn-sm"
-                                    onClick={() => { handleZoomIn() }}
+                                    className="btn cursor-pointer z-10 btn-circle btn-sm"
+                                    onClick={handleZoomIn }
                                     disabled={zoomLevel >= 3}
                                 >
                                     +
                                 </button>
                                 <button
-                                    className="btn btn-circle btn-sm"
+                                    className="btn cursor-pointer z-10 btn-circle btn-sm"
                                     onClick={() => {
                                         setIsImageModalOpen(false);
                                         setZoomLevel(1);
