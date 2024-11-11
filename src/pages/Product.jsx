@@ -9,6 +9,7 @@ import { MdOutlinePattern } from "react-icons/md";
 import CustomerReviews from '../components/CustomerReviews';
 import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
+import ProductDetail from './uiComponents/ProductDetail';
 
 
 
@@ -17,7 +18,7 @@ export default function Product() {
   const user = useSelector(state => state.auth.user)
   const { productId } = useParams();
   const [product, setProduct] = useState(null)
-  const {addToCart} = useCart();
+  const { addToCart } = useCart();
 
   const getProductReaction = useCallback(
     () => {
@@ -30,20 +31,21 @@ export default function Product() {
 
         setProduct({
           name: res.productName,
-          price: res.price,
+          basePrice: res.price,
+          fullPrice: res.fullPrice ? res.fullPrice : null,
           color: color.name,
           fabric: fabric.name,
           pattern: pattern.name,
           rating: Math.round(res.rating),
-          explanation:res.explanation
+          explanation: res.explanation
         });
       })
     },
     [productId],
   )
 
-  const handleAddToCart = ()=>{
-    addToCart(productId,product)
+  const handleAddToCart = () => {
+    addToCart(productId, product)
   }
 
 
@@ -51,63 +53,17 @@ export default function Product() {
     getProductReaction();
   }, [getProductReaction])
 
-  console.log(productId,product)
+  console.log(productId, product)
+
+
   if (product) {
     return (
-      <div className='container md:px-8 md:mx-auto  text-4xl text-red-900'>
-        <section class="py-12 ">
-          <div className="card flex flex-col md:flex-row items-center justify-center lg:card-side bg-base-100 ">
-            <figure className='w-full  md:w-1/4'>
-              <Carousel productId={productId}></Carousel>
-            </figure>
-            <div className="card-body w-full flex items-center justify-center gap-y-8 md:gap-y-0 md:w-3/4">
-              <div className='flex w-full flex-col md:flex-row items-center md:pb-4  md:px-2 md:justify-between'>
-                <h2 className="card-title  text-4xl">{product.name}</h2>
-                <div>
-                  <ProductRating id={productId} initialRating={product.rating} size={'md'}></ProductRating>
-                </div>
-              </div>
-              <p className='text-base pl-8 opacity-95 '>{product.explanation}</p>
-              <div className="card-actions pt-8 pl-8 flex items-center w-full justify-center md:justify-between gap-y-8">
-                <div className='text-base flex p-4 lg:border-l-0 border-l-2 rounded-tl-3xl border-l-base-300 rounded-tr-3xl border-t-2 border-t-base-300 border-r-base-300 border-r-2 items-center justify-center flex-col gap-y-4 font-semibold'>
-                  <strong>Özellikler</strong>
-                  <div className='flex items-center justify-between flex-row gap-x-8 font-semibold'>
-                    <div  data-tip="Renk" className='flex items-center tooltip justify-center flex-col'>
-                      <IoColorPaletteOutline size={30} />
-                      <div>{product.color}</div>
-                    </div>
-                    <div  data-tip="Kumaş" className='flex items-center tooltip justify-center flex-col'>
-                      <GiRolledCloth  size={30} />
-                      <div>{product.fabric}</div>
-                    </div>
-                    <div  data-tip="Desen" className='flex items-center tooltip justify-center flex-col'>
-                      <MdOutlinePattern  size={30} />
-                      <div>{product.pattern}</div>
-                    </div>
-                  </div>
-                </div>
-                <div className='flex w-full justify-between items-center ' >
-                  <div className='flex items-center justify-center text-3xl font-semibold'>{product.price} ₺ </div>
-                  <button onClick={handleAddToCart} className="btn rounded-md btn-primary">Sepete Ekle</button>
-                </div>
 
-              </div>
-            </div>
-          </div>
-        </section>
+      <ProductDetail product={product}></ProductDetail>
 
-        <section class="py-8 h-full w-full px-8 shadow-inner shadow-base-300 rounded-2xl">
-          <div class="md:container h-full w-full md:mx-auto">
-            <CustomerReviews getProductId={productId}></CustomerReviews>
-          </div>
-        </section>
-      </div>
     )
   } else {
-    return (
-      <div className='container flex items-center justify-center h-screen px-8 mx-auto text-4xl text-red-900'>
-        <h1>YÜKLENİYOR...</h1>
-      </div>
-    )
+    <div>Loading...</div>
   }
+
 }

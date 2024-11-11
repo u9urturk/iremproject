@@ -119,7 +119,7 @@ export const clearCartFb = async (userId) => {
         const cartRef = collection(db, "users", userId, "cart");
         const cartSnap = await getDocs(cartRef);
         // const batch = db.batch();
-        cartSnap.docs.forEach((doc) => removeCartItem(userId,doc.id));
+        cartSnap.docs.forEach((doc) => removeCartItem(userId,doc.id));  
         // await batch.commit();
 
         showToast('success', 'Sepet başarıyla temizlendi');
