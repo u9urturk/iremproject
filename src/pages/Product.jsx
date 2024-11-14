@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import Carousel from '../components/Carousel'
 import { useParams } from 'react-router-dom';
-import { addToCart, getColorByColorId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId } from '../firebase';
-import ProductRating from '../components/ProductRaiting';
-import { IoColorPaletteOutline } from "react-icons/io5";
-import { GiRolledCloth } from "react-icons/gi";
-import { MdOutlinePattern } from "react-icons/md";
-import CustomerReviews from '../components/CustomerReviews';
+import { getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId,  } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import ProductDetail from './uiComponents/ProductDetail';
@@ -18,7 +12,9 @@ export default function Product() {
   const user = useSelector(state => state.auth.user)
   const { productId } = useParams();
   const [product, setProduct] = useState(null)
+  const [reviews, setReviews] = useState([])
   const { addToCart } = useCart();
+
 
   const getProductReaction = useCallback(
     () => {
@@ -44,22 +40,47 @@ export default function Product() {
     [productId],
   )
 
+
+
+  const getReviewReaction = useCallback(
+    () => {
+      getCommentsByProductId(productId).then(res => {
+        res.forEach(e => {
+          setReviews(prevReviews => [...prevReviews, {
+            id: e.id,
+            customerName: e.customerName,
+            comment: e.comment,
+            date: new Date(e.date).toLocaleDateString('tr-TR'),
+            rating: e.rating
+
+          }]);
+        
+        });
+      })
+    },
+    [productId],
+  )
+
   const handleAddToCart = () => {
     addToCart(productId, product)
+  }
+
+  const updateReviewState = (data)=>{
+    setReviews(prevReviews=>[...prevReviews,data])
   }
 
 
   useEffect(() => {
     getProductReaction();
-  }, [getProductReaction])
+    getReviewReaction();
+  }, [getProductReaction, getReviewReaction])
 
-  console.log(productId, product)
 
 
   if (product) {
     return (
 
-      <ProductDetail product={product}></ProductDetail>
+      <ProductDetail productId={productId} updateReviewState={updateReviewState} reviews={reviews} user={user} product={product}></ProductDetail>
 
     )
   } else {

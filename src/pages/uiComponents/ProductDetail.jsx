@@ -1,41 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { addComment, downloadImages } from '../../firebase';
 
-
-const sampleProduct = {
-    name: "Özel Tasarım Havlu",
-    basePrice: 249.99,
-    fullPrice: 399.99,
-    rating: 4,
-    color: "Lacivert",
-    fabric: "Premium Pamuk",
-    pattern: "Özel Desen",
-    explanation: "Yüksek kaliteli pamuktan üretilen, kişiselleştirilebilir tasarım havlu. İster kendi havlunuz üzerine tasarım yaptırın, isterseniz bizim premium havlularımızı tercih edin.",
-    images: [
-        "https://picsum.photos/id/1059/600/600",
-        "https://picsum.photos/id/237/600/600",
-        "https://picsum.photos/id/1060/600/600"
-    ]
-
-
-
-};
-
-const images = [
-    "https://picsum.photos/id/1059/600/600",
-    "https://picsum.photos/id/237/600/600",
-    "https://picsum.photos/id/1060/600/600"
-]
-
-const sampleReviews = Array(30).fill(null).map((_, index) => ({
-    id: index + 1,
-    userName: `Kullanıcı ${index + 1}`,
-    rating: Math.floor(Math.random() * 2) + 4,
-    comment: "Ürün kalitesi çok iyi, tasarım tam istediğim gibi oldu. Kesinlikle tavsiye ediyorum!",
-    date: new Date(Date.now() - Math.random() * 10000000000).toLocaleDateString('tr-TR')
-}));
-
-export default function ProductDetail({ product }) {
+export default function ProductDetail({ product, user, productId, reviews, updateReviewState }) {
     const [includeProduct, setIncludeProduct] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -45,16 +12,40 @@ export default function ProductDetail({ product }) {
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
+    const [images, setImages] = useState([]);
+    const [productReview, setProductReview] = useState(1);
+    const [sortedReviews, setSortedReviews] = useState([]);
+
 
     const [newReview, setNewReview] = useState({
         rating: 5,
         comment: ''
     });
+
     const [isAnimating, setIsAnimating] = useState(false);
 
 
+
+    const listenImages = useCallback(
+        () => {
+            downloadImages("productImages", productId).then((res) => {
+                setImages(res)
+            })
+        },
+        [productId],
+    )
+
+
     useEffect(() => {
-        const targetPrice = includeProduct ? product.fullPrice : product.basePrice;
+        listenImages()
+        getProductReview();
+        setSortedReviews(reviews);
+    }, [productId, listenImages])
+
+
+    useEffect(() => {
+        let targetPrice = ""
+        if (product.fullPrice === null) { targetPrice = product.basePrice } else { targetPrice = includeProduct ? product.fullPrice : product.basePrice; }
         setIsAnimating(true);
 
         const steps = 20; // Animasyon adımları
@@ -98,17 +89,59 @@ export default function ProductDetail({ product }) {
         setLoading(true);
         // Simüle edilmiş yükleme gecikmesi
         setTimeout(() => {
-            setVisibleReviews(prev => Math.min(prev + 20, sampleReviews.length));
+            setVisibleReviews(prev => Math.min(prev + 20, reviews.length));
             setLoading(false);
         }, 1000);
     };
 
+    const getProductReview = async () => {
+        let totalReview = 0
+        await reviews.forEach(e => {
+            totalReview = totalReview + e.rating
+            setProductReview(totalReview / reviews.length)
+        });
+    }
+
+    // Sıralama işlemini gerçekleştiren fonksiyon
+    const sortReviews = (option) => {
+        let sortedData = [...reviews];
+
+        if (option === 'date_desc') {
+            sortedData.sort((a, b) => new Date(b.date) - new Date(a.date)); // Tarihe göre azalan
+        } else if (option === 'rating_desc') {
+            sortedData.sort((a, b) => b.rating - a.rating); // Puana göre azalan
+        } else if (option === 'date_asc') {
+            sortedData.sort((a, b) => new Date(a.date) - new Date(b.date)); // Tarihe göre artan
+        } else if (option === 'rating_asc') {
+            sortedData.sort((a, b) => a.rating - b.rating); // Puana göre artan
+        }
+
+
+        setSortedReviews(sortedData); // Sıralanan veriyi state'e kaydet
+    };
+
+    // Sıralama seçeneğini değiştiren handler
+    const handleSortChange = (e) => {
+        console.log(e.target.value)
+        sortReviews(e.target.value); // Seçilen sıralama opsiyonuna göre veriyi sırala
+    };
+
+
     const handleSubmitReview = (e) => {
         e.preventDefault();
         // Burada yorum gönderme işlemi simüle edilmiştir
-        console.log('Yeni yorum:', newReview);
         setIsReviewModalOpen(false);
-        setNewReview({ rating: 5, comment: '' });
+        const data = {
+            customerId: user.uid,
+            productId: productId,
+            customerName: user.displayName,
+            date: new Date().toISOString(),
+            rating: newReview.rating,
+            comment: newReview.comment
+        }
+        addComment(data).then(res => {
+            updateReviewState(res)
+        })
     };
 
     return (
@@ -117,11 +150,11 @@ export default function ProductDetail({ product }) {
                 {/* Ana Ürün Kartı */}
                 <div className="card lg:card-side bg-base-100 shadow-xl">
                     {/* Sol Taraf - Ürün Görselleri */}
-                    <div className="relative lg:w-1/2 p-6">
+                    <div className="relative h-1/2 lg:w-1/2 p-6">
                         <img
                             src={images[activeImageIndex]}
                             alt={`${product.name} - Ana Görsel`}
-                            className="w-full rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                            className="w-full h-96 rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => handleImageClick(activeImageIndex)}
                         />
                         {/* Küçük Görsel Önizlemeleri */}
@@ -146,26 +179,35 @@ export default function ProductDetail({ product }) {
                     {/* Sağ Taraf - Ürün Bilgileri */}
                     <div className="card-body lg:w-1/2">
                         {/* title */}
-                        <div className='flex items-center justify-between w-full'>
+                        <div className='flex flex-col md:flex-row justify-center items-center md:justify-between w-full'>
                             <h2 className="card-title text-3xl font-bold">{product.name}</h2>
                             <div>
-                                <span className='text-xs opacity-60'>{sampleReviews.length} değerlendirme</span>
-                                <div className="rating rating-sm flex items-center justify-center">
+                                <span className='text-xs opacity-60'>{reviews.length} değerlendirme</span>
+                                <div className="rating rating-sm rating-half flex items-center justify-center">
                                     {[...Array(5)].map((_, index) => (
-                                        <input
-                                            key={index}
-                                            type="radio"
-                                            className={`mask mask-star-2 ${index < product.rating ? 'bg-primary' : 'bg-base-300'
-                                                }`}
-                                            disabled
-                                        />
+                                        <>
+                                            <input
+                                                key={index}
+                                                type="radio"
+                                                className={`mask mask-star-2 mask-half-1 ${index.toFixed(1) < productReview.toFixed(1) ? 'bg-primary' : 'bg-base-300'
+                                                    }`}
+                                                disabled
+                                            />
+                                            <input
+                                                key={index}
+                                                type="radio"
+                                                className={`mask mask-star-2  mask-half-2 ${(index + 0.5).toFixed(1) < productReview.toFixed(1) ? 'bg-primary' : 'bg-base-300'
+                                                    }`}
+                                                disabled
+                                            />
+                                        </>
                                     ))}
-                                    <span className='ml-2 text-primary font-semibold' >{product.rating.toFixed(1)}</span>
+                                    <span className='ml-2 text-primary font-semibold' >{productReview.toFixed(1)}</span>
                                 </div>
                             </div>
                         </div>
                         {/* Ürün Seçenekleri */}
-                        <div className="form-control w-full mt-4">
+                        <div className={`${!product.fullPrice ? "hidden" : ""} form-control w-full mt-4`}>
                             <label className="label cursor-pointer">
                                 <span className="label-text text-lg">Havlu Tercihi</span>
                                 <input
@@ -184,7 +226,7 @@ export default function ProductDetail({ product }) {
 
                         {/* Fiyat, Adet ve Sepet Butonu */}
                         <div className="bg-base-200 rounded-xl p-6 mt-6 space-y-4">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-wrap items-center justify-center md:justify-between">
                                 <div className="text-3xl font-bold text-primary">
                                     {/* Animasyonlu Fiyat */}
                                     <motion.div
@@ -224,7 +266,7 @@ export default function ProductDetail({ product }) {
                         <p className="mt-6 text-base-content/80">{product.explanation}</p>
 
                         {/* Ürün Özellikleri */}
-                        <div className="grid grid-cols-3 gap-4 mt-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {Object.entries({
                                 Renk: product.color,
                                 Kumaş: product.fabric,
@@ -244,28 +286,38 @@ export default function ProductDetail({ product }) {
                 {/* Müşteri Yorumları */}
                 <div className="card bg-base-100 shadow-xl mt-12">
                     <div className="card-body">
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col md:flex-row gap-y-8 justify-between items-center mb-6">
                             <h3 className="card-title text-2xl">Müşteri Yorumları</h3>
-                            <button
-                                className="btn btn-primary"
-                                onClick={() => setIsReviewModalOpen(true)}
-                            >
-                                Yorum Yaz
-                            </button>
+                            <div className='flex flex-row gap-x-2 items-center justify-center'>
+                                <select className="select select-bordered w-full max-w-xs" onChange={handleSortChange}>
+                                    <option disabled selected>Sırala</option>
+                                    <option value="date_desc">Tarihe göre azalan</option>
+                                    <option value="rating_desc">Puana göre azalan</option>
+                                    <option value="date_asc">Tarihe göre artan</option>
+                                    <option value="rating_asc">Puana göre artan</option>
+                                </select>
+
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setIsReviewModalOpen(true)}
+                                >
+                                    Yorum Yaz
+                                </button>
+                            </div>
                         </div>
 
                         {/* Yorumlar Listesi */}
                         <div className="space-y-6">
-                            {sampleReviews.slice(0, visibleReviews).map((review) => (
+                            {sortedReviews?.slice(0, visibleReviews).map((review) => (
                                 <div key={review.id} className="border-b border-base-300 pb-4">
                                     <div className="flex items-center gap-4 mb-2">
                                         <div className="avatar placeholder">
                                             <div className="bg-base-300 text-base-content rounded-full w-12">
-                                                <span>{review.userName.substring(0, 2)}</span>
+                                                <span>{review.customerName.substring(0, 2)}</span>
                                             </div>
                                         </div>
                                         <div>
-                                            <h4 className="font-semibold">{review.userName}</h4>
+                                            <h4 className="font-semibold">{review.customerName}</h4>
                                             <div className="rating rating-sm">
                                                 {[...Array(5)].map((_, index) => (
                                                     <input
@@ -286,7 +338,7 @@ export default function ProductDetail({ product }) {
                         </div>
 
                         {/* Daha Fazla Yükle Butonu */}
-                        {visibleReviews < sampleReviews.length && (
+                        {visibleReviews < reviews.length && (
                             <button
                                 className={`btn btn-outline w-full mt-6 ${loading ? 'loading' : ''}`}
                                 onClick={handleLoadMore}
@@ -362,14 +414,14 @@ export default function ProductDetail({ product }) {
                             <div className="absolute top-4 right-4 flex gap-2">
                                 <button
                                     className="btn cursor-pointer z-10 btn-circle btn-sm"
-                                    onClick={ handleZoomOut }
+                                    onClick={handleZoomOut}
                                     disabled={zoomLevel <= 1}
                                 >
                                     -
                                 </button>
                                 <button
                                     className="btn cursor-pointer z-10 btn-circle btn-sm"
-                                    onClick={handleZoomIn }
+                                    onClick={handleZoomIn}
                                     disabled={zoomLevel >= 3}
                                 >
                                     +

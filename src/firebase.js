@@ -33,7 +33,7 @@ export const addToCartFb = async (userId, productId, productData, quantity = 1) 
         // Ürünün mevcut olup olmadığını kontrol et
         const existingProductSnap = await getDoc(cartRef);
 
-        if (existingProductSnap&&existingProductSnap.exists()) {
+        if (existingProductSnap && existingProductSnap.exists()) {
             // Ürün zaten varsa miktarını artır
             await updateDoc(cartRef, {
                 quantity: increment(quantity),
@@ -119,7 +119,7 @@ export const clearCartFb = async (userId) => {
         const cartRef = collection(db, "users", userId, "cart");
         const cartSnap = await getDocs(cartRef);
         // const batch = db.batch();
-        cartSnap.docs.forEach((doc) => removeCartItem(userId,doc.id));  
+        cartSnap.docs.forEach((doc) => removeCartItem(userId, doc.id));
         // await batch.commit();
 
         showToast('success', 'Sepet başarıyla temizlendi');
@@ -132,34 +132,56 @@ export const clearCartFb = async (userId) => {
 };
 
 
+async function getUsernameByUId(id) {
+    try {
+        const userRef = doc(db, "users", id);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            // Sadece displayName alanını döndür
+            return userSnap.data().displayName || null;
+        } else {
+            console.log("Kullanıcı bulunamadı.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Kullanıcı verisi getirilirken hata oluştu: ", error);
+        return null;
+    }
+}
+
+
+
 async function getUserbyId(id) {
     try {
         const userRef = doc(db, "users", id); // "users" koleksiyonundan belirli bir belgeye referans oluşturulur
         const userSnap = await getDoc(userRef); // Belgeyi getirir
-        
+
         if (userSnap.exists()) {
-          return userSnap.data(); // Kullanıcı verilerini döndür
+            return userSnap.data(); // Kullanıcı verilerini döndür
         } else {
-          console.log("Kullanıcı bulunamadı.");
-          return null;
+            console.log("Kullanıcı bulunamadı.");
+            return null;
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Kullanıcı verisi getirilirken hata oluştu: ", error);
         return null;
-      }
+    }
 }
-
-async function addComment({ rating, date, comment, customerId, productId }) {
+  
+async function addComment(data) {
     const db = getFirestore();
+    console.log(data)
     try {
-        await addDoc(collection(db, "comments"), {
-            rating,
-            date,
-            comment,
-            customerId,
-            productId
-        });
+        const docRef = await addDoc(collection(db, "comments"), data)
         toast.success('Yorum başarıyla eklendi!');
+        return {
+            id: docRef.id,
+            customerName: data.customerName,
+            comment: data.comment,
+            date: new Date(data.date).toLocaleDateString('tr-TR'),
+            rating: data.rating
+        }
     } catch (e) {
         toast.error('Yorum eklenirken hata oluştu!');
         console.error("Yorum eklenirken hata oluştu: ", e);
@@ -172,7 +194,7 @@ async function addComment({ rating, date, comment, customerId, productId }) {
 async function getCommentsByProductId(productId) {
     const db = getFirestore();
     const q = query(collection(db, "comments"), where("productId", "==", productId));
-    
+
     try {
         const querySnapshot = await getDocs(q);
         const comments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -184,13 +206,13 @@ async function getCommentsByProductId(productId) {
 }
 
 async function saveUserToFirestore(userData) {
-    const { localId, email, displayName, emailVerified,photoURL} = userData;
+    const { localId, email, displayName, emailVerified, photoURL } = userData;
     const userRef = doc(db, "users", localId);
 
     try {
         // Kullanıcının var olup olmadığını kontrol et
         const userSnap = await getDoc(userRef);
-        
+
         if (userSnap.exists()) {
             console.log("Kullanıcı zaten mevcut, tekrar kaydedilmeyecek.");
         } else {
@@ -199,7 +221,7 @@ async function saveUserToFirestore(userData) {
                 email: email,
                 displayName: displayName,
                 emailVerified: emailVerified,
-                photoURL:photoURL,
+                photoURL: photoURL,
                 createdAt: new Date().toISOString()
             });
             console.log("Yeni kullanıcı başarıyla kaydedildi.");
@@ -219,14 +241,14 @@ const signInWithGoogle = async () => {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log(user)
-        
+
         // Firestore'a kullanıcı verisini kaydet
         await saveUserToFirestore({
             localId: user.uid,
             email: user.email,
             displayName: user.displayName,
             emailVerified: user.emailVerified,
-            photoURL:user.photoURL
+            photoURL: user.photoURL
         });
 
         toast.success(`Hoş geldin ${user.displayName}`, {
@@ -312,10 +334,10 @@ export const getCategories = async () => {
     return querySnapshot;
 }
 
-export const isAdmin  = async(uid)=>{
-    const docRef = doc(db,"users",uid);
+export const isAdmin = async (uid) => {
+    const docRef = doc(db, "users", uid);
     const docSnap = (await getDoc(docRef)).data();
-    return docSnap.role?docSnap.role === "admin":"customer"
+    return docSnap.role ? docSnap.role === "admin" : "customer"
 }
 
 
@@ -331,7 +353,7 @@ const showToast = (type, message) => {
         draggable: true,
     };
 
-    switch(type) {
+    switch (type) {
         case 'success':
             toast.success(message, toastConfig);
             break;
@@ -436,16 +458,16 @@ export const deleteOrder = async (userId, orderId) => {
 export const createAddress = async (userId, addressData) => {
     try {
         const addressesRef = collection(db, "users", userId, "addresses");
-        
+
         const newAddress = {
             ...addressData,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-        
+
         const docRef = await addDoc(addressesRef, newAddress);
         showToast('success', 'Adres başarıyla eklendi');
-        
+
         return {
             success: true,
             addressId: docRef.id,
@@ -463,7 +485,7 @@ export const getUserAddresses = async (userId) => {
     try {
         const addressesRef = collection(db, "users", userId, "addresses");
         const querySnapshot = await getDocs(addressesRef);
-        
+
         const addresses = [];
         querySnapshot.forEach((doc) => {
             addresses.push({
@@ -471,7 +493,7 @@ export const getUserAddresses = async (userId) => {
                 ...doc.data()
             });
         });
-        
+
         return {
             success: true,
             addresses: addresses
@@ -488,14 +510,14 @@ export const getAddressById = async (userId, addressId) => {
     try {
         const addressRef = doc(db, "users", userId, "addresses", addressId);
         const addressDoc = await getDoc(addressRef);
-        
+
         if (!addressDoc.exists()) {
             showToast('warning', 'Adres bulunamadı');
             return {
                 success: false
             };
         }
-        
+
         return {
             success: true,
             address: {
@@ -514,15 +536,15 @@ export const getAddressById = async (userId, addressId) => {
 export const updateAddress = async (userId, addressId, updateData) => {
     try {
         const addressRef = doc(db, "users", userId, "addresses", addressId);
-        
+
         const updates = {
             ...updateData,
             updatedAt: new Date().toISOString()
         };
-        
+
         await updateDoc(addressRef, updates);
         showToast('success', 'Adres başarıyla güncellendi');
-        
+
         return {
             success: true,
             updatedFields: Object.keys(updateData)
@@ -539,9 +561,9 @@ export const deleteAddress = async (userId, addressId) => {
     try {
         const addressRef = doc(db, "users", userId, "addresses", addressId);
         await deleteDoc(addressRef);
-        
+
         showToast('success', 'Adres başarıyla silindi');
-        
+
         return {
             success: true,
             deletedAddressId: addressId
@@ -560,24 +582,24 @@ export const setDefaultAddress = async (userId, addressId) => {
         const addressesRef = collection(db, "users", userId, "addresses");
         const q = query(addressesRef, where("isDefault", "==", true));
         const querySnapshot = await getDocs(q);
-        
+
         const batch = [];
         querySnapshot.forEach((doc) => {
             const addressRef = doc(db, "users", userId, "addresses", doc.id);
             batch.push(updateDoc(addressRef, { isDefault: false }));
         });
-        
+
         await Promise.all(batch);
-        
+
         // Seçilen adresi varsayılan yap
         const newDefaultAddressRef = doc(db, "users", userId, "addresses", addressId);
-        await updateDoc(newDefaultAddressRef, { 
+        await updateDoc(newDefaultAddressRef, {
             isDefault: true,
             updatedAt: new Date().toISOString()
         });
-        
+
         showToast('success', 'Varsayılan adres güncellendi');
-        
+
         return {
             success: true,
             defaultAddressId: addressId
@@ -608,10 +630,10 @@ export const updateUserProfile = async (
     try {
         // Referans oluştur
         const userRef = doc(db, "users", uid);
-        
+
         // Güncellenecek verileri hazırla
         const updateData = {};
-        
+
         // Sadece tanımlı olan alanları güncelleme verisine ekle
         if (displayName !== undefined) updateData.displayName = displayName;
         if (email !== undefined) updateData.email = email;
@@ -620,21 +642,21 @@ export const updateUserProfile = async (
         if (phoneVerified !== undefined) updateData.phoneVerified = phoneVerified;
         if (county !== undefined) updateData.county = county;
         if (district !== undefined) updateData.district = district;
-        
+
         // Güncelleme timestamp'i ekle
         updateData.updatedAt = new Date().toISOString();
-        
+
         // Firestore'da güncelleme işlemini gerçekleştir
-        await updateDoc(userRef, updateData).then(res=>{
+        await updateDoc(userRef, updateData).then(res => {
             toast.success("Profil bilgileri güncellendi.")
         })
-        
+
         return {
             success: true,
             message: "Kullanıcı bilgileri başarıyla güncellendi",
             updatedFields: Object.keys(updateData)
         };
-        
+
     } catch (error) {
         toast.error("Profil bilgileri güncellenemedi !")
         console.log(error.message)
@@ -646,8 +668,8 @@ export const updateUserProfile = async (
     }
 };
 
-export const getUserByUid  = async(uid)=>{
-    const docRef = doc(db,"users",uid);
+export const getUserByUid = async (uid) => {
+    const docRef = doc(db, "users", uid);
     const docSnap = (await getDoc(docRef)).data();
     return docSnap;
 }
@@ -721,10 +743,15 @@ export const downloadImage = async (tg, productId) => {
 }
 
 export const downloadImages = async (tg, productId) => {
-    let data = null
+    const data = []
     const listRef = ref(storage, `${tg}/${productId}`);
     await listAll(listRef).then(async (res) => {
-        data = res.items
+        res.items.forEach(e => {
+            getDownloadURL(ref(storage, e.fullPath))
+                .then((path) => {
+                    data.push(path)
+                })
+        });
 
     }).catch((error) => {
         switch (error.code) {
@@ -759,7 +786,7 @@ export const downloadImages = async (tg, productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (productName, rating = 1, price,explanation, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
+export const addProduct = async (productName, rating = 1, price, explanation, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
     console.log(explanation)
     try {
         const docRef = await addDoc(collection(db, "products"), {
@@ -771,7 +798,7 @@ export const addProduct = async (productName, rating = 1, price,explanation, sel
             patternId: selectedPattern.id,
             rating: rating,
             creationTime: Timestamp.fromDate(new Date()),
-            explanation:explanation
+            explanation: explanation
         })
         toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
             position: "top-left",
@@ -1092,7 +1119,7 @@ export const login = async (email, password) => {
 
 
 export const logout = async () => {
-    await signOut(auth).then(res=>{
+    await signOut(auth).then(res => {
         userHendle(null);
     })
     toast.info("Oturum Kapatıldı", {
@@ -1364,10 +1391,13 @@ export const getPatternByPatternId = async (colorId) => {
 }
 
 
-export { auth, signInWithGoogle,
-     signInWithFacebook,
-     addComment,
-     getCommentsByProductId,
-     getUserbyId};
+export {
+    auth, signInWithGoogle,
+    signInWithFacebook,
+    addComment,
+    getCommentsByProductId,
+    getUserbyId,
+    getUsernameByUId,
+};
 
 
