@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addComment, downloadImages } from '../../firebase';
 
-export default function ProductDetail({ product, user, productId, reviews, updateReviewState }) {
+export default function ProductDetail({ product, user,addCart,quantityFB,productId, reviews, updateReviewState }) {
     const [includeProduct, setIncludeProduct] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -15,6 +15,7 @@ export default function ProductDetail({ product, user, productId, reviews, updat
     const [images, setImages] = useState([]);
     const [productReview, setProductReview] = useState(1);
     const [sortedReviews, setSortedReviews] = useState([]);
+    const [pageLoading, setPageLoading] = useState(true);
 
 
     const [newReview, setNewReview] = useState({
@@ -29,17 +30,23 @@ export default function ProductDetail({ product, user, productId, reviews, updat
     const listenImages = useCallback(
         () => {
             downloadImages("productImages", productId).then((res) => {
-                setImages(res)
+                setImages(res);
+                setPageLoading(false);
             })
         },
         [productId],
     )
 
+    useEffect(() => {
+      quantityFB(quantity);
+    }, [quantity])
+    
+
 
     useEffect(() => {
         listenImages()
         getProductReview();
-        setSortedReviews(reviews);
+        sortReviews();
     }, [productId, listenImages])
 
 
@@ -102,16 +109,24 @@ export default function ProductDetail({ product, user, productId, reviews, updat
         });
     }
 
+
+    const changeDateFormat = (date) => {
+        let [day, month, year] = date.split(".");
+        return new Date(`${year}-${month}-${day}`);
+
+    }
+
     // Sıralama işlemini gerçekleştiren fonksiyon
-    const sortReviews = (option) => {
+    const sortReviews = (option = 'date_desc') => {
         let sortedData = [...reviews];
 
+
         if (option === 'date_desc') {
-            sortedData.sort((a, b) => new Date(b.date) - new Date(a.date)); // Tarihe göre azalan
+            sortedData.sort((a, b) => changeDateFormat(b.date) - changeDateFormat(a.date)); // Tarihe göre azalan
         } else if (option === 'rating_desc') {
             sortedData.sort((a, b) => b.rating - a.rating); // Puana göre azalan
         } else if (option === 'date_asc') {
-            sortedData.sort((a, b) => new Date(a.date) - new Date(b.date)); // Tarihe göre artan
+            sortedData.sort((a, b) => changeDateFormat(a.date) - changeDateFormat(b.date)); // Tarihe göre artan
         } else if (option === 'rating_asc') {
             sortedData.sort((a, b) => a.rating - b.rating); // Puana göre artan
         }
@@ -144,9 +159,113 @@ export default function ProductDetail({ product, user, productId, reviews, updat
         })
     };
 
+
     return (
         <div className="min-h-screen bg-base-200">
-            <div className="container mx-auto px-4 py-8">
+            {pageLoading ? <div className="container mx-auto px-4 py-8">
+                {/* Ana Ürün Kartı Skeleton */}
+                <div className="card lg:card-side bg-base-100 shadow-xl animate-pulse">
+                    {/* Sol Taraf - Ürün Görselleri Skeleton */}
+                    <div className="relative h-1/2 lg:w-1/2 p-6">
+                        {/* Ana Görsel Skeleton */}
+                        <div className="w-full h-96 bg-base-300 rounded-xl" />
+
+                        {/* Küçük Görsel Önizlemeleri Skeleton */}
+                        <div className="grid grid-cols-3 gap-2 mt-4">
+                            {[1, 2, 3].map((index) => (
+                                <div key={index} className="w-full h-24 bg-base-300 rounded-lg" />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Sağ Taraf - Ürün Bilgileri Skeleton */}
+                    <div className="card-body lg:w-1/2">
+                        {/* Title ve Rating Skeleton */}
+                        <div className='flex flex-col md:flex-row justify-between items-center w-full gap-4'>
+                            <div className="h-8 bg-base-300 rounded w-2/3" />
+                            <div className="flex flex-col items-end gap-2">
+                                <div className="h-4 bg-base-300 rounded w-24" />
+                                <div className="h-4 bg-base-300 rounded w-32" />
+                            </div>
+                        </div>
+
+                        {/* Ürün Seçenekleri Skeleton */}
+                        <div className="form-control w-full mt-4">
+                            <div className="flex justify-between items-center">
+                                <div className="h-6 bg-base-300 rounded w-32" />
+                                <div className="h-6 bg-base-300 rounded w-12" />
+                            </div>
+                            <div className="h-4 bg-base-300 rounded w-3/4 mt-2" />
+                        </div>
+
+                        {/* Fiyat ve Adet Skeleton */}
+                        <div className="bg-base-200 rounded-xl p-6 mt-6">
+                            <div className="flex flex-wrap items-center justify-between">
+                                <div className="h-10 bg-base-300 rounded w-32" />
+                                <div className="flex items-center gap-4">
+                                    <div className="h-10 bg-base-300 rounded w-32" />
+                                    <div className="h-10 bg-base-300 rounded w-32" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Açıklama Skeleton */}
+                        <div className="space-y-2 mt-6">
+                            <div className="h-4 bg-base-300 rounded w-full" />
+                            <div className="h-4 bg-base-300 rounded w-5/6" />
+                            <div className="h-4 bg-base-300 rounded w-4/6" />
+                        </div>
+
+                        {/* Ürün Özellikleri Skeleton */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                            {[1, 2, 3].map((index) => (
+                                <div key={index} className="stats shadow">
+                                    <div className="stat place-items-center p-2">
+                                        <div className="h-4 bg-base-300 rounded w-16 mb-2" />
+                                        <div className="h-6 bg-base-300 rounded w-24" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Müşteri Yorumları Skeleton */}
+                <div className="card bg-base-100 shadow-xl mt-12">
+                    <div className="card-body">
+                        <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+                            <div className="h-8 bg-base-300 rounded w-48" />
+                            <div className="flex gap-x-2">
+                                <div className="h-10 bg-base-300 rounded w-40" />
+                                <div className="h-10 bg-base-300 rounded w-32" />
+                            </div>
+                        </div>
+
+                        {/* Yorumlar Listesi Skeleton */}
+                        <div className="space-y-6">
+                            {[1, 2, 3].map((index) => (
+                                <div key={index} className="border-b border-base-300 pb-4">
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <div className="w-12 h-12 bg-base-300 rounded-full" />
+                                        <div className="space-y-2">
+                                            <div className="h-4 bg-base-300 rounded w-32" />
+                                            <div className="h-4 bg-base-300 rounded w-24" />
+                                            <div className="h-4 bg-base-300 rounded w-20" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2 mt-4">
+                                        <div className="h-4 bg-base-300 rounded w-full" />
+                                        <div className="h-4 bg-base-300 rounded w-5/6" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Load More Button Skeleton */}
+                        <div className="w-full h-12 bg-base-300 rounded mt-6" />
+                    </div>
+                </div>
+            </div> : <div className="container animate-fade mx-auto px-4 py-8">
                 {/* Ana Ürün Kartı */}
                 <div className="card lg:card-side bg-base-100 shadow-xl">
                     {/* Sol Taraf - Ürün Görselleri */}
@@ -255,7 +374,7 @@ export default function ProductDetail({ product, user, productId, reviews, updat
                                             +
                                         </button>
                                     </div>
-                                    <button className="btn btn-primary">
+                                    <button onClick={addCart} className="btn btn-primary">
                                         Sepete Ekle
                                     </button>
                                 </div>
@@ -399,7 +518,7 @@ export default function ProductDetail({ product, user, productId, reviews, updat
                         </div>
                     </div>
                 )}
-            </div>
+            </div>}
 
             {/* Görsel Modal */}
             <AnimatePresence>
@@ -459,4 +578,5 @@ export default function ProductDetail({ product, user, productId, reviews, updat
             </AnimatePresence>
         </div>
     );
+
 }

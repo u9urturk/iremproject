@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId,  } from '../firebase';
+import { getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId, } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import ProductDetail from './uiComponents/ProductDetail';
@@ -14,6 +14,7 @@ export default function Product() {
   const [product, setProduct] = useState(null)
   const [reviews, setReviews] = useState([])
   const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState()
 
 
   const getProductReaction = useCallback(
@@ -54,7 +55,7 @@ export default function Product() {
             rating: e.rating
 
           }]);
-        
+
         });
       })
     },
@@ -62,13 +63,18 @@ export default function Product() {
   )
 
   const handleAddToCart = () => {
-    addToCart(productId, product)
+    addToCart(productId, product,quantity)
   }
 
-  const updateReviewState = (data)=>{
-    setReviews(prevReviews=>[...prevReviews,data])
+  const updateReviewState = (data) => {
+    setReviews(prevReviews => [...prevReviews, data])
   }
 
+  const setQuantityFb = (e)=>{
+    setQuantity(e)
+  }
+
+  console.log(quantity)
 
   useEffect(() => {
     getProductReaction();
@@ -77,14 +83,11 @@ export default function Product() {
 
 
 
-  if (product) {
-    return (
-
-      <ProductDetail productId={productId} updateReviewState={updateReviewState} reviews={reviews} user={user} product={product}></ProductDetail>
-
-    )
-  } else {
-    <div>Loading...</div>
-  }
+  return (
+    <div className='min-h-screen'>
+      {product && <ProductDetail productId={productId} quantityFB={setQuantityFb} addCart={handleAddToCart} updateReviewState={updateReviewState} reviews={reviews} user={user} product={product}></ProductDetail>
+      }
+    </div>
+  )
 
 }

@@ -55,7 +55,7 @@ const cartReducer = (state, action) => {
                 ...state,
                 items: state.items.filter(item => item.id !== productId),
                 totalQuantity: state.totalQuantity - itemToRemove.quantity,
-                totalAmount: state.totalAmount - itemToRemove.price * itemToRemove.quantity,
+                totalAmount: state.totalAmount - itemToRemove.basePrice * itemToRemove.quantity,
             };
 
         case actionTypes.CLEAR_CART:
@@ -77,7 +77,7 @@ export const CartProvider = ({ children }) => {
     // Firestore ile senkronize etmek için sepeti ayarla
     const setCart = (cartItems) => {
         const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
-        const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        const totalAmount = cartItems.reduce((total, item) => total + item.basePrice * item.quantity, 0);
         dispatch({ type: actionTypes.SET_CART, payload: { items: cartItems, totalQuantity, totalAmount } });
     };
 
@@ -85,6 +85,7 @@ export const CartProvider = ({ children }) => {
     const fetchCartFromFirestore = async () => {
         try {
             const cartItems = (await getCart(user.uid)).cartItems
+            console.log(cartItems)
             setCart(cartItems);
         } catch (error) {
             console.error("Fetch Cart Error:", error);
