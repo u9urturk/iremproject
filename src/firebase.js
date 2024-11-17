@@ -27,7 +27,7 @@ const storage = getStorage();
 
 // Sepet Operasyonları
 // Sepete Ürün Ekleme
-export const addToCartFb = async (userId, productId, productData,quantity = 1,baseImage) => {
+export const addToCartFb = async (userId, productId, productData, quantity = 1, baseImage) => {
     try {
         const cartRef = doc(db, "users", userId, "cart", productId);
         // Ürünün mevcut olup olmadığını kontrol et
@@ -38,7 +38,7 @@ export const addToCartFb = async (userId, productId, productData,quantity = 1,ba
             await updateDoc(cartRef, {
                 quantity: increment(quantity),
                 updatedAt: new Date().toISOString()
-            });
+            })
         } else {
             // Ürün yoksa yeni bir ürün olarak ekle
             const newCartItem = {
@@ -46,16 +46,15 @@ export const addToCartFb = async (userId, productId, productData,quantity = 1,ba
                 quantity: quantity,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                baseImage:baseImage
+                baseImage: baseImage
             };
             await setDoc(cartRef, newCartItem);
         }
         showToast('success', 'Ürün sepete başarıyla eklendi');
-        return { success: true };
+        return { success: true ,documentId: cartRef.id };
     } catch (error) {
         showToast('error', 'Ürün sepete eklenirken bir hata oluştu');
         console.error('Add to Cart Error:', error);
-        throw error;
     }
 };
 
@@ -70,7 +69,6 @@ export const getCart = async (userId) => {
     } catch (error) {
         showToast('error', 'Sepet getirilirken bir hata oluştu');
         console.error('Get Cart Error:', error);
-        throw error;
     }
 };
 
@@ -95,7 +93,6 @@ export const updateCartItem = async (userId, productId, quantity) => {
     } catch (error) {
         showToast('error', 'Sepet güncellenirken bir hata oluştu');
         console.error('Update Cart Item Error:', error);
-        throw error;
     }
 };
 
@@ -110,7 +107,6 @@ export const removeCartItem = async (userId, productId) => {
     } catch (error) {
         showToast('error', 'Ürün sepetten çıkarılırken bir hata oluştu');
         console.error('Remove Cart Item Error:', error);
-        throw error;
     }
 };
 
@@ -128,7 +124,6 @@ export const clearCartFb = async (userId) => {
     } catch (error) {
         showToast('error', 'Sepet temizlenirken bir hata oluştu');
         console.error('Clear Cart Error:', error);
-        throw error;
     }
 };
 
@@ -169,7 +164,7 @@ async function getUserbyId(id) {
         return null;
     }
 }
-  
+
 async function addComment(data) {
     const db = getFirestore();
     console.log(data)

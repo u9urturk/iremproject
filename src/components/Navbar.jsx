@@ -19,7 +19,7 @@ export default function Navbar() {
     const user = useSelector(state => state.auth.user)
     const [scrollY, setScrollY] = useState(0);
     const [isAdminUser, setIsAdminUser] = useState(false)
-    const { items, totalQuantity, totalAmount, removeFromCart, clearCart } = useCart();
+    const { items, totalQuantity, totalAmount, removeFromCart, clearCart,updateQantityFromCart } = useCart();
 
 
 
@@ -141,7 +141,7 @@ export default function Navbar() {
                                                 <strong>Ödenecek Tutar :</strong>
                                                 <strong>{totalAmount}₺</strong>
                                             </div>
-                                            <button className='btn rounded-md btn-primary w-full'>Satın Al</button>
+                                            <Link to={"checkoutsummary"} disabled={items.length > 0 ? false:true} className='btn rounded-md btn-primary w-full'>Siparişi Oluştur</Link>
                                         </div>
 
                                         {
@@ -149,22 +149,22 @@ export default function Navbar() {
                                                 items.map((item) => (
                                                     <li key={item.id} className="w-full mb-4">
                                                         <div className="w-full rounded-lg  shadow bg-base-100 flex items-center justify-between">
-                                                            <div className="">
+                                                            <div>
                                                                 <img className='object-cover rounded-md w-20 h-20' src={item.baseImage} alt={item.name} />
                                                                 
                                                             </div>
-                                                            <div className="flex items-center justify-center gap-x-10">
+                                                            <div className="flex items-center justify-center gap-x-5">
                                                                 <div className="flex flex-col items-center justify-center">
                                                                     <strong>{item.name}</strong>
                                                                     <span className='opacity-70 font-medium'>{item.basePrice}₺</span>
                                                                 </div>
                                                                 <div className="flex items-center justify-center gap-x-4">
                                                                     <p className="flex items-center flex-col justify-center gap-y-1">
-                                                                        <MdExpandLess size={24} />
+                                                                        <MdExpandLess className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={()=>{updateQantityFromCart(item.id,item.quantity,"INCREASE")}} />
                                                                         <span className="font-semibold">{item.quantity}</span>
-                                                                        <MdExpandMore size={24} />
+                                                                        <MdExpandMore className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={()=>{updateQantityFromCart(item.id,item.quantity,"REDUCE")}} />
                                                                     </p>
-                                                                    <p onClick={()=>{removeFromCart(item.id)}} className="text-warning font-semibold">Kaldır</p>
+                                                                    <p onClick={()=>{removeFromCart(item.id)}} className="text-warning hover:text-success transition-colors font-semibold">Kaldır</p>
                                                                 </div>
                                                             </div>
                                                         </div>

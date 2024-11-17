@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { addToCartFb, clearCartFb, getCart, removeCartItem } from '../firebase';
+import { addToCartFb, clearCartFb, getCart, removeCartItem, updateCartItem } from '../firebase';
 import { useSelector } from 'react-redux';
+import Product from '../pages/Product';
 
 // Sepet durumu için başlangıç durumu 
 const initialState = {
@@ -15,6 +16,7 @@ const actionTypes = {
     ADD_TO_CART: "ADD_TO_CART",
     REMOVE_FROM_CART: "REMOVE_FROM_CART",
     CLEAR_CART: "CLEAR_CART",
+    UPDATE_FROM_CART: "UPDATE_CART"
 };
 
 // Sepet durumunu yönetmek için reducer fonksiyonu
@@ -28,15 +30,42 @@ const cartReducer = (state, action) => {
                 totalAmount: action.payload.totalAmount,
             };
 
+        case actionTypes.UPDATE_FROM_CART:
+            const { uProductId, uType } = action.payload
+            const uExistingProductIndex = state.items.findIndex(item => item.id === uProductId);
+            const uUpdatedItems = [...state.items];
+
+
+            if (uType === "REDUCE") {
+                uUpdatedItems[uExistingProductIndex].quantity -= 1;
+                return {
+                    ...state,
+                    items: uUpdatedItems,
+                    totalQuantity: state.totalQuantity - 1,
+                    totalAmount: state.totalAmount - uUpdatedItems[uExistingProductIndex].basePrice * 1,
+                };
+            } else {
+                uUpdatedItems[uExistingProductIndex].quantity += 1;
+                return {
+                    ...state,
+                    items: uUpdatedItems,
+                    totalQuantity: state.totalQuantity + 1,
+                    totalAmount: state.totalAmount + uUpdatedItems[uExistingProductIndex].basePrice * 1,
+                };
+
+            }
+
+
+
         case actionTypes.ADD_TO_CART:
-            const { product, quantity,baseImage } = action.payload;
-            const existingProductIndex = state.items.findIndex(item => item.id === product.id);
+            const { product, quantity, baseImage, id } = action.payload;
+            const existingProductIndex = state.items.findIndex(item => item.id === id);
             const updatedItems = [...state.items];
 
             if (existingProductIndex >= 0) {
                 updatedItems[existingProductIndex].quantity += quantity;
             } else {
-                updatedItems.push({ ...product, quantity,baseImage});
+                updatedItems.push({ ...product, quantity, baseImage, id });
             }
 
             return {
@@ -85,7 +114,6 @@ export const CartProvider = ({ children }) => {
     const fetchCartFromFirestore = async () => {
         try {
             const cartItems = (await getCart(user.uid)).cartItems
-            console.log(cartItems)
             setCart(cartItems);
         } catch (error) {
             console.error("Fetch Cart Error:", error);
@@ -101,25 +129,50 @@ export const CartProvider = ({ children }) => {
     }, [user?.uid]);
 
     // Sepete Ürün Ekleme (Firebase ve State)
-    const addToCart = async (productId, product, quantity = 1,baseImage) => {
+    const addToCart = async (id, product, quantity = 1, baseImage) => {
 
 
         try {
             // Firestore'a güncelleme veya ekleme
-            addToCartFb(user.uid, productId, product, quantity,baseImage)
+            addToCartFb(user.uid, id, product, quantity, baseImage).then(() => {
+                dispatch({ type: actionTypes.ADD_TO_CART, payload: { product, quantity, baseImage, id } });
 
-            dispatch({ type: actionTypes.ADD_TO_CART, payload: { product, quantity ,baseImage } });
+            })
         } catch (error) {
             console.error("Add to Cart Error:", error);
         }
     };
 
+    const updateQantityFromCart = async (productId, quantity, type) => {
+        switch (type) {
+            case "REDUCE":
+                const reduceQauntity = quantity - 1;
+                updateCartItem(user.uid, productId, reduceQauntity).then(() => {
+                    dispatch({ type: actionTypes.UPDATE_FROM_CART, payload: { uProductId: productId, uType: type } });
+
+                })
+                break;
+            case "INCREASE":
+                const increaseQauntity = quantity + 1;
+                updateCartItem(user.uid, productId, increaseQauntity).then(() => {
+                    dispatch({ type: actionTypes.UPDATE_FROM_CART, payload: { uProductId: productId, uType: type } });
+                })
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
     // Sepetten Ürün Kaldırma (Firebase ve State)
     const removeFromCart = async (productId) => {
 
         try {
-            removeCartItem(user.uid, productId)
-            dispatch({ type: actionTypes.REMOVE_FROM_CART, payload: productId });
+            removeCartItem(user.uid, productId).then(() => {
+                dispatch({ type: actionTypes.REMOVE_FROM_CART, payload: productId });
+            })
         } catch (error) {
             console.error("Remove from Cart Error:", error);
         }
@@ -129,7 +182,7 @@ export const CartProvider = ({ children }) => {
     const clearCart = async () => {
 
         try {
-            clearCartFb(user.uid).then(res => {
+            clearCartFb(user.uid).then(() => {
                 dispatch({ type: actionTypes.CLEAR_CART });
             })
         } catch (error) {
@@ -138,7 +191,7 @@ export const CartProvider = ({ children }) => {
     };
 
     return (
-        <CartContext.Provider value={{ ...state, addToCart, removeFromCart, clearCart }}>
+        <CartContext.Provider value={{ ...state, addToCart, removeFromCart, clearCart, updateQantityFromCart }}>
             {children}
         </CartContext.Provider>
     );

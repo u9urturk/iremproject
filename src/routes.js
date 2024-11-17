@@ -1,3 +1,4 @@
+import { path } from "framer-motion/client"
 import CookiePolicy from "./components/policy/CookiePolicy "
 import PrivacyPolicy from "./components/policy/PrivacyPolicy "
 import UserAgreement from "./components/policy/UserAgreement"
@@ -16,6 +17,7 @@ import AddressManager from "./pages/profile/AddressManager"
 import IndexProfile from "./pages/profile/IndexProfile"
 import MainProfile from "./pages/profile/MainProfile"
 import PrivateRoute from "./utils"
+import CheckoutSummary from "./pages/uiComponents/CheckoutSummary"
 
 const routes = [
     {
@@ -47,6 +49,10 @@ const routes = [
                     }
                 ]
                 
+            },
+            {
+                path:"checkoutsummary",
+                element:<CheckoutSummary></CheckoutSummary>    
             }
             ,
             {
