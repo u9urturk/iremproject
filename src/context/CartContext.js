@@ -29,21 +29,21 @@ const cartReducer = (state, action) => {
             };
 
         case actionTypes.ADD_TO_CART:
-            const { product, quantity } = action.payload;
+            const { product, quantity,baseImage } = action.payload;
             const existingProductIndex = state.items.findIndex(item => item.id === product.id);
             const updatedItems = [...state.items];
 
             if (existingProductIndex >= 0) {
                 updatedItems[existingProductIndex].quantity += quantity;
             } else {
-                updatedItems.push({ ...product, quantity });
+                updatedItems.push({ ...product, quantity,baseImage});
             }
 
             return {
                 ...state,
                 items: updatedItems,
                 totalQuantity: state.totalQuantity + quantity,
-                totalAmount: state.totalAmount + product.price * quantity,
+                totalAmount: state.totalAmount + product.basePrice * quantity,
             };
 
         case actionTypes.REMOVE_FROM_CART:
@@ -101,14 +101,14 @@ export const CartProvider = ({ children }) => {
     }, [user?.uid]);
 
     // Sepete Ürün Ekleme (Firebase ve State)
-    const addToCart = async (productId, product, quantity = 1) => {
+    const addToCart = async (productId, product, quantity = 1,baseImage) => {
 
 
         try {
             // Firestore'a güncelleme veya ekleme
-            addToCartFb(user.uid, productId, product, quantity)
+            addToCartFb(user.uid, productId, product, quantity,baseImage)
 
-            dispatch({ type: actionTypes.ADD_TO_CART, payload: { product, quantity } });
+            dispatch({ type: actionTypes.ADD_TO_CART, payload: { product, quantity ,baseImage } });
         } catch (error) {
             console.error("Add to Cart Error:", error);
         }

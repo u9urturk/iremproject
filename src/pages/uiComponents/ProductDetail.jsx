@@ -374,7 +374,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={addCart} className="btn btn-primary">
+                                    <button onClick={()=>{addCart(images[0])}} className="btn btn-primary">
                                         Sepete Ekle
                                     </button>
                                 </div>

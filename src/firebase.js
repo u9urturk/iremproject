@@ -27,7 +27,7 @@ const storage = getStorage();
 
 // Sepet Operasyonları
 // Sepete Ürün Ekleme
-export const addToCartFb = async (userId, productId, productData, quantity = 1) => {
+export const addToCartFb = async (userId, productId, productData,quantity = 1,baseImage) => {
     try {
         const cartRef = doc(db, "users", userId, "cart", productId);
         // Ürünün mevcut olup olmadığını kontrol et
@@ -45,7 +45,8 @@ export const addToCartFb = async (userId, productId, productData, quantity = 1) 
                 ...productData,
                 quantity: quantity,
                 createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
+                baseImage:baseImage
             };
             await setDoc(cartRef, newCartItem);
         }
@@ -346,7 +347,7 @@ export const isAdmin = async (uid) => {
 const showToast = (type, message) => {
     const toastConfig = {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

@@ -9,6 +9,8 @@ import { LuShoppingCart } from "react-icons/lu";
 import { isAdmin } from '../firebase'
 import { LuUserCog } from "react-icons/lu";
 import { useCart } from '../context/CartContext'
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
+
 
 
 
@@ -18,11 +20,8 @@ export default function Navbar() {
     const [scrollY, setScrollY] = useState(0);
     const [isAdminUser, setIsAdminUser] = useState(false)
     const { items, totalQuantity, totalAmount, removeFromCart, clearCart } = useCart();
-    const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-    const toggleDropdown = () => {
-        setDropdownOpen(!isDropdownOpen);
-    };
+
 
 
     const handleScroll = () => {
@@ -53,7 +52,7 @@ export default function Navbar() {
         };
     }, []);
 
-
+    console.log(items)
     return (
         <div>
             <div
@@ -115,71 +114,73 @@ export default function Navbar() {
                                 </svg>
                             </Link>
                         </li>
-                        <li onClick={toggleDropdown} className='relative tooltip md:tooltip-bottom indicator' data-tip={"Sepetim"}>
-                            <Link>
-                                <span className="indicator-item badge badge-secondary">{totalQuantity}</span>
-                                <LuShoppingCart size={22} />
-                            </Link>
-                            {/* Sepet Dropdown */}
-                            {isDropdownOpen && (
-                                <div className="dropdown-content absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4">
-                                    <h2 className="text-lg font-semibold text-gray-800 mb-4">Sepet</h2>
+                        <div>
+                            <div className="drawer ">
+                                <input id="my-drawer" type="checkbox" className="drawer-toggle " />
+                                <div className="drawer-content">
+                                    {/* Page content here */}
+                                    <label htmlFor="my-drawer">
+                                        <li>
+                                            <div className='indicator'>
+                                                <LuShoppingCart size={22} />
+                                                <span className="indicator-item text-xs opacity-85 badge badge-secondary">{totalQuantity}</span>
+                                            </div>
+                                        </li>
+                                    </label>
+                                </div>
+                                <div className="drawer-side">
+                                    <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                                    <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                                        <div className='space-y-2 my-8 mx-2'>
+                                            <div className='flex items-center justify-between'>
+                                                <div className='font-semibold  text-3xl mb-2 opacity-80 text-accent-content'>Sepet</div>
+                                                <button onClick={clearCart} className='btn btn-sm rounded-md btn-outline '>Sepeti Temizle</button>
+                                            </div>
+                                            <div className='divider'>Toplam</div>
+                                            <div className='flex items-center justify-between px-2'>
+                                                <strong>Ödenecek Tutar :</strong>
+                                                <strong>{totalAmount}₺</strong>
+                                            </div>
+                                            <button className='btn rounded-md btn-primary w-full'>Satın Al</button>
+                                        </div>
 
-                                    {items.length > 0 ? (
-                                        <div>
-                                            {/* Ürün Listesi */}
-                                            <ul className="space-y-3 max-h-60 overflow-y-auto">
-                                                {items.map((item) => (
-                                                    <li key={item.id} className="flex justify-between items-center">
-                                                        <div className="flex items-center space-x-3">
-                                                            <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-md" />
-                                                            <div>
-                                                                <p className="font-medium text-gray-800">{item.name}</p>
-                                                                <p className="text-sm text-gray-600">{item.price}₺ x {item.quantity}</p>
+                                        {
+                                            items.length > 0 ? (
+                                                items.map((item) => (
+                                                    <li key={item.id} className="w-full mb-4">
+                                                        <div className="w-full rounded-lg  shadow bg-base-100 flex items-center justify-between">
+                                                            <div className="">
+                                                                <img className='object-cover rounded-md w-20 h-20' src={item.baseImage} alt={item.name} />
+                                                                
+                                                            </div>
+                                                            <div className="flex items-center justify-center gap-x-10">
+                                                                <div className="flex flex-col items-center justify-center">
+                                                                    <strong>{item.name}</strong>
+                                                                    <span className='opacity-70 font-medium'>{item.basePrice}₺</span>
+                                                                </div>
+                                                                <div className="flex items-center justify-center gap-x-4">
+                                                                    <p className="flex items-center flex-col justify-center gap-y-1">
+                                                                        <MdExpandLess size={24} />
+                                                                        <span className="font-semibold">{item.quantity}</span>
+                                                                        <MdExpandMore size={24} />
+                                                                    </p>
+                                                                    <p onClick={()=>{removeFromCart(item.id)}} className="text-warning font-semibold">Kaldır</p>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <button
-                                                            className="text-red-500 text-sm"
-                                                            onClick={() => removeFromCart(item.id)}
-                                                        >
-                                                            Kaldır
-                                                        </button>
                                                     </li>
-                                                ))}
-                                            </ul>
+                                                ))
+                                            ) : (
+                                                <div className="w-full rounded-lg h-16   shadow bg-base-100 flex items-center justify-center"><p className='opacity-70'>Sepetinizde ürün bulunmamakta.</p></div>
+                                            )
+                                        }
 
-                                            {/* Toplam Tutar */}
-                                            <div className="mt-4 flex justify-between items-center border-t pt-4">
-                                                <span className="text-gray-800 font-semibold">Toplam:</span>
-                                                <span className="text-gray-800 font-semibold">{totalAmount}₺</span>
-                                            </div>
 
-                                            {/* Checkout ve Sepeti Temizle Butonları */}
-                                            <div className="mt-4 flex space-x-2">
-                                                <Link
-                                                    to="/checkout"
-                                                    className="btn btn-primary flex-1"
-                                                    onClick={() => setDropdownOpen(false)}
-                                                >
-                                                    Satın Al
-                                                </Link>
-                                                <button
-                                                    className="btn btn-outline btn-error flex-1"
-                                                    onClick={() => {
-                                                        clearCart();
-                                                        setDropdownOpen(false);
-                                                    }}
-                                                >
-                                                    Sepeti Temizle
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-600 text-center">Sepetiniz boş</p>
-                                    )}
+                                    </ul>
+
                                 </div>
-                            )}
-                        </li>
+                            </div>
+                        </div>
 
                         <li className={`${user ? "block" : "hidden"} tooltip md:tooltip-bottom`} data-tip={"Profile"}>
                             <Link to={"profile"}>
@@ -192,8 +193,11 @@ export default function Navbar() {
                             </div>
                         </li>
                     </ul>
+
                 </div>
-            </div>
-        </div>
+            </div >
+
+
+        </div >
     )
 }

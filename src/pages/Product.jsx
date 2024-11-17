@@ -14,7 +14,7 @@ export default function Product() {
   const [product, setProduct] = useState(null)
   const [reviews, setReviews] = useState([])
   const { addToCart } = useCart();
-  const [quantity, setQuantity] = useState()
+  const [quantity, setQuantity] = useState();
 
 
   const getProductReaction = useCallback(
@@ -62,8 +62,8 @@ export default function Product() {
     [productId],
   )
 
-  const handleAddToCart = () => {
-    addToCart(productId, product,quantity)
+  const handleAddToCart = (baseImage) => {
+    addToCart(productId, product,quantity,baseImage)
   }
 
   const updateReviewState = (data) => {
@@ -74,7 +74,6 @@ export default function Product() {
     setQuantity(e)
   }
 
-  console.log(quantity)
 
   useEffect(() => {
     getProductReaction();

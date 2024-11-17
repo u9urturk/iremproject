@@ -1,7 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
 
-export default function HeroSectionSlider({width="full",hight}) {
+export default function HeroSectionSlider({width="full",hight="72"}) {
 
     const settings = {
         arrow: false,
@@ -17,7 +17,7 @@ export default function HeroSectionSlider({width="full",hight}) {
         arrows: false
     };
     return (
-        <div className={`slider-container animate-fade w-auto h-auto`}>
+        <div className={`slider-container   animate-fade w-auto h-auto`}>
             <Slider {...settings}>
                 <div  >
                     <img className={`w-${width} h-${hight}`} src="https://img.freepik.com/premium-photo/3d-rendering-offline-text-with-screen-effects-technological-glitches_232104-15720.jpg" alt="" />
