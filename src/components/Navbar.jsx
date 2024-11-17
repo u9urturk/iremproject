@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CiSearch } from 'react-icons/ci'
 import Login from './Login'
 import logo from '../materials/logos/logo.svg'
@@ -19,7 +19,7 @@ export default function Navbar() {
     const user = useSelector(state => state.auth.user)
     const [scrollY, setScrollY] = useState(0);
     const [isAdminUser, setIsAdminUser] = useState(false)
-    const { items, totalQuantity, totalAmount, removeFromCart, clearCart,updateQantityFromCart } = useCart();
+    const { items, totalQuantity, totalAmount, removeFromCart, clearCart, updateQantityFromCart } = useCart();
 
 
 
@@ -42,6 +42,15 @@ export default function Navbar() {
 
 
     }, [user])
+
+
+    const drawerRef = useRef(null);
+
+    const closeDrawer = () => {
+        if (drawerRef.current) {
+            drawerRef.current.checked = false;
+        }
+    };
 
 
     useEffect(() => {
@@ -116,10 +125,10 @@ export default function Navbar() {
                         </li>
                         <div>
                             <div className="drawer ">
-                                <input id="my-drawer" type="checkbox" className="drawer-toggle " />
+                                <input id="basket-cart" ref={drawerRef} type="checkbox" className="drawer-toggle " />
                                 <div className="drawer-content">
                                     {/* Page content here */}
-                                    <label htmlFor="my-drawer">
+                                    <label htmlFor="basket-cart">
                                         <li>
                                             <div className='indicator'>
                                                 <LuShoppingCart size={22} />
@@ -129,7 +138,7 @@ export default function Navbar() {
                                     </label>
                                 </div>
                                 <div className="drawer-side">
-                                    <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                                    <label htmlFor="basket-cart"  aria-label="close sidebar" className="drawer-overlay"></label>
                                     <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
                                         <div className='space-y-2 my-8 mx-2'>
                                             <div className='flex items-center justify-between'>
@@ -141,7 +150,7 @@ export default function Navbar() {
                                                 <strong>Ödenecek Tutar :</strong>
                                                 <strong>{totalAmount}₺</strong>
                                             </div>
-                                            <Link to={"checkoutsummary"} disabled={items.length > 0 ? false:true} className='btn rounded-md btn-primary w-full'>Siparişi Oluştur</Link>
+                                            <Link to={"checkoutsummary"} onClick={closeDrawer} disabled={items.length > 0 ? false : true} className='btn rounded-md btn-primary w-full'>Siparişi Oluştur</Link>
                                         </div>
 
                                         {
@@ -151,7 +160,7 @@ export default function Navbar() {
                                                         <div className="w-full rounded-lg  shadow bg-base-100 flex items-center justify-between">
                                                             <div>
                                                                 <img className='object-cover rounded-md w-20 h-20' src={item.baseImage} alt={item.name} />
-                                                                
+
                                                             </div>
                                                             <div className="flex items-center justify-center gap-x-5">
                                                                 <div className="flex flex-col items-center justify-center">
@@ -160,11 +169,11 @@ export default function Navbar() {
                                                                 </div>
                                                                 <div className="flex items-center justify-center gap-x-4">
                                                                     <p className="flex items-center flex-col justify-center gap-y-1">
-                                                                        <MdExpandLess className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={()=>{updateQantityFromCart(item.id,item.quantity,"INCREASE")}} />
+                                                                        <MdExpandLess className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={() => { updateQantityFromCart(item.id, item.quantity, "INCREASE") }} />
                                                                         <span className="font-semibold">{item.quantity}</span>
-                                                                        <MdExpandMore className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={()=>{updateQantityFromCart(item.id,item.quantity,"REDUCE")}} />
+                                                                        <MdExpandMore className='cursor-pointer hover:scale-125 hover:bg-base-100 rounded-full transition-transform' size={24} onClick={() => { updateQantityFromCart(item.id, item.quantity, "REDUCE") }} />
                                                                     </p>
-                                                                    <p onClick={()=>{removeFromCart(item.id)}} className="text-warning hover:text-success transition-colors font-semibold">Kaldır</p>
+                                                                    <p onClick={() => { removeFromCart(item.id) }} className="text-warning hover:text-success transition-colors font-semibold">Kaldır</p>
                                                                 </div>
                                                             </div>
                                                         </div>

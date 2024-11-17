@@ -26,7 +26,7 @@ const CheckoutSummary = () => {
 
   
     return (
-        <div className="max-w-6xl mx-auto p-4">
+        <div className="max-w-6xl animate-fade mx-auto p-4">
             {/* Sipariş İlerleme Durumu */}
             <div className="mb-8">
                 <div className="flex justify-between items-center">
