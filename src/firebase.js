@@ -472,7 +472,6 @@ export const createAddress = async (userId, addressData) => {
     } catch (error) {
         showToast('error', 'Adres eklenirken bir hata oluştu');
         console.error('Create Address Error:', error);
-        throw error;
     }
 };
 
@@ -497,7 +496,6 @@ export const getUserAddresses = async (userId) => {
     } catch (error) {
         showToast('error', 'Adresler yüklenirken bir hata oluştu');
         console.error('Get Addresses Error:', error);
-        throw error;
     }
 };
 
@@ -524,6 +522,36 @@ export const getAddressById = async (userId, addressId) => {
     } catch (error) {
         showToast('error', 'Adres bilgileri alınırken bir hata oluştu');
         console.error('Get Address Error:', error);
+    }
+};
+
+//Varsayılan adresi getir 
+export const getDefaultAddress = async (userId) => {
+    try {
+        // Kullanıcının adresler koleksiyonuna sorgu
+        const addressesRef = collection(db, "users", userId, "addresses");
+        const q = query(addressesRef, where("isDefault", "==", true));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            showToast('warning', 'Varsayılan adres bulunamadı');
+            return {
+                success: false
+            };
+        }
+
+        // İlk varsayılan adresi döndür
+        const defaultAddressDoc = querySnapshot.docs[0];
+        return {
+            success: true,
+            address: {
+                id: defaultAddressDoc.id,
+                ...defaultAddressDoc.data()
+            }
+        };
+    } catch (error) {
+        showToast('error', 'Varsayılan adres alınırken bir hata oluştu');
+        console.error('Get Default Address Error:', error);
         throw error;
     }
 };

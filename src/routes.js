@@ -44,7 +44,7 @@ const routes = [
                     },
                     {
                         path:"address",
-                        element:<AddressManager></AddressManager>
+                        element:<AddressManager mainPage={true}></AddressManager>
 
                     }
                 ]

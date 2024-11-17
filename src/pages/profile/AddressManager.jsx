@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import { MapPin, Plus, Edit, Trash, Home, Building, Check } from 'lucide-react';
 import { createAddress, deleteAddress, getUserAddresses, updateAddress } from '../../firebase';
 import { useSelector } from 'react-redux';
 
-const AddressManager = () => {
+const AddressManager = ({handleJustAdd=false,onClose,mainPage=null}) => {
     const user = useSelector(state => state.auth.user)
 
     const [addresses, setAddresses] = useState([]);
+    const [justAdd, setJustAdd] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -25,6 +25,17 @@ const AddressManager = () => {
     useEffect(() => {
         loadAddresses();
     }, [user]);
+
+    useEffect(() => {
+      if(handleJustAdd === true){
+        setIsAddModalOpen(true)
+        setJustAdd(true);
+      }else{
+        setIsAddModalOpen(false)
+        setJustAdd(false);
+      }
+    }, [handleJustAdd])
+    
 
     const loadAddresses = async () => {
         setLoading(true);
@@ -50,6 +61,7 @@ const AddressManager = () => {
             setEditingAddress(null);
             resetForm();
             loadAddresses();
+            onClose(true);
         } catch (error) {
             console.error('Submit address error:', error);
         }
@@ -86,6 +98,7 @@ const AddressManager = () => {
         });
     };
 
+   if(justAdd === false && mainPage === true){
     return (
         <div className="container mx-auto min-h-screen  p-4 max-w-6xl">
             {/* Header */}
@@ -295,6 +308,146 @@ const AddressManager = () => {
             </dialog>
         </div>
     );
+   }else if(justAdd === true && mainPage === false){
+    return (
+        <div className="container mx-auto p-4 max-w-6xl">
+            
+            {/* Add/Edit Modal */}
+            <dialog className={`modal ${isAddModalOpen ? 'modal-open' : ''}`}>
+                <div className="modal-box max-w-2xl">
+                    <h3 className="font-bold text-lg mb-4">
+                        {editingAddress ? 'Adresi Düzenle' : 'Yeni Adres Ekle'}
+                    </h3>
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Adres Başlığı</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Ad Soyad</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    value={formData.fullName}
+                                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Telefon</span>
+                                </label>
+                                <input
+                                    type="tel"
+                                    className="input input-bordered"
+                                    value={formData.phoneNumber}
+                                    onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Şehir</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    value={formData.city}
+                                    onChange={(e) => setFormData({...formData, city: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">İlçe</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    value={formData.district}
+                                    onChange={(e) => setFormData({...formData, district: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Mahalle</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input input-bordered"
+                                    value={formData.neighborhood}
+                                    onChange={(e) => setFormData({...formData, neighborhood: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control md:col-span-2">
+                                <label className="label">
+                                    <span className="label-text">Adres Detayı</span>
+                                </label>
+                                <textarea
+                                    className="textarea textarea-bordered h-24"
+                                    value={formData.addressDetail}
+                                    onChange={(e) => setFormData({...formData, addressDetail: e.target.value})}
+                                    required
+                                ></textarea>
+                            </div>
+                            <div className="form-control md:col-span-2">
+                                <label className="label cursor-pointer">
+                                    <span className="label-text">Varsayılan adres olarak ayarla</span>
+                                    <input
+                                        type="checkbox"
+                                        className="checkbox checkbox-primary"
+                                        checked={formData.isDefault}
+                                        onChange={(e) => setFormData({...formData, isDefault: e.target.checked})}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+                        <div className="modal-action">
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={() => {
+                                    setIsAddModalOpen(false);
+                                    setEditingAddress(null);
+                                    resetForm();
+                                    onClose(false);
+                                }}
+                            >
+                                İptal
+                            </button>
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <span className="loading loading-spinner"></span>
+                                ) : (
+                                    <Check size={20} />
+                                )}
+                                {editingAddress ? 'Güncelle' : 'Kaydet'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div className="modal-backdrop bg-neutral opacity-40" onClick={() => setIsAddModalOpen(false)}></div>
+            </dialog>
+        </div>
+    );
+   }
 };
 
 export default AddressManager;
