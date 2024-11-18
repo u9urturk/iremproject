@@ -23,7 +23,6 @@ export default function IndexProfile() {
   useEffect(() => {
     if(user){
       getUserByUid(user.uid).then(res=>{
-        console.log(res)
         setForm({
           displayName:res.displayName,
           email:res.email,

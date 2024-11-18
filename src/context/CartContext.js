@@ -179,10 +179,10 @@ export const CartProvider = ({ children }) => {
     };
 
     // Sepeti Temizleme (Firebase ve State)
-    const clearCart = async () => {
+    const clearCart = async (info=true) => {
 
         try {
-            clearCartFb(user.uid).then(() => {
+            clearCartFb(user.uid,info).then(() => {
                 dispatch({ type: actionTypes.CLEAR_CART });
             })
         } catch (error) {

@@ -1,4 +1,3 @@
-import { path } from "framer-motion/client"
 import CookiePolicy from "./components/policy/CookiePolicy "
 import PrivacyPolicy from "./components/policy/PrivacyPolicy "
 import UserAgreement from "./components/policy/UserAgreement"
@@ -18,6 +17,8 @@ import IndexProfile from "./pages/profile/IndexProfile"
 import MainProfile from "./pages/profile/MainProfile"
 import PrivateRoute from "./utils"
 import CheckoutSummary from "./pages/uiComponents/CheckoutSummary"
+import OrderManager from "./pages/profile/OrderManageger"
+import OrderDetail from "./pages/profile/OrderDetail"
 
 const routes = [
     {
@@ -45,6 +46,16 @@ const routes = [
                     {
                         path:"address",
                         element:<AddressManager mainPage={true}></AddressManager>
+
+                    },
+                    {
+                        path:"orders",
+                        element:<OrderManager></OrderManager>
+
+                    },
+                    {
+                        path:"orders/:id",
+                        element:<OrderDetail></OrderDetail>
 
                     }
                 ]

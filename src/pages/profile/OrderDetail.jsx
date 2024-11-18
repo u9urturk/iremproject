@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Package, CreditCard, MapPin, ArrowDownUp } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
-import { createOrder, getUserAddresses } from '../../firebase';
+import { getUserAddresses } from '../../firebase';
 import { useSelector } from 'react-redux';
 import AddressManager from '../profile/AddressManager';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-
-const CheckoutSummary = () => {
+const OrderDetail = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const user = useSelector(state => state.auth.user);
-    const { items, totalAmount, clearCart } = useCart();
     const [address, setAddress] = useState();
+    const [items, setItems] = useState([])
+    const [totalAmount, setTotalAmount] = useState(0)
     const [allAddress, setAllAddress] = useState([])
     const [justAdd, setJustAdd] = useState(false);
-    const navigate = useNavigate();
 
+    useEffect(() => {
+        if (location.state !== null) {
+            setAddress(location.state.order.address)
+            setItems(location.state.order.items)
+            setTotalAmount(location.state.order.totalAmount ? location.state.order.totalAmount : 0)
+        }
+    }, [location.state])
 
+    console.log(items, address, totalAmount);
     const defaultAddress = (data) => {
         return new Promise((resolve, reject) => {
             if (!data || data.length === 0) {
@@ -37,65 +44,34 @@ const CheckoutSummary = () => {
 
     const justAddClose = (success) => {
         setJustAdd(false);
-        console.log(success)
         if (success === true) { getAllAddress(); }
     }
 
 
+    useEffect(() => {
 
-    const goToOrderWithState = (data) => {
-        // Yönlendirme yaparken state verisi gönderme
-        navigate(`/profile/orders/${data.orderId}`, {
-            state: { order: data.order },
-        });
-    };
-
-
-
-
-    const sendOrder = () => {
-        createOrder(user.uid, {
-            items: items,
-            address: address,
-            totalAmount: totalAmount
-        }).then(res => {
-            clearCart(false)
-            goToOrderWithState(res);
-        })
-    }
+        if (!location.state) {
+            navigate('/profile/orders');
+        }
+    }, [location, navigate]);
+    console.log(location.state)
 
     const getAllAddress = () => {
         getUserAddresses(user.uid).then(res => {
-            res.addresses.length > 0 && defaultAddress(res.addresses).then(e => {
-                setAddress(e)
-            })
             setAllAddress(res.addresses);
         })
     }
-
-    useEffect(() => {
-        if (user) {
-            getAllAddress();
-        }
-    }, [user])
-
     return (
-        <div className="max-w-6xl animate-fade mx-auto p-4">
-            {/* Sipariş İlerleme Durumu */}
-            <ul className="steps w-full md:mb-8 steps-horizontal">
-                <li className="step step-primary">Sepet</li>
-                <li className="step step-primary">Sipariş Özeti</li>
-                <li className="step">Planlama Ve Üretim</li>
-            </ul>
+        <div className="max-w-6xl animate-fade-left mx-auto p-4">
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Sol Taraf - Ürün Listesi */}
                 <div className="lg:col-span-2">
                     <div className="bg-base-200 rounded-lg shadow-lg p-6">
-                        <h2 className="text-xl font-bold mb-6">Sepetinizdeki Ürünler</h2>
+                        <h2 className="text-xl font-bold mb-6">Sipariş Detayları</h2>
                         <div className="space-y-6">
-                            {items.map((item, index) => (
-                                <div key={index} className="flex gap-4 pb-6 border-b last:border-0">
+                            {items && items.map((item) => (
+                                <div key={item.id} className="flex gap-4 pb-6 border-b last:border-0">
                                     <img
                                         src={item.baseImage}
                                         alt={item.name}
@@ -146,21 +122,14 @@ const CheckoutSummary = () => {
                                 </div>
                             }
                         </div>
-                        {allAddress.length > 0 ? (
-                            <div key={address?.id || Math.random()} className="p-4 bg-base-100 rounded-lg ">
+                        {address && (
+                            <div key={address.address?.id || Math.random()} className="p-4 bg-base-100 rounded-lg ">
                                 <div className='flex items-center justify-between'>
                                     <p className="font-medium animate-fade-up">{address?.title}</p>
                                     <p className="font-semibold cursor-pointer animate-fade-up">{address?.phoneNumber}</p>
                                 </div>
                                 <p className="text-gray-600 mt-1 animate-fade-up">{address?.addressDetail}</p>
                                 <p className="text-gray-600 animate-fade-up" >{address?.city}/{address?.district}</p>
-                            </div>
-                        ) : (
-                            <div key={Math.random()} className="p-4 bg-base-100 rounded-lg ">
-                                <div className='flex flex-col gap-y-4'>
-                                    <p>Kayıtlı Adresiniz Bulunmamaktadır.</p>
-                                    <button onClick={() => { setJustAdd(!justAdd) }} className='btn btn-primary rounded-md opacity-90 text-white'>Yeni Adres Ekle</button>
-                                </div>
                             </div>
                         )}
                     </div>
@@ -203,9 +172,6 @@ const CheckoutSummary = () => {
                             </div>
                         </div>
 
-                        <Link onClick={sendOrder} className="w-full btn  bg-primary bg-opacity-80 text-white py-3 rounded-lg font-semibold hover:bg-primary hover:bg-opacity-100 transition-all">
-                            Siparişi Oluştur
-                        </Link>
                     </div>
                 </div>
             </div>
@@ -215,4 +181,4 @@ const CheckoutSummary = () => {
     );
 };
 
-export default CheckoutSummary;
+export default OrderDetail;

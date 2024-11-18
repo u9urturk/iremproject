@@ -88,7 +88,7 @@ export default function Navbar() {
                         <Link className='hover:scale-110 transition-transform'>Hakkında</Link>
                     </div>
 
-                    <ul className="fixed md:static md:h-full md:flex items-center justify-center md:bg-transparent   bg-opacity-70 bottom-0 menu menu-horizontal bg-base-200 rounded-box mt-6 md:mt-0">
+                    <ul className="fixed md:static md:h-full md:flex items-center justify-center md:bg-transparent   bg-opacity-70 bottom-0 menu menu-horizontal bg-base-300 rounded-box mt-6 md:mt-0">
                         <li  >
                             <Link to={`/`} className="tooltip md:tooltip-bottom" data-tip="Ana Sayfa">
                                 <svg
@@ -136,9 +136,9 @@ export default function Navbar() {
                                         </li>
                                     </label>
                                 </div>
-                                <div className="drawer-side">
+                                <div className="drawer-side z-[1] ">
                                     <label htmlFor="basket-cart"  aria-label="close sidebar" className="drawer-overlay"></label>
-                                    <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                                    <ul className="menu bg-base-200  text-base-content min-h-full w-80 p-4">
                                         <div className='space-y-2 my-8 mx-2'>
                                             <div className='flex items-center justify-between'>
                                                 <div className='font-semibold  text-3xl mb-2 opacity-80 text-accent-content'>Sepet</div>

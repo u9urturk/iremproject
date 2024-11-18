@@ -51,7 +51,7 @@ export const addToCartFb = async (userId, productId, productData, quantity = 1, 
             await setDoc(cartRef, newCartItem);
         }
         showToast('success', 'Ürün sepete başarıyla eklendi');
-        return { success: true ,documentId: cartRef.id };
+        return { success: true, documentId: cartRef.id };
     } catch (error) {
         showToast('error', 'Ürün sepete eklenirken bir hata oluştu');
         console.error('Add to Cart Error:', error);
@@ -97,12 +97,12 @@ export const updateCartItem = async (userId, productId, quantity) => {
 };
 
 // Sepetten Ürün Silme
-export const removeCartItem = async (userId, productId) => {
+export const removeCartItem = async (userId, productId,info=true) => {
     try {
         const cartRef = doc(db, "users", userId, "cart", productId);
 
         await deleteDoc(cartRef);
-        showToast('success', 'Ürün sepetten başarıyla çıkarıldı');
+        info&&showToast('success', 'Ürün sepetten başarıyla çıkarıldı');
         return { success: true };
     } catch (error) {
         showToast('error', 'Ürün sepetten çıkarılırken bir hata oluştu');
@@ -111,15 +111,15 @@ export const removeCartItem = async (userId, productId) => {
 };
 
 // Sepeti Temizleme
-export const clearCartFb = async (userId) => {
+export const clearCartFb = async (userId,info) => {
     try {
         const cartRef = collection(db, "users", userId, "cart");
         const cartSnap = await getDocs(cartRef);
         // const batch = db.batch();
-        cartSnap.docs.forEach((doc) => removeCartItem(userId, doc.id));
+        cartSnap.docs.forEach((doc) => removeCartItem(userId, doc.id,false));
         // await batch.commit();
 
-        showToast('success', 'Sepet başarıyla temizlendi');
+        info&&showToast('success', 'Sepet başarıyla temizlendi');
         return { success: true };
     } catch (error) {
         showToast('error', 'Sepet temizlenirken bir hata oluştu');
@@ -414,6 +414,35 @@ export const readOrder = async (userId, orderId) => {
         throw error;
     }
 };
+
+// Tüm Siparişleri Okuma (Read Order)
+export const readOrders = async (userId) => {
+    try {
+        const ordersRef = collection(db, "users", userId, "orders");
+        const ordersSnap = await getDocs(ordersRef);
+
+        if (!ordersSnap.empty) {
+            const orders = ordersSnap.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            // Siparişler başarıyla döndürülüyor
+            return {
+                success: true,
+                orders,
+            };
+        } else {
+            showToast('error', 'Sipariş bulunamadı');
+            return { success: false, orders: [] };
+        }
+    } catch (error) {
+        showToast('error', 'Sipariş getirilirken bir hata oluştu');
+        console.error('Read Order Error:', error);
+        return { success: false, orders: null };
+    }
+};
+
 
 // Sipariş Güncelleme (Update Order)
 export const updateOrder = async (userId, orderId, updatedData) => {
