@@ -51,7 +51,7 @@ export default function IndexProfile() {
     }));
   };
   return (
-    <div className='w-full animate-fade-left  px-8 py-4  space-y-8 flex rounded-md items-center justify-center flex-col h-auto'>
+    <div className='w-full animate-fade  px-8 py-4  space-y-8 flex rounded-md items-center justify-center flex-col h-auto'>
       <div className=' py-3 px-4  w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
         <span>Profil</span>
         <div className='flex items-center justify-center gap-x-2'>
