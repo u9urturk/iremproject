@@ -51,8 +51,8 @@ export default function IndexProfile() {
     }));
   };
   return (
-    <div className='w-full animate-fade-left px-4 py-4 space-y-16 flex rounded-md items-center justify-center flex-col h-auto'>
-      <div className=' p-2  w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
+    <div className='w-[80%] animate-fade-left  py-4 space-y-16 flex rounded-md items-center justify-center flex-col h-auto'>
+      <div className=' py-2 px-3  w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
         <span>Profil</span>
         <div className='flex items-center justify-center gap-x-2'>
           <div clas><FaRegBell size={22} /></div>
