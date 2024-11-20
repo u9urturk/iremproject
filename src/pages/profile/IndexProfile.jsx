@@ -52,7 +52,7 @@ export default function IndexProfile() {
   };
   return (
     <div className='w-full animate-fade  px-8 py-4  space-y-8 flex rounded-md items-center justify-center flex-col h-auto'>
-      <div className=' py-3 px-4  w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
+      <div className=' py-3 px-4 sm:px-8   w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
         <span>Profil</span>
         <div className='flex items-center justify-center gap-x-2'>
           <div clas><FaRegBell size={22} /></div>
@@ -61,7 +61,7 @@ export default function IndexProfile() {
       </div>
       <div className='flex items-center w-[90%] justify-center flex-col'>
         <div className="avatar pb-4">
-          <div className="w-32 rounded">
+          <div className="w-20 sm:w-32 max-w-full rounded">
             {form.photoURL?<img className='animate-fade' src={form.photoURL} />
               :<div className='w-full h-full bg-base-100 flex items-center justify-center'><span className="loading bg-primary loading-ring loading-lg"></span></div>
           }
@@ -78,7 +78,7 @@ export default function IndexProfile() {
           </div>
           <div>
             <strong>E-Posta</strong>
-            <div className='flex items-center justify-center gap-x-8'>
+            <div className='flex items-center justify-center gap-x-4 sm:gap-x-8'>
               <input type="email"
                 name="email"
                 value={form.email}
@@ -91,7 +91,7 @@ export default function IndexProfile() {
           </div>
           <div>
             <strong>Telefon Numarası</strong>
-            <div className='flex items-center justify-center gap-x-8'>
+            <div className='flex items-center justify-center gap-x-4 sm:gap-x-8'>
               <input type="tel"
                 name="phoneNumber"
                 value={form.phoneNumber}
