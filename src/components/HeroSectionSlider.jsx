@@ -1,7 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
 
-export default function HeroSectionSlider({width="full",hight="72"}) {
+export default function HeroSectionSlider({width="full",hight="64"}) {
 
     const settings = {
         arrow: false,
