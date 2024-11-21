@@ -33,7 +33,7 @@ export default function Product() {
           fullPrice: res.fullPrice ? res.fullPrice : null,
           color: color.name,
           fabric: fabric.name,
-          pattern: pattern.name,
+          pattern: pattern?.name,
           rating: Math.round(res.rating),
           explanation: res.explanition
         });

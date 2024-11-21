@@ -5,30 +5,89 @@ import "../../../../ScrollStyle.css"
 import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
 import classNames from 'classnames';
-import {  addPattern, deletePatternByPatternId,getPatterns } from '../../../../firebase.js';
+import { addPattern, deletePatternByPatternId, getPatterns } from '../../../../firebase.js';
 import { useSelector } from 'react-redux';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Timestamp } from 'firebase/firestore';
 import VerificationModal from '../../../../components/VerificationModal.jsx';
-
+import { toast } from 'react-toastify';
+import { pattern } from 'framer-motion/client';
 
 
 export default function PatternOperations() {
     const [isActive, setisActive] = useState(false)
     const user = useSelector(state => state.auth.user)
-    const [patterns, setPatterns] = useState([]);
+    const [patterns, setPatterns] = useState([
+    ]);
+    const [formData, setFormData] = useState(() => Array(3).fill(null)); // Daha güvenli tanım
     const [selectedPattern, setSelectedPattern] = useState()
     const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
 
-    const handleSubmit = async (values, actions) => {
-        addPattern(values).then(res => {
-            if (res) {
-                console.log(res)
-                setPatterns(prevState => [...prevState, { id: res, patternName: values.patternName,creationTime:new Date().toLocaleString() }]);
-                setisActive(false);
+
+    const handlePhotoChange = (e) => {
+        const files = Array.from(e.target.files);
+        const currentPhotos = formData.filter((photo) => photo !== null);
+        const remainingSlots = 3 - currentPhotos.length;
+
+        if (files.length > remainingSlots) {
+            toast.warning(`Maksimum ${remainingSlots} fotoğraf daha yükleyebilirsiniz.`);
+            return;
+        }
+
+        const newPhotos = files.slice(0, remainingSlots).map((file) => ({
+            file,
+            url: URL.createObjectURL(file), // Önizleme için URL oluştur
+        }));
+
+        setFormData((prevFormData) => {
+            const updatedPhotos = [...prevFormData];
+            let i = 0;
+            for (let j = 0; j < updatedPhotos.length; j++) {
+                if (updatedPhotos[j] === null && i < newPhotos.length) {
+                    updatedPhotos[j] = newPhotos[i];
+                    i++;
+                }
             }
-        })
+            return updatedPhotos;
+        });
+    };
+
+
+    const getUrls = () => {
+        return new Promise((resolve, reject) => {
+            try {
+                const urls = [];
+                formData.forEach((form) => {
+                    if (form?.url) {
+                        urls.push(form.url);
+                    }
+                });
+                resolve(urls);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    const handleSubmit = async (values, actions) => {
+        getUrls()
+            .then((urls) => {
+                addPattern({ patternName: values.patternName, files: formData }).then(res => {
+                    if (res) {
+                        setPatterns(prevState => [...prevState, { id: res, patternName: values.patternName, urls, creationTime: new Date().toLocaleString() }]);
+                        setisActive(false);
+                    }
+                })
+            })
+            .catch((error) => {
+                console.error("Hata oluştu:", error);
+            });
+
+
     }
+
+
+
 
 
     const deleteSelectedPattern = () => {
@@ -37,13 +96,21 @@ export default function PatternOperations() {
         })
     }
 
-    const verificationModalClose =()=>{
+    const verificationModalClose = () => {
         setisVerificationModalOpen(false);
         resetSelectedPattern();
     }
 
     const resetSelectedPattern = () => {
         setSelectedPattern(null);
+    }
+
+    const handlePhotoDelete = (index) => {
+        setFormData((prevFormData) => {
+            const updatedPhotos = [...prevFormData];
+            updatedPhotos[index] = null; // Fotoğrafı kaldır
+            return updatedPhotos
+        });
     }
 
     const getAllPatternReaction = () => {
@@ -54,7 +121,13 @@ export default function PatternOperations() {
                 const date = fbts.toDate();
                 const readableDate = date.toLocaleString();
 
-                setPatterns(prevState => [...prevState, { id: doc.id, patternName: doc.data().name, creationTime: readableDate }])
+
+
+                setPatterns(prevState => [...prevState, {
+                    id: doc.id, patternName: doc.data().name,
+                    urls: doc.data().imgsUrl === undefined ? Array(3).fill(null) : doc.data().imgsUrl,
+                    creationTime: readableDate
+                }])
             })
         })
     }
@@ -62,7 +135,6 @@ export default function PatternOperations() {
     useEffect(() => {
         getAllPatternReaction()
     }, [])
-    console.log(selectedPattern)
     return (
         <div className='flex  animate-fade-left animate-ease-in-out animate-normal animate-fill-forwards w-full h-full flex-col items-center justify-center'>
             <div className='flex flex-col w-full h-1/2 gap-y-8 items-center justify-center'>
@@ -79,7 +151,7 @@ export default function PatternOperations() {
                     {
                         isActive === true && <div className='fixed top-0 animate-fade left-0 h-screen w-full z-10  backdrop-blur-sm'>
                             <div className='h-full w-full flex items-center justify-center '>
-                                <div className='relative flex flex-col items-center pb-8  bg-gradient-to-b from-neutral to-base-100 shadow-2xl rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
+                                <div className=' flex flex-col items-center pb-8  bg-gradient-to-b from-neutral to-base-100 shadow-2xl rounded-3xl  justify-center gap-y-16 min-w-[300px] min-h-[400px] w-auto h-auto border-2 '>
                                     <div className='flex items-center justify-center gap-x-3'>
                                         <div className='space-x-1'>
                                             <strong className='text-2xl font-medium font-serif tracking-widest'>Desen bilgileri</strong>
@@ -89,22 +161,59 @@ export default function PatternOperations() {
                                     </div>
                                     <Formik
                                         initialValues={{
-                                            patternName: '',
-                                            file: null
-
+                                            patternName: ''
                                         }}
 
                                         onSubmit={handleSubmit}
                                     >
-                                        {({ values, setFieldValue }) => (
+                                        {({ values }) => (
                                             <Form>
                                                 <div className='flex flex-col items-center justify-center gap-y-3'>
 
-                                                    <div className='flex flex-row items-center justify-between'>
+                                                    <div className='flex flex-col items-center justify-center'>
                                                         <Input type="text" name="patternName" className='p-2  focus:outline-brand-color  w-48 text-base rounded-md  transition-all h-10 outline-none hover:text-sm ' label='Desen Adı' />
-                                                        <input onChange={(event) => {
-                                                            setFieldValue("file", event.currentTarget.files[0]);
-                                                        }} type="file" id="file" name='file' className="pl-1 " />
+                                                        <div className='flex items-center justify-center pt-8 px-4 gap-x-2'>
+                                                            {
+                                                                formData?.map((photo, index) => (
+                                                                    <div className='relative aspect-square w-28 h-28 cursor-crosshair rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center  hover:bg-base-200 transition-colors"'>
+                                                                        {photo !== null ? (
+                                                                            <>
+                                                                                <img
+                                                                                    src={photo.url}
+                                                                                    alt={`Fotoğraf ${index + 1}`}
+                                                                                    className="w-full h-full object-cover rounded-lg"
+                                                                                />
+                                                                                <div
+                                                                                    className="absolute top-1 right-1 cursor-pointer  bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition"
+                                                                                    onClick={() => handlePhotoDelete(index)}
+                                                                                >
+                                                                                    ✕
+                                                                                </div>
+                                                                            </>
+                                                                        ) : (
+                                                                            <label htmlFor="files_input" className="text-center cursor-crosshair  p-4 ">
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    fill="none"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    className="w-8 h-8 mx-auto mb-2 opacity-50"
+                                                                                >
+                                                                                    <path
+                                                                                        strokeLinecap="round"
+                                                                                        strokeLinejoin="round"
+                                                                                        strokeWidth="2"
+                                                                                        d="M12 4v16m8-8H4"
+                                                                                        className="stroke-current text-gray-500"
+                                                                                    />
+                                                                                </svg>
+                                                                                <p className="text-sm text-gray-500">Fotoğraf {index + 1}</p>
+                                                                            </label>
+                                                                        )}
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                        <input multiple onChange={handlePhotoChange} type="file" id="files_input" name='file' className="hidden" />
                                                     </div>
 
                                                     <div className='flex pt-10 items-center justify-center gap-x-4'>
@@ -167,10 +276,10 @@ export default function PatternOperations() {
                     <table className="table table-md table-pin-rows table-pin-cols">
                         <thead >
                             <tr>
-
                                 <td>Desen Adı</td>
                                 <td>Oluşturulma Tarihi</td>
-                                <th className='flex items-center justify-center'>Operasyonlar</th>
+                                <td>Görseller</td>
+                                <td className='flex items-center justify-center'>Operasyonlar</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,9 +289,48 @@ export default function PatternOperations() {
                                     <tr key={key} className='hover:scale-95 transition-all hover:cursor-pointer hover:opacity-90'>
                                         <td onClick={() => { setisVerificationModalOpen(true); setSelectedPattern(pattern) }}>{pattern.patternName}</td>
                                         <td>{pattern.creationTime}</td>
-                                        <td className='flex items-center justify-center gap-x-2'>
+                                        <td className='w-full flex  items-start justify-start gap-x-2 gap-y-1'>
+                                            {patterns.length > 0 && pattern.urls.map((url, index) => (
+                                                <div className='relative aspect-square w-28 h-28 cursor-crosshair rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center  hover:bg-base-200 transition-colors"'>
+                                                    {url !== null ? (
+                                                        <>
+                                                            <img
+                                                                src={url}
+                                                                alt={`Fotoğraf ${index + 1}`}
+                                                                className="w-full h-full object-cover rounded-lg"
+                                                            />
+                                                            <div
+                                                                className="absolute top-1 right-1 cursor-pointer  bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition"
+                                                                onClick={() => handlePhotoDelete(index)}
+                                                            >
+                                                                ✕
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <label htmlFor="files_input" className="text-center cursor-crosshair  p-4 ">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                className="w-8 h-8 mx-auto mb-2 opacity-50"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth="2"
+                                                                    d="M12 4v16m8-8H4"
+                                                                    className="stroke-current text-gray-500"
+                                                                />
+                                                            </svg>
+                                                            <p className="text-sm text-gray-500">Fotoğraf {index + 1}</p>
+                                                        </label>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </td>
+                                        <td >
                                             <div onClick={() => { setisVerificationModalOpen(true); setSelectedPattern(pattern) }}
-                                                className='hover:scale-125 transition-all' >
+                                                className=' flex items-center justify-center gap-x-2 hover:scale-125 transition-all' >
                                                 <AiOutlineDelete size={18} color='red'  ></AiOutlineDelete></div>
                                         </td>
                                     </tr>)
@@ -200,7 +348,7 @@ export default function PatternOperations() {
                 </div>
 
             </div>
-           
+
 
             {selectedPattern && <VerificationModal isActive={isVerificationModalOpen} onClose={verificationModalClose}
                 trueOperation={deleteSelectedPattern} ></VerificationModal>}

@@ -912,12 +912,12 @@ export const deleteProductByProductId = async (data) => {
 }
 
 
-export const uploadImage = async (target = null, productId, file) => {
+export const uploadImage = async (target = null, id, file) => {
     if (!file) {
         throw new Error("File cannot be null.");
     }
 
-    const storageRef = ref(storage, target ? `${target}/${productId}/${file.name}` : `${productId}/${file.name}`);
+    const storageRef = ref(storage, target ? `${target}/${id}/${file.name}` : `${id}/${file.name}`);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -1370,17 +1370,69 @@ export const getFabricsByFabricId = async (fabricId) => {
 
 
 //PatternOperations
-export const addPattern = async (values) => {
+
+
+async function updatePattern(docId, baseData, updateFields) {
     try {
-        const docRef = await addDoc(collection(db, "patterns"), {
-            name: values.patternName,
-            creationTime: Timestamp.fromDate(new Date())
+        // Belge referansı oluştur
+        const docRef = doc(db, "patterns", docId);
+
+        // Güncelleme işlemi
+        await updateDoc(docRef, {
+            ...baseData,
+            updateTime: Timestamp.fromDate(new Date()),
+            imgsUrl: updateFields
         });
-        const id = docRef.id
 
-        await uploadImage('patterns', id, values.file)
+        console.log("Belge başarıyla güncellendi.");
+    } catch (error) {
+        console.error("Güncelleme sırasında bir hata oluştu:", error);
+    }
+}
 
-        toast.success(`"${values.patternName}" isimli kumaş başarıyla eklendi. `, {
+
+const getImgUrls = (id, files) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const imgUrls = files.map((file) => {
+                return uploadImage("patterns", id, file.file); // uploadImage işlemi bir Promise döndürür
+            });
+
+            // Tüm upload işlemleri tamamlandığında URL'leri al
+            Promise.all(imgUrls)
+                .then((urls) => {
+                    resolve(urls); // Bütün URL'ler elde edildikten sonra resolve
+                })
+                .catch((error) => {
+                    reject(error); // Bir hata olursa reject
+                });
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+
+
+export const addPattern = async ({ patternName, files }) => {
+    try {
+        const baseData = {
+            name: patternName,
+            creationTime: Timestamp.fromDate(new Date())
+        };
+
+        // Firestore'a yeni belge ekleyin
+        const docRef = await addDoc(collection(db, "patterns"), baseData);
+        const id = docRef.id;
+
+        // Resim URL'lerini al
+        const imgUrls = await getImgUrls(id, files);
+
+        // URL'ler alındıktan sonra Firestore belgesini güncelleyin
+        await updatePattern(id, baseData, imgUrls);
+
+        toast.success(`"${patternName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
@@ -1392,10 +1444,11 @@ export const addPattern = async (values) => {
             transition: Flip
         });
 
-        return id; // Burada docRef kullanılıyor
+        return id;
+
     } catch (error) {
         console.error("Error adding document: ", error);
-        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+
         toast.error("Renk eklenirken bir hata oluştu.", {
             position: "top-left",
             autoClose: 1500,
@@ -1408,8 +1461,8 @@ export const addPattern = async (values) => {
             transition: Flip
         });
     }
+};
 
-}
 
 export const deletePatternByPatternId = async (data) => {
     let isSuccess = false
