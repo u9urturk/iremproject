@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPass
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { Await } from "react-router-dom";
 
 
 
@@ -97,12 +98,12 @@ export const updateCartItem = async (userId, productId, quantity) => {
 };
 
 // Sepetten Ürün Silme
-export const removeCartItem = async (userId, productId,info=true) => {
+export const removeCartItem = async (userId, productId, info = true) => {
     try {
         const cartRef = doc(db, "users", userId, "cart", productId);
 
         await deleteDoc(cartRef);
-        info&&showToast('success', 'Ürün sepetten başarıyla çıkarıldı');
+        info && showToast('success', 'Ürün sepetten başarıyla çıkarıldı');
         return { success: true };
     } catch (error) {
         showToast('error', 'Ürün sepetten çıkarılırken bir hata oluştu');
@@ -111,15 +112,15 @@ export const removeCartItem = async (userId, productId,info=true) => {
 };
 
 // Sepeti Temizleme
-export const clearCartFb = async (userId,info) => {
+export const clearCartFb = async (userId, info) => {
     try {
         const cartRef = collection(db, "users", userId, "cart");
         const cartSnap = await getDocs(cartRef);
         // const batch = db.batch();
-        cartSnap.docs.forEach((doc) => removeCartItem(userId, doc.id,false));
+        cartSnap.docs.forEach((doc) => removeCartItem(userId, doc.id, false));
         // await batch.commit();
 
-        info&&showToast('success', 'Sepet başarıyla temizlendi');
+        info && showToast('success', 'Sepet başarıyla temizlendi');
         return { success: true };
     } catch (error) {
         showToast('error', 'Sepet temizlenirken bir hata oluştu');
@@ -839,36 +840,39 @@ export const downloadImages = async (tg, productId) => {
 // FireStore Set 
 //ProdcutOperations
 
-export const addProduct = async (productName, rating = 1, price, explanation, selectedCategory, selectedColor, selectedFabric, selectedPattern) => {
-    console.log(explanation)
+export const addProduct = async (formData) => {
     try {
+        // Yeni ürün oluşturulurken başlangıçta boş bir photos dizisi ekliyoruz.
         const docRef = await addDoc(collection(db, "products"), {
-            productName: productName,
-            price: price,
-            categoryId: selectedCategory.id,
-            colorId: selectedColor.id,
-            fabricId: selectedFabric.id,
-            patternId: selectedPattern.id,
-            rating: rating,
+            ...formData.productData,
+            rating: 0,
             creationTime: Timestamp.fromDate(new Date()),
-            explanation: explanation
-        })
-        toast.success(`"${productName}" isimli ürün başarıyla eklendi. `, {
-            position: "top-left",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Flip
+            photos: [] // Başlangıçta boş bırakıyoruz.
         });
 
-        return { id: docRef.id }; // Burada docRef kullanılıyor
+        if (docRef.id) {
+            // Fotoğrafların yükleme işlemlerini bir diziye topluyoruz.
+            formData.photos.forEach(photo => {
+                if (photo !== null) {
+                    uploadImage("productImages", docRef.id, photo.file)
+                }
+            });
+            toast.success(`"${formData.productData.productName}" isimli ürün başarıyla eklendi.`, {
+                position: "top-left",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Flip
+            });
+
+        }
     } catch (error) {
         console.error("Error adding document: ", error);
-        // Hata durumunda bir hata bildirimi göstermek isterseniz:
+        // Hata mesajı gösteriyoruz.
         toast.error("Ürün eklenirken bir hata oluştu.", {
             position: "top-left",
             autoClose: 1500,
@@ -881,9 +885,8 @@ export const addProduct = async (productName, rating = 1, price, explanation, se
             transition: Flip
         });
     }
+};
 
-
-}
 
 export const deleteProductByProductId = async (data) => {
     let isSuccess = false
@@ -911,29 +914,23 @@ export const deleteProductByProductId = async (data) => {
 
 
 export const uploadImage = async (target = null, productId, file) => {
-    let storageRef = null;
-    if (target !== null) {
-        storageRef = ref(storage, `${target}/${productId}/${file.name}`)
-    } else {
-        storageRef = ref(storage, `${productId}/${file.name}`);
+    if (!file) {
+        throw new Error("File cannot be null.");
     }
 
+    const storageRef = ref(storage, target ? `${target}/${productId}/${file.name}` : `${productId}/${file.name}`);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    // Register three observers:
-    // 1. 'state_changed' observer, called any time the state changes
-    // 2. Error observer, called on failure
-    // 3. Completion observer, called on successful completion
-    uploadTask.on('state_changed',
-        (snapshot) => {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    return new Promise((resolve, reject) => {
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                // Yükleme durumu
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-            if (progress === 0 && snapshot.state === "running") {
-                toast.info("Yükleniyor... ",
-                    {
+                if (progress === 0 && snapshot.state === "running") {
+                    toast.info("Yükleniyor...", {
                         position: "top-left",
                         autoClose: 1000,
                         hideProgressBar: false,
@@ -943,36 +940,48 @@ export const uploadImage = async (target = null, productId, file) => {
                         progress: progress,
                         theme: "colored",
                         transition: Flip
-                    })
-            } else if (progress === 100 && snapshot.state === "running") {
-                toast.success("Başarıyla Yüklendi", {
+                    });
+                }
+            },
+            (error) => {
+                // Hata durumunda reject çağrılıyor
+                console.error("Yükleme hatası:", error);
+                toast.error("Yükleme sırasında bir hata oluştu.", {
                     position: "top-left",
                     autoClose: 1500,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
                     draggable: true,
-                    progress: undefined,
                     theme: "colored",
                     transition: Flip
-                })
-
+                });
+                reject(error);
+            },
+            async () => {
+                // Tamamlanma durumunda URL'yi döndür
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    toast.success("Başarıyla Yüklendi", {
+                        position: "top-left",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Flip
+                    });
+                    resolve(downloadURL);
+                } catch (error) {
+                    console.error("URL alınamadı:", error);
+                    reject(error);
+                }
             }
-
-        },
-        (error) => {
-            console.log(error)
-        },
-        //   () => {
-        //     // Handle successful uploads on complete
-        //     // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-        //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        //       console.log('File available at', downloadURL);
-        //     });
-        //   }
-    );
-
-}
+        );
+    });
+};
 
 
 export const uploadImageBilboard = async (file) => {

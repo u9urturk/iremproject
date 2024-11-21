@@ -6,30 +6,33 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import { CartProvider } from './context/CartContext';
+import { CategoryProvider } from './context/CategoryContext';
 
 function App() {
   const showRoutes = useRoutes(routes)
   return (
     <div className="App ">
-      <CartProvider >
-        <Navbar></Navbar>
-        <ScrollToTop></ScrollToTop>
+      <CategoryProvider>
+        <CartProvider >
+          <Navbar></Navbar>
+          <ScrollToTop></ScrollToTop>
 
-        {showRoutes}
+          {showRoutes}
 
-        <Footer></Footer>
-        <ToastContainer
-          position="top-left"
-          autoClose={1500}
-          hideProgressBar={false}
-          closeOnClick={true}
-          pauseOnHover={true}
-          draggable={true}
-          progress={undefined}
-          theme="colored"
-          transition={Flip}
-        />
-      </CartProvider>
+          <Footer></Footer>
+          <ToastContainer
+            position="top-left"
+            autoClose={1500}
+            hideProgressBar={false}
+            closeOnClick={true}
+            pauseOnHover={true}
+            draggable={true}
+            progress={undefined}
+            theme="colored"
+            transition={Flip}
+          />
+        </CartProvider>
+      </CategoryProvider>
 
     </div>
   );
