@@ -4,7 +4,6 @@ import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPass
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
-import { Await } from "react-router-dom";
 
 
 
@@ -892,7 +891,7 @@ export const deleteProductByProductId = async (data) => {
     let isSuccess = false
 
     await deleteDoc(doc(db, "products", data.productId)).then(function () {
-        toast.warning(`"${data.productName}" isimli renk başarıyla silindi. `, {
+        toast.warning(`"${data.productName}" isimli ürün başarıyla silindi. `, {
             position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,

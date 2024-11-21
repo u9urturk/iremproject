@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { addComment, downloadImages } from '../../firebase';
 
 export default function ProductDetail({ product, user,addCart,quantityFB,productId, reviews, updateReviewState }) {
-    const [includeProduct, setIncludeProduct] = useState(true);
+    const [includeProduct, setIncludeProduct] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [visibleReviews, setVisibleReviews] = useState(8);
@@ -17,7 +17,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     const [sortedReviews, setSortedReviews] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
 
-    console.log(images)
+    console.log(product)
 
     const [newReview, setNewReview] = useState({
         rating: 5,

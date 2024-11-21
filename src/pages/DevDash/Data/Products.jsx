@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { deleteProductByProductId, getCategoryByCategoryId, getProducts, uploadImage } from '../../../firebase';
+import { deleteProductByProductId,  getProducts  } from '../../../firebase';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
 import VerificationModal from '../../../components/VerificationModal';
@@ -10,7 +10,6 @@ export default function Products({ productChanged, totalProducts }) {
 
 
     const [products, setProducts] = useState([])
-    const [file, setFile] = useState(null)
     const [currentProduct, setCurrentProduct] = useState(null)
     const [isVerificationModalOpen, setisVerificationModalOpen] = useState(false)
     const [currentQQ, setCurrentQQ] = useState("Sırala")
