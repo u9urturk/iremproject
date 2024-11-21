@@ -43,7 +43,7 @@ export default function Products({ id }) {
                             productId: doc.id,
                             categoryName: res.name,
                             productName: doc.data().productName,
-                            price: doc.data().price,
+                            basePrice: doc.data().basePrice,
                             rating: Math.round(doc.data().rating)
 
                         }
@@ -159,7 +159,7 @@ export default function Products({ id }) {
                                         <h4 className='font-serif text-xs   opacity-60'>{product.categoryName}</h4>
                                     </div>
                                     <ProductRating id={product.productId} size={"xs"} initialRating={product.rating} />
-                                    <div className='w-full h-auto'><div className=" badge  text-xs rounded-md md:text-md badge-secondary badge-lg badge-outline">{product.price} &#x20BA;</div></div>
+                                    <div className='w-full h-auto'><div className=" badge  text-xs rounded-md md:text-md badge-secondary badge-lg badge-outline">{product.basePrice} &#x20BA;</div></div>
                                     <div className="card-actions w-full">
                                         <button className=" opacity-100 w-full bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-md py-2 px-2  text-xs md:text-md ">Ürünü İncele</button>
                                     </div>

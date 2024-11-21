@@ -8,7 +8,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [visibleReviews, setVisibleReviews] = useState(8);
     const [loading, setLoading] = useState(false);
-    const [currentPrice, setCurrentPrice] = useState(product.fullPrice);
+    const [currentPrice, setCurrentPrice] = useState(product.basePrice);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
@@ -17,21 +17,27 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     const [sortedReviews, setSortedReviews] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
 
+    console.log(images)
 
     const [newReview, setNewReview] = useState({
         rating: 5,
         comment: ''
     });
 
-    const [isAnimating, setIsAnimating] = useState(false);
 
-
+    useEffect(() => {
+        includeProduct?setCurrentPrice(product.fullPrice):setCurrentPrice(product.basePrice)
+    }, [includeProduct])
+    
 
     const listenImages = useCallback(
         () => {
             downloadImages("productImages", productId).then((res) => {
-                setImages(res);
-                setPageLoading(false);
+                setImages(res)
+                setTimeout(() => {
+                    setPageLoading(false)
+                }, 500);
+                
             })
         },
         [productId],
@@ -50,29 +56,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     }, [productId, listenImages])
 
 
-    useEffect(() => {
-        let targetPrice = ""
-        if (product.fullPrice === null) { targetPrice = product.basePrice } else { targetPrice = includeProduct ? product.fullPrice : product.basePrice; }
-        setIsAnimating(true);
-
-        const steps = 20; // Animasyon adımları
-        const stepDuration = 1000 / steps; // Toplam süre 2000ms
-        const priceStep = (targetPrice - currentPrice) / steps;
-        let currentStep = 0;
-
-        const interval = setInterval(() => {
-            if (currentStep < steps) {
-                setCurrentPrice(prev => prev + priceStep);
-                currentStep++;
-            } else {
-                setCurrentPrice(targetPrice);
-                setIsAnimating(false);
-                clearInterval(interval);
-            }
-        }, stepDuration);
-
-        return () => clearInterval(interval);
-    }, [includeProduct]);
+    
 
     // Zoom kontrolü için ref
     const imageRef = useRef(null);
@@ -269,7 +253,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                 {/* Ana Ürün Kartı */}
                 <div className="card lg:card-side bg-base-100 shadow-xl">
                     {/* Sol Taraf - Ürün Görselleri */}
-                    <div className="relative h-1/2 lg:w-1/2 p-6">
+                    <div  className="relative h-1/2 lg:w-1/2 p-6">
                         <img
                             src={images[activeImageIndex]}
                             alt={`${product.name} - Ana Görsel`}
@@ -328,7 +312,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         {/* Ürün Seçenekleri */}
                         <div className={`${!product.fullPrice ? "hidden" : ""} form-control w-full mt-4`}>
                             <label className="label cursor-pointer">
-                                <span className="label-text text-lg">Havlu Tercihi</span>
+                                <span className="label-text text-lg">Hizmet Tercihi</span>
                                 <input
                                     type="checkbox"
                                     className="toggle toggle-primary"
@@ -338,8 +322,8 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                             </label>
                             <p className="text-sm text-base-content/70 mt-2">
                                 {includeProduct
-                                    ? "Premium havlumuz ve özel tasarım"
-                                    : "Sadece tasarım (Havlu müşteri tarafından temin edilecek)"}
+                                    ? "Kaliteli ürün ve özel tasarım"
+                                    : "Sadece tasarım (İşlenilecek ürün müşteri tarafından temin edilecek)"}
                             </p>
                         </div>
 
@@ -350,8 +334,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                     {/* Animasyonlu Fiyat */}
                                     <motion.div
                                         className="text-4xl font-bold text-primary mb-6"
-                                        animate={{ scale: isAnimating ? [1, 1.1, 1] : 1 }}
-                                        transition={{ duration: 0.3 }}
+                                     
                                     >
                                         {(currentPrice * quantity).toLocaleString('tr-TR')} ₺
                                     </motion.div>
@@ -432,7 +415,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                     <div className="flex items-center gap-4 mb-2">
                                         <div className="avatar placeholder">
                                             <div className="bg-base-300 text-base-content rounded-full w-12">
-                                                <span>{review.customerName.substring(0, 2)}</span>
+                                                <span>{review.customerName&&review.customerName.substring(0, 2)}</span>
                                             </div>
                                         </div>
                                         <div>

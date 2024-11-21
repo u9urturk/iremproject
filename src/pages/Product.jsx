@@ -20,6 +20,7 @@ export default function Product() {
   const getProductReaction = useCallback(
     () => {
       getProductByProductId(productId).then(async res => {
+        console.log(res)
         const colorPromise = getColorByColorId(res.colorId);
         const fabricPromise = getFabricsByFabricId(res.fabricId);
         const patternPromise = getPatternByPatternId(res.patternId);
@@ -28,13 +29,13 @@ export default function Product() {
 
         setProduct({
           name: res.productName,
-          basePrice: res.price,
+          basePrice: res.basePrice,
           fullPrice: res.fullPrice ? res.fullPrice : null,
           color: color.name,
           fabric: fabric.name,
           pattern: pattern.name,
           rating: Math.round(res.rating),
-          explanation: res.explanation
+          explanation: res.explanition
         });
       })
     },
