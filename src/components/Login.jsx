@@ -82,7 +82,7 @@ export default function Login() {
                                         <span className="label-text">Beni hatırla</span>
                                     </label>
                                 </div>
-                                <Link className=" opacity-70 underline" prefetch={false}>
+                                <Link className=" opacity-70 underline" prefetch={"false"}>
                                     Şifremi unuttum?
                                 </Link>
                             </div>

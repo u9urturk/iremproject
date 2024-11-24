@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addComment, downloadImages } from '../../firebase';
 
-export default function ProductDetail({ product, user,addCart,quantityFB,productId, reviews, updateReviewState }) {
+export default function ProductDetail({ product, user, addCart, quantityFB, productId, reviews, updateReviewState }) {
     const [includeProduct, setIncludeProduct] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -16,8 +16,14 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     const [productReview, setProductReview] = useState(1);
     const [sortedReviews, setSortedReviews] = useState([]);
     const [pageLoading, setPageLoading] = useState(true);
-
-    console.log(product)
+    const [selectedValue, setSelectedValue] = useState("Sırala");
+    const [currentProperty, setCurrentProperty] = useState({
+        length:0,
+        urls:[]
+    })
+    const [selectedImage, setSelectedImage] = useState(0);
+    console.log(selectedImage)
+    console.log(currentProperty)
 
     const [newReview, setNewReview] = useState({
         rating: 5,
@@ -26,9 +32,9 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
 
 
     useEffect(() => {
-        includeProduct?setCurrentPrice(product.fullPrice):setCurrentPrice(product.basePrice)
+        includeProduct ? setCurrentPrice(product.fullPrice) : setCurrentPrice(product.basePrice)
     }, [includeProduct])
-    
+
 
     const listenImages = useCallback(
         () => {
@@ -37,16 +43,16 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                 setTimeout(() => {
                     setPageLoading(false)
                 }, 500);
-                
+
             })
         },
         [productId],
     )
 
     useEffect(() => {
-      quantityFB(quantity);
+        quantityFB(quantity);
     }, [quantity])
-    
+
 
 
     useEffect(() => {
@@ -56,7 +62,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
     }, [productId, listenImages])
 
 
-    
+
 
     // Zoom kontrolü için ref
     const imageRef = useRef(null);
@@ -121,8 +127,9 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
 
     // Sıralama seçeneğini değiştiren handler
     const handleSortChange = (e) => {
-        console.log(e.target.value)
-        sortReviews(e.target.value); // Seçilen sıralama opsiyonuna göre veriyi sırala
+        const value = e.target.value
+        setSelectedValue(value)
+        sortReviews(value); // Seçilen sıralama opsiyonuna göre veriyi sırala
     };
 
 
@@ -157,7 +164,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         {/* Küçük Görsel Önizlemeleri Skeleton */}
                         <div className="grid grid-cols-3 gap-2 mt-4">
                             {[1, 2, 3].map((index) => (
-                                <div key={index} className="w-full h-24 bg-base-300 rounded-lg" />
+                                <div key={`miniPhoto${index}`} className="w-full h-24 bg-base-300 rounded-lg" />
                             ))}
                         </div>
                     </div>
@@ -203,7 +210,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         {/* Ürün Özellikleri Skeleton */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {[1, 2, 3].map((index) => (
-                                <div key={index} className="stats shadow">
+                                <div key={`pskeleton${index}`} className="stats shadow">
                                     <div className="stat place-items-center p-2">
                                         <div className="h-4 bg-base-300 rounded w-16 mb-2" />
                                         <div className="h-6 bg-base-300 rounded w-24" />
@@ -228,7 +235,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         {/* Yorumlar Listesi Skeleton */}
                         <div className="space-y-6">
                             {[1, 2, 3].map((index) => (
-                                <div key={index} className="border-b border-base-300 pb-4">
+                                <div key={`cskeleton${index}`} className="border-b border-base-300 pb-4">
                                     <div className="flex items-center gap-4 mb-2">
                                         <div className="w-12 h-12 bg-base-300 rounded-full" />
                                         <div className="space-y-2">
@@ -253,7 +260,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                 {/* Ana Ürün Kartı */}
                 <div className="card lg:card-side bg-base-100 shadow-xl">
                     {/* Sol Taraf - Ürün Görselleri */}
-                    <div  className="relative h-1/2 lg:w-1/2 p-6">
+                    <div className="relative h-1/2 lg:w-1/2 p-6">
                         <img
                             src={images[activeImageIndex]}
                             alt={`${product.name} - Ana Görsel`}
@@ -264,7 +271,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         <div className="grid grid-cols-3 gap-2 mt-4">
                             {images.map((img, index) => (
                                 <div
-                                    key={index}
+                                    key={`${productId}${index}`}
                                     className={`cursor-pointer rounded-lg overflow-hidden border-2 
                         ${activeImageIndex === index ? 'border-primary' : 'border-transparent'}`}
                                     onClick={() => setActiveImageIndex(index)}
@@ -288,22 +295,20 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                 <span className='text-xs opacity-60'>{reviews.length} değerlendirme</span>
                                 <div className="rating rating-sm rating-half flex items-center justify-center">
                                     {[...Array(5)].map((_, index) => (
-                                        <>
+                                        <React.Fragment key={index}>
                                             <input
-                                                key={index}
                                                 type="radio"
                                                 className={`mask mask-star-2 mask-half-1 ${index.toFixed(1) < productReview.toFixed(1) ? 'bg-primary' : 'bg-base-300'
                                                     }`}
                                                 disabled
                                             />
                                             <input
-                                                key={index}
                                                 type="radio"
                                                 className={`mask mask-star-2  mask-half-2 ${(index + 0.5).toFixed(1) < productReview.toFixed(1) ? 'bg-primary' : 'bg-base-300'
                                                     }`}
                                                 disabled
                                             />
-                                        </>
+                                        </React.Fragment>
                                     ))}
                                     <span className='ml-2 text-primary font-semibold' >{productReview.toFixed(1)}</span>
                                 </div>
@@ -334,7 +339,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                     {/* Animasyonlu Fiyat */}
                                     <motion.div
                                         className="text-4xl font-bold text-primary mb-6"
-                                     
+
                                     >
                                         {(currentPrice * quantity).toLocaleString('tr-TR')} ₺
                                     </motion.div>
@@ -357,7 +362,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={()=>{addCart(images[0])}} className="btn btn-primary">
+                                    <button onClick={() => { addCart(images[0]) }} className="btn btn-primary">
                                         Sepete Ekle
                                     </button>
                                 </div>
@@ -368,20 +373,73 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         <p className="mt-6 text-base-content/80">{product.explanation}</p>
 
                         {/* Ürün Özellikleri */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                        <div onClick={() => document.getElementById('my_modal_prpty').showModal()} className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {Object.entries({
-                                Renk: product.color,
-                                Kumaş: product.fabric,
-                                Desen: product.pattern
-                            }).map(([key, value]) => (
-                                <div key={key} className="stats shadow">
+                                Renk: { value: product.color, images: ['url-to-color1.jpg', 'url-to-color2.jpg'] },
+                                Kumaş: { value: product.fabric, images: ['url-to-fabric1.jpg', 'url-to-fabric2.jpg'] },
+                                Model: {
+                                    value: product.pattern, images: [
+                                        "https://picsum.photos/800/600?random=1",
+                                        "https://picsum.photos/800/600?random=2",
+                                        "https://picsum.photos/800/600?random=3"
+                                      ]
+                                },
+                            }).map(([key, { value, images }]) => (
+                                <div onClick={()=>{setCurrentProperty({
+                                    length:images.length,
+                                    urls:images
+                                })}} key={key} className="stats overflow-visible relative group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow">
                                     <div className="stat place-items-center p-2">
                                         <div className="stat-title">{key}</div>
                                         <div className="stat-value text-lg">{value}</div>
                                     </div>
+                                    {/* Hover İçin Popup */}
+                                    <div className="absolute top-[-170%] left-1/2 transform -translate-x-1/2 hidden group-hover:flex flex-col items-center bg-base-100 border border-gray-200 rounded-lg shadow-lg z-[1] w-48 p-3">
+                                        <div className="font-bold mb-2">{key} Görselleri</div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {images.map((img, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={img}
+                                                    alt={`${key} ${index + 1}`}
+                                                    className="w-full h-16 object-cover rounded-md border border-gray-300"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
+
+                            <dialog id="my_modal_prpty" className="modal">
+                                <div className="modal-box relative">
+                                    <div className='font-bold text-2xl pb-2'>Alternatif {"Modeller"} ? </div>
+                                    {/* Büyük Resim */}
+                                  
+                                    <img src={currentProperty?.urls[selectedImage]} alt={`Large View`} className="w-full h-auto rounded-lg" />
+
+                                    {/* Galeri Navigasyonu */}
+                                    <div className="flex justify-between mt-4">
+                                        <button
+                                            onClick={() => setSelectedImage((prev) => (prev === 0 ? currentProperty.length - 1 : prev - 1))}
+                                            className="bg-gray-700 select-none text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"
+                                        >
+                                            Önceki
+                                        </button>
+                                        <button
+                                            onClick={() => setSelectedImage((prev) => (prev === currentProperty.length - 1 ? 0 : prev + 1))}
+                                            className="bg-gray-700 select-none text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"
+                                        >
+                                            Sonraki
+                                        </button>
+                                    </div>
+                                </div>
+                                <form method="dialog" className="modal-backdrop">
+                                    <button>close</button>
+                                </form>
+                            </dialog>
                         </div>
+
+
                     </div>
                 </div>
 
@@ -391,8 +449,8 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                         <div className="flex flex-col md:flex-row gap-y-8 justify-between items-center mb-6">
                             <h3 className="card-title text-2xl">Müşteri Yorumları</h3>
                             <div className='flex flex-row gap-x-2 items-center justify-center'>
-                                <select className="select select-bordered w-full max-w-xs" onChange={handleSortChange}>
-                                    <option disabled selected>Sırala</option>
+                                <select value={selectedValue} className="select select-bordered w-full max-w-xs" onChange={handleSortChange}>
+                                    <option disabled >Sırala</option>
                                     <option value="date_desc">Tarihe göre azalan</option>
                                     <option value="rating_desc">Puana göre azalan</option>
                                     <option value="date_asc">Tarihe göre artan</option>
@@ -415,7 +473,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                     <div className="flex items-center gap-4 mb-2">
                                         <div className="avatar placeholder">
                                             <div className="bg-base-300 text-base-content rounded-full w-12">
-                                                <span>{review.customerName&&review.customerName.substring(0, 2)}</span>
+                                                <span>{review.customerName && review.customerName.substring(0, 2)}</span>
                                             </div>
                                         </div>
                                         <div>
@@ -423,7 +481,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                             <div className="rating rating-sm">
                                                 {[...Array(5)].map((_, index) => (
                                                     <input
-                                                        key={index}
+                                                        key={`rating${index}`}
                                                         type="radio"
                                                         className={`mask mask-star-2 ${index < review.rating ? 'bg-primary' : 'bg-base-300'
                                                             }`}
@@ -465,7 +523,7 @@ export default function ProductDetail({ product, user,addCart,quantityFB,product
                                     <div className="rating rating-lg gap-2">
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <input
-                                                key={star}
+                                                key={`star${star}`}
                                                 type="radio"
                                                 name="rating"
                                                 className="mask mask-star-2 bg-primary"

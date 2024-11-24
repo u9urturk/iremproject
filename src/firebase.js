@@ -167,7 +167,6 @@ async function getUserbyId(id) {
 
 async function addComment(data) {
     const db = getFirestore();
-    console.log(data)
     try {
         const docRef = await addDoc(collection(db, "comments"), data)
         toast.success('Yorum başarıyla eklendi!');
@@ -236,7 +235,6 @@ const signInWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
-        console.log(user)
 
         // Firestore'a kullanıcı verisini kaydet
         await saveUserToFirestore({
@@ -984,7 +982,6 @@ export const uploadImage = async (target = null, id, file) => {
 
 
 export const uploadImageBilboard = async (file) => {
-    // console.log(productId,file);
     const storageRef = ref(storage, `${"bilboard"}/${file.name}`);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -1324,7 +1321,6 @@ export const addFabric = async (fabricName) => {
 
 export const deleteFabricByFabricId = async (data) => {
     let isSuccess = false
-    // console.log(data)
 
     await deleteDoc(doc(db, "fabrics", data.id)).then(function () {
         toast.warning(`"${data.fabricName}" isimli kumaş başarıyla silindi. `, {
@@ -1372,30 +1368,52 @@ export const getFabricsByFabricId = async (fabricId) => {
 //PatternOperations
 
 
-async function updatePattern(docId, baseData, updateFields) {
+async function updatePattern(docId, updateFields, baseData) {
     try {
         // Belge referansı oluştur
         const docRef = doc(db, "patterns", docId);
 
         // Güncelleme işlemi
-        await updateDoc(docRef, {
-            ...baseData,
-            updateTime: Timestamp.fromDate(new Date()),
-            imgsUrl: updateFields
-        });
-
+        if (baseData) {
+            await updateDoc(docRef, {
+                ...baseData,
+                updateTime: Timestamp.fromDate(new Date()),
+                imgsUrl: updateFields
+            });
+        } else if (!baseData) {
+            await updateDoc(docRef, {
+                updateTime: Timestamp.fromDate(new Date()),
+                imgsUrl: updateFields
+            });
+        }
         console.log("Belge başarıyla güncellendi.");
     } catch (error) {
         console.error("Güncelleme sırasında bir hata oluştu:", error);
     }
 }
 
+export const getImgUrl = (id, file) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const imgUrls = await uploadImage("patterns", id, file);
+            resolve(imgUrls);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 
-const getImgUrls = (id, files) => {
+
+
+export const getImgUrls = (id, files) => {
     return new Promise((resolve, reject) => {
         try {
             const imgUrls = files.map((file) => {
-                return uploadImage("patterns", id, file.file); // uploadImage işlemi bir Promise döndürür
+                if (file === null) {
+                    return null;
+                }
+                return uploadImage("patterns", id, file.file);
+                // uploadImage işlemi bir Promise döndürür
             });
 
             // Tüm upload işlemleri tamamlandığında URL'leri al
@@ -1430,7 +1448,7 @@ export const addPattern = async ({ patternName, files }) => {
         const imgUrls = await getImgUrls(id, files);
 
         // URL'ler alındıktan sonra Firestore belgesini güncelleyin
-        await updatePattern(id, baseData, imgUrls);
+        await updatePattern(id, imgUrls, baseData);
 
         toast.success(`"${patternName}" isimli kumaş başarıyla eklendi. `, {
             position: "top-left",
@@ -1466,7 +1484,6 @@ export const addPattern = async ({ patternName, files }) => {
 
 export const deletePatternByPatternId = async (data) => {
     let isSuccess = false
-    // console.log(data)
 
     await deleteDoc(doc(db, "patterns", data.id)).then(function () {
         toast.warning(`"${data.patternName}" isimli desen başarıyla silindi. `, {
@@ -1512,6 +1529,7 @@ export {
     getCommentsByProductId,
     getUserbyId,
     getUsernameByUId,
+    updatePattern
 };
 
 

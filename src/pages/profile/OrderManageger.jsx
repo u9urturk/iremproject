@@ -9,7 +9,7 @@ const OrderManager = () => {
   const navigate = useNavigate();
   const user = useSelector(state => state.auth.user)
   const [orders, setOrders] = useState([])
-  const [expandedOrder, setExpandedOrder] = useState(null);
+  const [expandedOrder, setExpandedOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortedOrders, setSortedOrders] = useState([]);
@@ -59,7 +59,7 @@ const OrderManager = () => {
   const goToOrderWithState = (data) => {
     console.log(data)
     navigate(`/profile/orders/${data.id}`, {
-      state: { order:data }
+      state: { order: data }
     });
   };
 
@@ -117,7 +117,7 @@ const OrderManager = () => {
               <input
                 type="checkbox"
                 checked={expandedOrder === order.id}
-                onChange={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                onChange={() => setExpandedOrder(expandedOrder === order.id ? "" : order.id)}
               />
               <div className="collapse-title">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -188,7 +188,7 @@ const OrderManager = () => {
                     </div>
                   </div>
                 </div>
-                <div  onClick={() => { goToOrderWithState(order) }} className='w-full flex items-center justify-center' >
+                <div onClick={() => { goToOrderWithState(order) }} className='w-full flex items-center justify-center' >
                   <Link className='btn btn-primary w-[80%] my-4 text-white  rounded-lg'>Siparişi Ayrıntılı Görüntüle</Link>
 
                 </div>

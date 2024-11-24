@@ -1,23 +1,21 @@
 
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
+const authSlice = createSlice({
+    name: 'auth',
+    initialState: {
+        user: null,
+    },
+    reducers: {
+        setUser: (state, action) => {
+            const { uid, email, displayName } = action.payload; // Serileştirilebilir alanlar
+            state.user = { uid, email, displayName }; // Sadece düz nesneler saklanır
+        },
+        clearUser: (state) => {
+            state.user = null;
+        },
+    },
+});
 
-const initialState = {
-    user:null
-}
-
-const auth = createSlice({
-    name : "auth",
-    initialState,
-    reducers:{
-        setUser : (state,action) =>{
-
-            state.user  = action.payload
-        }
-        
-    }})
-
-
-
-export const {setUser}  = auth.actions
-export default auth.reducer
+export const { setUser, clearUser } = authSlice.actions;
+export default authSlice.reducer;

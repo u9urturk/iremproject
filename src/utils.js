@@ -6,7 +6,17 @@ import { Navigate, useLocation } from "react-router-dom";
 
 
 export const userHendle = data => {
-    store.dispatch(setUser(data))
+    if (!data) return;
+
+    // Serileştirilebilir özellikleri seç
+    const serializedData = {
+        uid: data.uid,
+        email: data.email,
+        displayName: data.displayName,
+        photoURL: data.photoURL,
+        phoneNumber: data.phoneNumber,
+    };
+    store.dispatch(setUser(serializedData))
 }
 
 

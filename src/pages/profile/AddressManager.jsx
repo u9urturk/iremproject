@@ -3,13 +3,13 @@ import { MapPin, Plus, Edit, Trash, Home, Building, Check } from 'lucide-react';
 import { createAddress, deleteAddress, getUserAddresses, updateAddress } from '../../firebase';
 import { useSelector } from 'react-redux';
 
-const AddressManager = ({handleJustAdd=false,onClose,mainPage=null}) => {
+const AddressManager = ({handleJustAdd=false,onClose=()=>{},mainPage=null}) => {
     const user = useSelector(state => state.auth.user)
 
     const [addresses, setAddresses] = useState([]);
     const [justAdd, setJustAdd] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [editingAddress, setEditingAddress] = useState(null);
+    const [editingAddress, setEditingAddress] = useState("");
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',

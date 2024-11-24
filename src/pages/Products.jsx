@@ -84,15 +84,6 @@ export default function Products({ id }) {
     }
 
     useEffect(() => {
-        {
-            categories.map((category, key) => {
-                return <div className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId === category.categoryId ? "bg-yellow-800" : null} `} onClick={
-                    () => {
-                        setSelected({ categoryId: category.categoryId });
-                        productByCategoryIdReaction(category.categoryId)
-                    }} key={key}><div>{category.name}</div></div>
-            })
-        }
         categoryReaction()
         productReaction()
     }, [categoryReaction, productReaction])
@@ -102,7 +93,7 @@ export default function Products({ id }) {
         let range = 9;
         for (let i = 0; i < range; i++) {
             set.push({
-                res: <div className="flex flex-col gap-4 w-52">
+                res: <div key={`skeleton${i}`} className="flex flex-col gap-4 w-52">
                     <div className="skeleton h-32 w-full"></div>
                     <div className="skeleton h-4 w-28"></div>
                     <div className="skeleton h-4 w-full"></div>
@@ -116,7 +107,7 @@ export default function Products({ id }) {
 
 
     return (
-        <div ref={ref} class="flex mt-16 flex-col items-center justify-center gap-y-16   ">
+        <div ref={ref} className="flex mt-16 flex-col items-center justify-center gap-y-16   ">
             <div className='w-full  h-auto text-sm md:text-base flex items-center justify-center gap-x-1 md:gap-x-6 py-2'>
                 <div className='flex flex-col z-[1]  gap-y-2 items-center justify-center'>
                     {categories.length === 0 && <div className='py-1 px-2'>Yükleniyor ...</div>}
@@ -124,17 +115,17 @@ export default function Products({ id }) {
 
                     {categories.length > 0 && <div className='flex items-center gap-y-2 px-4 justify-start flex-wrap gap-x-2'>
                         <div onClick={() => { productReaction() }} className='flex flex-wrap gap-x-2 w-auto items-center justify-center gap-y-2'>
-                            <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto  btn-sm sm:btn-sm md:btn-md '>
+                            <div onClick={() => { setSelected({ categoryName: "Kategoriler" }) }} className='btn w-auto rounded-md btn-sm sm:btn-sm md:btn-md '>
                                 Tüm Ürünler
                             </div>
                         </div>
                         {
                             categories.map((category, key) => {
-                                return <div className={`btn w-auto   btn-sm sm:btn-sm md:btn-md ${selected?.categoryId === category.categoryId ? "bg-yellow-800" : null} `} onClick={
+                                return <div className={`btn w-auto  rounded-md  btn-sm sm:btn-sm md:btn-md ${selected?.categoryId === category.categoryId ? "bg-yellow-800" : null} `} onClick={
                                     () => {
                                         setSelected({ categoryId: category.categoryId });
                                         productByCategoryIdReaction(category.categoryId)
-                                    }} key={key}><div>{category.name}</div></div>
+                                    }} key={category.categoryId}><div>{category.name}</div></div>
                             })
                         }
 
@@ -149,7 +140,7 @@ export default function Products({ id }) {
                     {
                         products.length > 0 && products.map((product, key) => {
 
-                            return <Link to={`product/${product.productId}`} key={key}
+                            return <Link to={`product/${product.productId}`} key={product.productId}
                                 className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
 
                                 <figure ><ListenImages target={"productImages"} productId={product.productId}></ListenImages></figure>

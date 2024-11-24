@@ -20,7 +20,6 @@ export default function Product() {
   const getProductReaction = useCallback(
     () => {
       getProductByProductId(productId).then(async res => {
-        console.log(res)
         const colorPromise = getColorByColorId(res.colorId);
         const fabricPromise = getFabricsByFabricId(res.fabricId);
         const patternPromise = getPatternByPatternId(res.patternId);

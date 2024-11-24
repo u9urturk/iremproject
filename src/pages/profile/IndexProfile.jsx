@@ -55,7 +55,7 @@ export default function IndexProfile() {
       <div className=' py-3 px-4 sm:px-8   w-full tracking-wider flex items-center justify-between rounded font-bold  bg-base-100'>
         <span>Profil</span>
         <div className='flex items-center justify-center gap-x-2'>
-          <div clas><FaRegBell size={22} /></div>
+          <div ><FaRegBell size={22} /></div>
 
         </div>
       </div>

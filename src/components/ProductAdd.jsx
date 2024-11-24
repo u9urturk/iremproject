@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, Image, ArrowRight, ArrowLeft, Eye, EyeOff, Plus } from 'lucide-react';
+import { Save,  ArrowRight, ArrowLeft, Eye, EyeOff, Plus } from 'lucide-react';
 import { useCategory } from '../context/CategoryContext';
 import validateFormData from '../validate/ValidateProductAdd';
 import { toast } from 'react-toastify';
@@ -388,7 +388,7 @@ export default function ProductAdd({ productStateChange }) {
                                         İleri <ArrowRight className="w-4 h-4 ml-2" />
                                     </button>
                                 ) : (
-                                    <button onClick={handleSave} className="btn btn-success ml-auto">
+                                    <button onClick={handleSave} type='submit' className="btn btn-success ml-auto">
                                         <Save className="w-4 h-4 mr-2" /> Kaydet
                                     </button>
                                 )}
