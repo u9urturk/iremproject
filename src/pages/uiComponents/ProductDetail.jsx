@@ -18,12 +18,11 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
     const [pageLoading, setPageLoading] = useState(true);
     const [selectedValue, setSelectedValue] = useState("Sırala");
     const [currentProperty, setCurrentProperty] = useState({
-        length:0,
-        urls:[]
+        length: 0,
+        urls: []
     })
     const [selectedImage, setSelectedImage] = useState(0);
-    console.log(selectedImage)
-    console.log(currentProperty)
+
 
     const [newReview, setNewReview] = useState({
         rating: 5,
@@ -262,14 +261,14 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                     {/* Sol Taraf - Ürün Görselleri */}
                     <div className="relative h-1/2 lg:w-1/2 p-6">
                         <img
-                            src={images[activeImageIndex]}
+                            src={images && images[activeImageIndex]}
                             alt={`${product.name} - Ana Görsel`}
                             className="w-full h-96 rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => handleImageClick(activeImageIndex)}
                         />
                         {/* Küçük Görsel Önizlemeleri */}
                         <div className="grid grid-cols-3 gap-2 mt-4">
-                            {images.map((img, index) => (
+                            {images && images.map((img, index) => (
                                 <div
                                     key={`${productId}${index}`}
                                     className={`cursor-pointer rounded-lg overflow-hidden border-2 
@@ -373,52 +372,53 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                         <p className="mt-6 text-base-content/80">{product.explanation}</p>
 
                         {/* Ürün Özellikleri */}
-                        <div onClick={() => document.getElementById('my_modal_prpty').showModal()} className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {Object.entries({
-                                Renk: { value: product.color, images: ['url-to-color1.jpg', 'url-to-color2.jpg'] },
-                                Kumaş: { value: product.fabric, images: ['url-to-fabric1.jpg', 'url-to-fabric2.jpg'] },
+                                Renk: { value: product.colors[0].colorName, },
+                                Kumaş: { value: product.fabrics[0].fabricName },
                                 Model: {
-                                    value: product.pattern, images: [
-                                        "https://picsum.photos/800/600?random=1",
-                                        "https://picsum.photos/800/600?random=2",
-                                        "https://picsum.photos/800/600?random=3"
-                                      ]
+                                    value: product.patterns.patternName, images: product.patterns.urls,
+                                    openModal: () => { document.getElementById('my_modal_prpty').showModal() }
                                 },
-                            }).map(([key, { value, images }]) => (
-                                <div onClick={()=>{setCurrentProperty({
-                                    length:images.length,
-                                    urls:images
-                                })}} key={key} className="stats overflow-visible relative group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow">
+                            }).map(([key, { value, images , openModal}]) => (
+                                <div key={key} className="stats overflow-visible relative group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow">
                                     <div className="stat place-items-center p-2">
                                         <div className="stat-title">{key}</div>
                                         <div className="stat-value text-lg">{value}</div>
                                     </div>
                                     {/* Hover İçin Popup */}
-                                    <div className="absolute top-[-170%] left-1/2 transform -translate-x-1/2 hidden group-hover:flex flex-col items-center bg-base-100 border border-gray-200 rounded-lg shadow-lg z-[1] w-48 p-3">
+                                    <div className={`absolute top-[-170%] left-1/2 transform -translate-x-1/2 hidden ${images ? "group-hover:flex" : ""} flex-col items-center bg-base-100 border border-gray-200 rounded-lg shadow-lg z-[1] w-48 p-3`}>
                                         <div className="font-bold mb-2">{key} Görselleri</div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {images.map((img, index) => (
-                                                <img
+                                        <div onClick={() => {
+                                            setCurrentProperty({
+                                                length: images.length,
+                                                urls: images
+                                            })
+
+                                            openModal()
+                                        }} className="flex items-center justify-center  grid-cols-2 gap-2">
+                                            {images?.map((img, index) => (
+                                                img ? <img
                                                     key={index}
                                                     src={img}
                                                     alt={`${key} ${index + 1}`}
                                                     className="w-full h-16 object-cover rounded-md border border-gray-300"
-                                                />
+                                                /> : ""
                                             ))}
                                         </div>
                                     </div>
                                 </div>
                             ))}
 
-                            <dialog id="my_modal_prpty" className="modal">
+                            <dialog id="my_modal_prpty" className={`${currentProperty.urls ? "modal" : "hidden"}`}>
                                 <div className="modal-box relative">
-                                    <div className='font-bold text-2xl pb-2'>Alternatif {"Modeller"} ? </div>
+                                    <div className='font-bold text-2xl pb-2'> {"Model"} Görselleri </div>
                                     {/* Büyük Resim */}
-                                  
+
                                     <img src={currentProperty?.urls[selectedImage]} alt={`Large View`} className="w-full h-auto rounded-lg" />
 
                                     {/* Galeri Navigasyonu */}
-                                    <div className="flex justify-between mt-4">
+                                    <div className={`flex justify-between mt-4 ${currentProperty.length > 1 ? "" : "hidden"}`}>
                                         <button
                                             onClick={() => setSelectedImage((prev) => (prev === 0 ? currentProperty.length - 1 : prev - 1))}
                                             className="bg-gray-700 select-none text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"

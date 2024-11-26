@@ -1,12 +1,16 @@
 import { useSelector } from "react-redux";
 import store from "./store"
-import { setUser } from "./store/auth";
+import { clearUser, fetchUserRole, setUser } from "./store/auth";
 import React from 'react'
 import { Navigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
-export const userHendle = data => {
-    if (!data) return;
+export const userHendle = async data => {
+    if (!data) {
+        store.dispatch(clearUser());
+        return;
+    }
 
     // Serileştirilebilir özellikleri seç
     const serializedData = {
@@ -16,21 +20,37 @@ export const userHendle = data => {
         photoURL: data.photoURL,
         phoneNumber: data.phoneNumber,
     };
-    store.dispatch(setUser(serializedData))
+    store.dispatch(setUser(serializedData));
+    await store.dispatch(fetchUserRole(data.uid));
 }
 
 
-export default function PrivateRoute({ children }) {
+export default function PrivateRoute({ children ,type}) {
 
     const user = useSelector(state => state.auth.user)
-    console.log(user)
+    const isAdmin = useSelector(state => state.auth.isAdmin)
+
     const location = useLocation()
 
-    if (!user) {
-        return <Navigate to="/" replace={true} state={{
-            return_url: location.pathname
-        }}></Navigate>
+    switch (type) {
+        case "admin":
+            if (user && !isAdmin) {
+                toast.warning('Yetki dışı erişim isteği saptandı ! İstek bilgileri denetlenecektir.')
+                return <Navigate to="/" replace={true} state={{
+                    return_url: location.pathname
+                }}></Navigate>
+            }
+
+            return children;
+
+        default:
+            if (!user) {
+                return <Navigate to="/" replace={true} state={{
+                    return_url: location.pathname
+                }}></Navigate>
+            }
+            return children;
     }
 
-    return children;
+
 }

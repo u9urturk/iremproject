@@ -15,7 +15,7 @@ export default function ProductAdd({ productStateChange }) {
         productData: {
             productName: '',
             categoryId: '',
-            explanition: '',
+            explanation: '',
             colorId: '',
             fabricId: '',
             patternId: '',

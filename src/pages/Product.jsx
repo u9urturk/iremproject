@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId, } from '../firebase';
+import { downloadImages, getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId, } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import ProductDetail from './uiComponents/ProductDetail';
@@ -24,18 +24,28 @@ export default function Product() {
         const fabricPromise = getFabricsByFabricId(res.fabricId);
         const patternPromise = getPatternByPatternId(res.patternId);
 
-        const [color, fabric, pattern] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
+
+        const [colors, fabrics, patterns] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
+        console.log(patterns)
 
         setProduct({
           name: res.productName,
           basePrice: res.basePrice,
-          fullPrice: res.fullPrice ? res.fullPrice : null,
-          color: color.name,
-          fabric: fabric.name,
-          pattern: pattern?.name,
+          fullPrice: res.fullPrice || null,
+          colors: [{
+            colorName: colors?.name || 'Unknown Color', 
+          }],
+          fabrics: [{
+            fabricName: fabrics?.name || 'Unknown Fabric',
+          }],
+          patterns: {
+            patternName: patterns?.name || 'Unknown Pattern', 
+            urls: [patterns?.imgsUrl?.find(img => img !== null)],
+          },
           rating: Math.round(res.rating),
-          explanation: res.explanition
+          explanation: res.explanation || 'No explanation provided', 
         });
+
       })
     },
     [productId],
@@ -63,14 +73,14 @@ export default function Product() {
   )
 
   const handleAddToCart = (baseImage) => {
-    addToCart(productId, product,quantity,baseImage)
+    addToCart(productId, product, quantity, baseImage)
   }
 
   const updateReviewState = (data) => {
     setReviews(prevReviews => [...prevReviews, data])
   }
 
-  const setQuantityFb = (e)=>{
+  const setQuantityFb = (e) => {
     setQuantity(e)
   }
 

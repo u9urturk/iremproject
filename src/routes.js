@@ -28,93 +28,117 @@ const routes = [
             {
                 index: true,
                 element: <Main></Main>,
-              
+
             },
             {
-                path:'product/:productId',
-                element:<Product></Product>
+                path: 'product/:productId',
+                element: <Product></Product>
             },
             {
-                path:"profile",
-                element:<MainProfile></MainProfile>,
-                children:[
+                path: "profile",
+                element: <MainProfile></MainProfile>,
+                auth: true,
+                children: [
                     {
-                        index:true,
-                        element:<IndexProfile></IndexProfile>
+                        auth: true,
+                        index: true,
+                        element: <IndexProfile></IndexProfile>
 
                     },
                     {
-                        path:"address",
-                        element:<AddressManager mainPage={true}></AddressManager>
+                        auth: true,
+                        path: "address",
+                        element: <AddressManager mainPage={true}></AddressManager>
 
                     },
                     {
-                        path:"orders",
-                        element:<OrderManager></OrderManager>
+                        auth: true,
+                        path: "orders",
+                        element: <OrderManager></OrderManager>
 
                     },
                     {
-                        path:"orders/:id",
-                        element:<OrderDetail></OrderDetail>
+                        auth: true,
+                        path: "orders/:id",
+                        element: <OrderDetail></OrderDetail>
 
                     }
                 ]
-                
+
             },
             {
-                path:"checkoutsummary",
-                element:<CheckoutSummary></CheckoutSummary>    
+                auth: true,
+                path: "checkoutsummary",
+                element: <CheckoutSummary></CheckoutSummary>
             }
             ,
             {
-                path:'yöneticipaneli',
-                element:<DevDash></DevDash>,
-                children:[
+                auth: true,
+                admin: true,
+                path: 'yöneticipaneli',
+                element: <DevDash></DevDash>,
+                children: [
                     {
-                        index:true,
-                        element:<OrderManagment></OrderManagment>
+                        auth: true,
+                        admin: true,
+                        index: true,
+                        element: <OrderManagment></OrderManagment>
                     },
                     {
-                        path:'kategoriislemleri',
-                        element:<CategoryOperations></CategoryOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'kategoriislemleri',
+                        element: <CategoryOperations></CategoryOperations>
                     },
                     {
-                        path:'ozellikislemleri',
-                        element:<PropertyOperations></PropertyOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'ozellikislemleri',
+                        element: <PropertyOperations></PropertyOperations>
                     },
                     {
-                        path:'ozellikislemleri/renkler',
-                        element:<ColorOperations></ColorOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'ozellikislemleri/renkler',
+                        element: <ColorOperations></ColorOperations>
                     },
                     {
-                        path:'ozellikislemleri/kumaslar',
-                        element:<FabricOperations></FabricOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'ozellikislemleri/kumaslar',
+                        element: <FabricOperations></FabricOperations>
                     },
                     {
-                        path:'ozellikislemleri/desenler',
-                        element:<PatternOperations></PatternOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'ozellikislemleri/desenler',
+                        element: <PatternOperations></PatternOperations>
                     },
                     {
-                        path:'urunislemleri',
-                        element:<ProductOperations></ProductOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'urunislemleri',
+                        element: <ProductOperations></ProductOperations>
                     },
                     {
-                        path:'kullaniciislemleri',
-                        element:<CategoryOperations></CategoryOperations>
+                        auth: true,
+                        admin: true,
+                        path: 'kullaniciislemleri',
+                        element: <CategoryOperations></CategoryOperations>
                     }
                 ]
             },
             {
-                path:'useragreement',
-                element:<UserAgreement></UserAgreement>
+                path: 'useragreement',
+                element: <UserAgreement></UserAgreement>
             },
             {
-                path:'privacypolicy',
-                element:<PrivacyPolicy></PrivacyPolicy>
+                path: 'privacypolicy',
+                element: <PrivacyPolicy></PrivacyPolicy>
             },
             {
-                path:'cookiepolicy',
-                element:<CookiePolicy></CookiePolicy>
+                path: 'cookiepolicy',
+                element: <CookiePolicy></CookiePolicy>
             },
         ]
     }
@@ -123,6 +147,9 @@ const routes = [
 const authCheck = routes => routes.map(route => {
     if (route?.auth) {
         route.element = <PrivateRoute>{route.element}</PrivateRoute>
+    }
+    if (route?.auth && route?.admin) {
+        route.element = <PrivateRoute type={"admin"}>{route.element}</PrivateRoute>
     }
     if (route?.children) {
         route.children = authCheck(route.children)

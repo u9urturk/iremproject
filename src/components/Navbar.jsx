@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { LuShoppingCart } from "react-icons/lu";
-import { isAdmin } from '../firebase'
 import { LuUserCog } from "react-icons/lu";
 import { useCart } from '../context/CartContext'
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
@@ -17,31 +16,16 @@ import { MdExpandLess, MdExpandMore } from "react-icons/md";
 export default function Navbar() {
 
     const user = useSelector(state => state.auth.user)
+    const isAdmin = useSelector(state=>state.auth.isAdmin)
     const [scrollY, setScrollY] = useState(0);
-    const [isAdminUser, setIsAdminUser] = useState(false)
     const { items, totalQuantity, totalAmount, removeFromCart, clearCart, updateQantityFromCart } = useCart();
-
 
 
 
     const handleScroll = () => {
         setScrollY(window.scrollY);
     };
-    useEffect(() => {
-        if (user) {
-            isAdmin(user?.uid).then(res => {
-                if (res === true) {
-                    setIsAdminUser(true);
-                } else {
-                    setIsAdminUser(false);
-                }
-            })
-        } else if (user === null) {
-            setIsAdminUser(false)
-        }
 
-
-    }, [user])
 
 
     const drawerRef = useRef(null);
@@ -107,7 +91,7 @@ export default function Navbar() {
                         </li>
                         <li>
                             <Link to={"/yöneticipaneli"}
-                                className={`tooltip  md:tooltip-bottom ${isAdminUser ? "block" : "hidden"}`} data-tip="Yönetim Paneli">
+                                className={`tooltip  md:tooltip-bottom ${isAdmin ? "block" : "hidden"}`} data-tip="Yönetim Paneli">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="h-5 w-5"
@@ -137,7 +121,7 @@ export default function Navbar() {
                                     </label>
                                 </div>
                                 <div className="drawer-side z-[1] ">
-                                    <label htmlFor="basket-cart"  aria-label="close sidebar" className="drawer-overlay"></label>
+                                    <label htmlFor="basket-cart" aria-label="close sidebar" className="drawer-overlay"></label>
                                     <ul className="menu bg-base-200  text-base-content min-h-full w-80 p-4">
                                         <div className='space-y-2 my-8 mx-2'>
                                             <div className='flex items-center justify-between'>
