@@ -2,9 +2,9 @@ import { toast } from "react-toastify";
 
 const validateFormData = (formData) => {
     const { productData, photos } = formData;
+    console.log(productData)
 
     const changeKey = (key) => {
-        console.log(key)
         switch (key) {
             case 'categoryId':
                 return "Kategori"
@@ -13,14 +13,14 @@ const validateFormData = (formData) => {
                 return "Renk"
 
 
-            case 'explanition':
+            case 'explanation':
                 return "Ürün Açıklaması"
 
             case 'fabricId':
                 return "Kumaş"
 
             case 'patternId':
-                return "Desen"
+                return "Model"
 
             case 'basePrice':
                 return "Taban Fiyat"
@@ -53,7 +53,7 @@ const validateFormData = (formData) => {
        
     }
 
-    if (productData.basePrice > productData.fullPrice && productData.premiumProduct === true) {
+    if (parseInt(productData.basePrice) > parseInt(productData.fullPrice) && productData.premiumProduct === true) {
         toast.error("Taban Fiyat Premium Fiyattan Yüksek Olamaz");
         return false;
     }

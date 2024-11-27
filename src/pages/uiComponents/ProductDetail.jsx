@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { addComment, downloadImages } from '../../firebase';
 
 export default function ProductDetail({ product, user, addCart, quantityFB, productId, reviews, updateReviewState }) {
-    const [includeProduct, setIncludeProduct] = useState(false);
+    const [includeProduct, setIncludeProduct] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [visibleReviews, setVisibleReviews] = useState(8);
@@ -374,8 +374,8 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                         {/* Ürün Özellikleri */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {Object.entries({
-                                Renk: { value: product.colors[0].colorName, },
-                                Kumaş: { value: product.fabrics[0].fabricName },
+                                Renk: { value: product.color.colorName, },
+                                Kumaş: { value: product.fabric.fabricName },
                                 Model: {
                                     value: product.patterns.patternName, images: product.patterns.urls,
                                     openModal: () => { document.getElementById('my_modal_prpty').showModal() }

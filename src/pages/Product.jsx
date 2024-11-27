@@ -26,25 +26,20 @@ export default function Product() {
 
 
         const [colors, fabrics, patterns] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
-        console.log(patterns)
-
         setProduct({
           name: res.productName,
           basePrice: res.basePrice,
           fullPrice: res.fullPrice || null,
-          colors: [{
-            colorName: colors?.name || 'Unknown Color', 
-          }],
-          fabrics: [{
-            fabricName: fabrics?.name || 'Unknown Fabric',
-          }],
+          color: {colorName: colors?.name || 'Unknown Color' },
+          fabric: {fabricName: fabrics?.name || 'Unknown Fabric'},
           patterns: {
             patternName: patterns?.name || 'Unknown Pattern', 
-            urls: [patterns?.imgsUrl?.find(img => img !== null)],
+            urls: patterns?.imgsUrl?.filter(img => img !== null),
           },
           rating: Math.round(res.rating),
           explanation: res.explanation || 'No explanation provided', 
         });
+        
 
       })
     },

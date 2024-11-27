@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Save,  ArrowRight, ArrowLeft, Eye, EyeOff, Plus } from 'lucide-react';
+import { Save, ArrowRight, ArrowLeft, Eye, EyeOff, Plus } from 'lucide-react';
 import { useCategory } from '../context/CategoryContext';
 import validateFormData from '../validate/ValidateProductAdd';
 import { toast } from 'react-toastify';
 import { addProduct } from '../firebase';
+import ModelUi from './ModelUi';
 
 export default function ProductAdd({ productStateChange }) {
     const [currentStep, setCurrentStep] = useState(1);
@@ -21,9 +22,9 @@ export default function ProductAdd({ productStateChange }) {
             patternId: '',
             basePrice: "",
             fullPrice: "",
-            premiumProduct: false
+            premiumProduct: true
         },
-        photos:Array(6).fill(null)
+        photos: Array(6).fill(null)
 
     });
 
@@ -53,7 +54,7 @@ export default function ProductAdd({ productStateChange }) {
             }
             return {
                 ...prevFormData,
-                photos:updatedPhotos
+                photos: updatedPhotos
             };
         });
     };
@@ -64,13 +65,11 @@ export default function ProductAdd({ productStateChange }) {
             updatedPhotos[index] = null; // Fotoğrafı kaldır
             return {
                 ...prevFormData,
-                photos:updatedPhotos
+                photos: updatedPhotos
             };
         });
     };
 
-
-    
 
 
     const handleInputChange = (section, field, value) => {
@@ -83,10 +82,11 @@ export default function ProductAdd({ productStateChange }) {
         }));
     };
 
+
     const handleSave = () => {
         const isValid = validateFormData(formData);
         if (isValid) {
-            addProduct(formData).then(()=>{
+            addProduct(formData).then(() => {
                 document.getElementById("modal_product_add").close()
             })
         }
@@ -190,8 +190,8 @@ export default function ProductAdd({ productStateChange }) {
                                             <textarea
                                                 className="textarea textarea-bordered h-24"
                                                 placeholder="Ürün açıklamasını giriniz"
-                                                value={formData.productData.explanition}
-                                                onChange={(e) => handleInputChange('productData', 'explanition', e.target.value)}
+                                                value={formData.productData.explanation}
+                                                onChange={(e) => handleInputChange('productData', 'explanation', e.target.value)}
                                             ></textarea>
                                         </div>
                                     </div>
@@ -242,21 +242,10 @@ export default function ProductAdd({ productStateChange }) {
 
                                             <div className="form-control">
                                                 <label className="label">
-                                                    <span className="label-text">Desen</span>
+                                                    <span className="label-text">Model</span>
                                                 </label>
-                                                <select
-                                                    className="select select-bordered"
-                                                    value={formData.productData.patternId}
-                                                    onChange={(e) => handleInputChange('productData', 'patternId', e.target.value)}
-                                                >
-                                                    <option value="" disabled>Desen seçiniz</option>
-                                                    {
-                                                        patterns.map((pattern, key) => (
-                                                            <option key={key} value={pattern.id}>{pattern.name}</option>
+                                                <ModelUi patterns={patterns} currentModel={handleInputChange} ></ModelUi>
 
-                                                        ))
-                                                    }
-                                                </select>
                                             </div>
 
                                             <div className="form-control">

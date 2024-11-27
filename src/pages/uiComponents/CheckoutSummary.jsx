@@ -16,7 +16,7 @@ const CheckoutSummary = () => {
     const [justAdd, setJustAdd] = useState(false);
     const navigate = useNavigate();
 
-
+    console.log(items)
     const defaultAddress = (data) => {
         return new Promise((resolve, reject) => {
             if (!data || data.length === 0) {
@@ -104,8 +104,18 @@ const CheckoutSummary = () => {
                                     <div className="flex-1">
                                         <h3 className="font-semibold">{item.name}</h3>
                                         <div className="text-sm text-gray-600 mt-1">
-                                            <p>Renk: {item.color}</p>
-                                            <p>Desen: {item.pattern}</p>
+                                            <p>Renk: {item.color.colorName}</p>
+                                            <p>Kumaş: {item.fabric.fabricName}</p>
+                                            <div className='flex items-center justify-start gap-x-1'>
+                                                <p>Model:</p>
+                                                <div>
+                                                    {
+                                                        item.patterns.urls.map((url,key)=>(
+                                                            <img key={key} src={url} className='w-16 h-16' alt="" srcset="" />
+                                                        ))
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="flex justify-between items-center mt-2">
                                             <span className="text-sm">Adet: {item.quantity}</span>
