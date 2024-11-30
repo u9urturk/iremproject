@@ -42,7 +42,9 @@ const cartReducer = (state, action) => {
                     ...state,
                     items: uUpdatedItems,
                     totalQuantity: state.totalQuantity - 1,
-                    totalAmount: state.totalAmount - uUpdatedItems[uExistingProductIndex].basePrice * 1,
+                    totalAmount: state.totalAmount - (uUpdatedItems[uExistingProductIndex].isFullPrice?
+                        uUpdatedItems[uExistingProductIndex].fullPrice
+                        :uUpdatedItems[uExistingProductIndex].basePrice )* 1
                 };
             } else {
                 uUpdatedItems[uExistingProductIndex].quantity += 1;
@@ -50,7 +52,9 @@ const cartReducer = (state, action) => {
                     ...state,
                     items: uUpdatedItems,
                     totalQuantity: state.totalQuantity + 1,
-                    totalAmount: state.totalAmount + uUpdatedItems[uExistingProductIndex].basePrice * 1,
+                    totalAmount: state.totalAmount + (uUpdatedItems[uExistingProductIndex].isFullPrice?
+                        uUpdatedItems[uExistingProductIndex].fullPrice
+                        :uUpdatedItems[uExistingProductIndex].basePrice )* 1
                 };
 
             }
@@ -58,21 +62,23 @@ const cartReducer = (state, action) => {
 
 
         case actionTypes.ADD_TO_CART:
-            const { product, quantity, baseImage, id } = action.payload;
+            const { updatedProduct, quantity, baseImage, id} = action.payload;
             const existingProductIndex = state.items.findIndex(item => item.id === id);
             const updatedItems = [...state.items];
 
             if (existingProductIndex >= 0) {
                 updatedItems[existingProductIndex].quantity += quantity;
             } else {
-                updatedItems.push({ ...product, quantity, baseImage, id });
+                updatedItems.push({ ...updatedProduct, quantity, baseImage, id });
             }
+
+            console.log(updatedProduct)
 
             return {
                 ...state,
                 items: updatedItems,
                 totalQuantity: state.totalQuantity + quantity,
-                totalAmount: state.totalAmount + product.basePrice * quantity,
+                totalAmount: state.totalAmount + (updatedProduct.isFullPrice?updatedProduct.fullPrice:updatedProduct.basePrice) * quantity,
             };
 
         case actionTypes.REMOVE_FROM_CART:
@@ -84,7 +90,7 @@ const cartReducer = (state, action) => {
                 ...state,
                 items: state.items.filter(item => item.id !== productId),
                 totalQuantity: state.totalQuantity - itemToRemove.quantity,
-                totalAmount: state.totalAmount - itemToRemove.basePrice * itemToRemove.quantity,
+                totalAmount: state.totalAmount - (itemToRemove.isFullPrice?itemToRemove.fullPrice:itemToRemove.basePrice) * itemToRemove.quantity,
             };
 
         case actionTypes.CLEAR_CART:
@@ -106,7 +112,7 @@ export const CartProvider = ({ children }) => {
     // Firestore ile senkronize etmek için sepeti ayarla
     const setCart = (cartItems) => {
         const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
-        const totalAmount = cartItems.reduce((total, item) => total + item.basePrice * item.quantity, 0);
+        const totalAmount = cartItems.reduce((total, item) => total + (item.isFullPrice?item.fullPrice:item.basePrice) * item.quantity, 0);
         dispatch({ type: actionTypes.SET_CART, payload: { items: cartItems, totalQuantity, totalAmount } });
     };
 
@@ -129,13 +135,13 @@ export const CartProvider = ({ children }) => {
     }, [user?.uid]);
 
     // Sepete Ürün Ekleme (Firebase ve State)
-    const addToCart = async (id, product, quantity = 1, baseImage) => {
-
-
+    const addToCart = async (id, product, quantity = 1, baseImage,isFullPrice) => {
+        const updatedProduct  = {...product,isFullPrice}
+ 
         try {
             // Firestore'a güncelleme veya ekleme
-            addToCartFb(user.uid, id, product, quantity, baseImage).then(() => {
-                dispatch({ type: actionTypes.ADD_TO_CART, payload: { product, quantity, baseImage, id } });
+            addToCartFb(user.uid, id, updatedProduct, quantity, baseImage).then(() => {
+                dispatch({ type: actionTypes.ADD_TO_CART, payload: {updatedProduct, quantity, baseImage, id } });
 
             })
         } catch (error) {

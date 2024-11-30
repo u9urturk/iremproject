@@ -3,7 +3,7 @@ import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, FacebookAuthProvider } from "firebase/auth";
 import { userHendle } from "./utils";
 import { Flip, toast } from "react-toastify";
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, increment, orderBy, query, runTransaction, setDoc, updateDoc, where } from "firebase/firestore";
 
 
 
@@ -364,23 +364,58 @@ const showToast = (type, message) => {
 
 //Sipariş Operasyonları
 
+
+
+//getAll Orders
+
+export const getAllOrders = async ()=>{
+    try {
+      const ordersCollectionRef = collection(db, "orders");
+      const q = query(ordersCollectionRef, orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+  
+      const ordersList = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      return ordersList;
+    } catch (error) {
+      console.error("Siparişler alınırken hata oluştu:", error);
+    }
+  }
+
 // Sipariş Ekleme (Create Order)
 export const createOrder = async (userId, orderData) => {
+    const orderId = doc(collection(db, "orders")).id;
+
+
+    const newOrder = {
+        ...orderData,
+        userId: userId,
+        id: orderId,
+        status:0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+
     try {
-        const ordersRef = collection(db, "users", userId, "orders");
+        await runTransaction(db, async (transaction) => {
 
-        const newOrder = {
-            ...orderData,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        };
+            const userOrderRef = doc(db, `users/${userId}/orders/${orderId}`);
+            const centralOrderRef = doc(db, `orders/${orderId}`);
+            
+            transaction.set(userOrderRef, newOrder);
+            transaction.set(centralOrderRef, newOrder);
+        });
 
-        const docRef = await addDoc(ordersRef, newOrder);
+
+
         showToast('success', 'Sipariş başarıyla eklendi');
 
         return {
             success: true,
-            orderId: docRef.id,
+            orderId: newOrder.id,
             order: newOrder
         };
     } catch (error) {
@@ -808,7 +843,7 @@ export const downloadImages = async (tg, productId) => {
     }).catch((error) => {
         console.log(error)
     });
-    
+
     return data;
 
 }

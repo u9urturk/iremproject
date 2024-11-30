@@ -148,7 +148,7 @@ export default function Navbar() {
                                                             <div className="flex items-center justify-center gap-x-5">
                                                                 <div className="flex flex-col items-center justify-center">
                                                                     <strong>{item.name}</strong>
-                                                                    <span className='opacity-70 font-medium'>{item.basePrice}₺</span>
+                                                                    <span className='opacity-70 font-medium'>{item.isFullPrice?item.fullPrice:item.basePrice}₺</span>
                                                                 </div>
                                                                 <div className="flex items-center justify-center gap-x-4">
                                                                     <p className="flex items-center flex-col justify-center gap-y-1">

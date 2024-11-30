@@ -1,160 +1,143 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { getAllOrders } from '../../../../firebase';
 
 export default function OrderManagment() {
-    return (
-        <div className='animate-fade'>
+    const [orders, setOrders] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
+    useEffect(() => {
+        const fetchOrders = async () => {
+            const fetchedOrders = await getAllOrders();
+            setOrders(fetchedOrders);
+        };
+
+        fetchOrders();
+    }, []);
+
+
+    const getTotalAmount = () => {
+        return orders.reduce((total, order) => {
+            return total + (order.totalAmount || 0);
+        }, 0);
+    };
+
+    const handleStatusUpdate = (orderId, newStatus) => {
+        console.log(`Sipariş ID: ${orderId} durumu güncellendi: ${newStatus}`);
+    };
+
+    function OrderStatus(statusCode = 0) {
+        const orderStatus = {
+            0: { label: "Yeni Sipariş", color: "bg-blue-500" },
+            1: { label: "Hazırlanıyor", color: "bg-orange-500" },
+            2: { label: "Yolda", color: "bg-green-500" },
+            3: { label: "Teslim Edildi", color: "bg-gray-500" },
+            4: { label: "İptal Edildi", color: "bg-red-500" },
+
+        };
+
+        const status = orderStatus[statusCode];
+
+        return <span className={`px-3 py-1 text-white rounded ${status?.color}`}>{status?.label || "Bilinmiyor"}</span>;
+    }
+
+    const filteredOrders = orders.filter(order =>
+        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.address.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div className='animate-fade max-w-7xl  mx-auto'>
             {/* cards */}
             <div className='flex flex-wrap justify-between items-center m-8 gap-4'>
-                <div className="card bg-base-100 w-96 shadow-xl">
+                <div className="card bg-base-200 w-96 shadow-xl">
                     <div className="card-body flex justify-start gap-y-12">
                         <h1 className="card-title "><strong>Toplam Siparişler</strong></h1>
-                        <strong className='font-bold text-4xl'> <p>5</p></strong>
+                        <strong className='font-bold text-4xl'> <p>{orders.length}</p></strong>
                     </div>
                 </div>
-                <div className="card bg-base-100 w-96 shadow-xl">
+                <div className="card bg-base-200 w-96 shadow-xl">
                     <div className="card-body flex justify-start gap-y-12">
                         <h1 className="card-title "><strong>Toplam Gelir</strong></h1>
-                        <strong className='font-bold text-4xl'> <p>659.95 ₺</p></strong>
-                    </div>
-                </div><div className="card bg-base-100 w-96 shadow-xl">
-                    <div className="card-body flex justify-start gap-y-12">
-                        <h1 className="card-title "><strong>Ortalama Sipariş Değeri</strong></h1>
-                        <strong className='font-bold text-4xl'> <p>131.99 ₺</p></strong>
+                        <strong className='font-bold text-4xl'> <p>{getTotalAmount()} ₺</p></strong>
                     </div>
                 </div>
             </div>
 
-            {/* table */}
-            <div className='flex md:flex-row gap-y-8 pt-16 md:gap-y-0 flex-col items-center justify-between my-8'>
-                <h1 className='font-bold text-4xl tracking-widest text-center'><strong>Siparişler</strong></h1>
-                <div className='flex dropdown  dropdown-bottom dropdown-end flex-row gap-x-4'>
-                    <div><input className="input input-bordered w-full max-w-xs" type="text" placeholder='Sipariş ara...' /></div>
-                    <div className='flex items-center justify-center'>
-                        <div tabIndex={0} role="button" className="btn rounded-btn font-semibold  btn-outline">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="h-4 w-4"
-                            >
-                                <path d="m21 16-4 4-4-4"></path>
-                                <path d="M17 20V4"></path>
-                                <path d="m3 8 4-4 4 4"></path>
-                                <path d="M7 4v16"></path>
-                            </svg>Sırala</div>
-                        <ul
-                            tabIndex={0}
-                            className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow">
-                            <li><div>Sipariş numarası</div></li>
-                            <li><div>Müşteri adı</div></li>
-                            <li><div>Tarih</div></li>
-                            <li><div>Toplam</div></li>
-                            <li><div>Durum</div></li>
-                        </ul>
+            <div >
+                <div className="bg-base-200 shadow-md rounded-lg p-6">
+                    <h1 className="text-3xl font-semibold mb-6">Sipariş Yönetimi</h1>
+
+                    <div className="mb-6 flex items-center justify-between">
+                        <div className="relative w-1/3">
+                            <input
+                                type="text"
+                                className="w-full p-2 bg-base-100 rounded-lg focus:outline-none"
+                                placeholder="Sipariş ara..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex space-x-4">
+                            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Filtrele</button>
+                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Rapor</button>
+                        </div>
+                    </div>
+
+                    <ul className="space-y-4">
+                        {filteredOrders.map((order) => (
+                            <li key={order.id} className="bg-base-100 p-4 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200 ease-in-out">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-800">{order.id}</h3>
+                                        <p className="text-sm text-gray-600">Tarih: {new Date(order.createdAt).toLocaleDateString("tr-TR")}</p>
+                                        <p className="text-sm text-gray-600">Müşteri: {order.address.fullName || "Bilinmiyor"}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xl font-semibold text-blue-600">{order.totalAmount ? `${order.totalAmount} ₺` : "Bilinmiyor"}</p>
+                                    </div>
+                                </div>
+                                <div className="mt-2 text-gray-500">
+                                    <p className="text-sm">Adres: {order?.address.addressDetail || "Bilinmiyor"}</p>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className='mt-4 flex space-x-4'>
+                                        <button
+                                            onClick={() => handleStatusUpdate(order.id, 'Onaylandı')}
+                                            className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                                        >
+                                            Onayla
+                                        </button>
+                                        <button
+                                            onClick={() => handleStatusUpdate(order.id, 'Teslim Edildi')}
+                                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                                        >
+                                            Teslim Edildi
+                                        </button>
+                                        <button
+                                            onClick={() => handleStatusUpdate(order.id, 'İptal Edildi')}
+                                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                                        >
+                                            İptal Et
+                                        </button>
+                                    </div>
+                                    {OrderStatus(order?.status)}
+
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+
+                    {filteredOrders.length === 0 && (
+                        <div className="mt-6 text-center text-gray-500">
+                            <p>Henüz sipariş yok.</p>
+                        </div>
+                    )}
+
+                    <div className="mt-6 text-right">
+                        <h2 className="text-2xl font-semibold text-gray-900">Toplam Tutar: {getTotalAmount()} ₺</h2>
                     </div>
                 </div>
-            </div>
-            <div>
-                <table class="w-full caption-bottom text-sm">
-                    <thead class="[&amp;_tr]:border-b">
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[150px]">
-                                Sipariş Numarası
-                            </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                Müşteri Adı
-                            </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                Sipariş Tarihi
-                            </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                Durum
-                            </th>
-                            <th class="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 text-right">
-                                Toplam
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="[&amp;_tr:last-child]:border-0">
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">ORD001</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">John Doe</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">2023-05-01</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                <div
-                                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                                    data-v0-t="badge"
-                                >
-                                    Yolda
-                                </div>
-                            </td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">99.99 ₺</td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">ORD002</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jane Smith</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">2023-05-02</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                <div
-                                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-warning text-foreground"
-                                    data-v0-t="badge"
-                                >
-                                    Hazırlanıyor
-                                </div>
-                            </td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">149.99 ₺</td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">ORD003</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Bob Johnson</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">2023-05-03</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                <div
-                                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-error text-destructive-foreground hover:bg-destructive/80"
-                                    data-v0-t="badge"
-                                >
-                                    İptal edildi
-                                </div>
-                            </td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">79.99 ₺</td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">ORD004</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Sarah Lee</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">2023-05-04</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                <div
-                                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-success  text-gray-100 hover:bg-destructive/80"
-                                    data-v0-t="badge"
-                                >
-                                    Teslim edildi
-                                </div>
-                            </td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">199.99 ₺</td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">ORD005</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Tom Wilson</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">2023-05-05</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 hidden md:table-cell">
-                                <div
-                                    class="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                                    data-v0-t="badge"
-                                >
-                                    Yolda
-                                </div>
-                            </td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-right">$129.99</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     )

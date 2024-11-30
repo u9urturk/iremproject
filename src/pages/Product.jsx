@@ -67,8 +67,8 @@ export default function Product() {
     [productId],
   )
 
-  const handleAddToCart = (baseImage) => {
-    addToCart(productId, product, quantity, baseImage)
+  const handleAddToCart = (baseImage,isFullPrice) => {
+    addToCart(productId, product, quantity, baseImage,isFullPrice)
   }
 
   const updateReviewState = (data) => {

@@ -84,7 +84,7 @@ const OrderDetail = () => {
                                             <p>Kumaş: {item.fabric.fabricName}</p>
                                             <div className='flex items-center justify-start gap-x-1'>
                                                 <p>Model:</p>
-                                                <div>
+                                                <div className='flex items-center justify-center gap-x-1'>
                                                     {
                                                         item.patterns.urls.map((url, key) => (
                                                             <img key={key} src={url} className='w-16 h-16' alt="" srcset="" />
