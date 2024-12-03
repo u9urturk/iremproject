@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { getCategories  } from '../firebase';
+import { getCategories } from '../firebase/categoryService';
 
 
 export default function Categories() {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getAllOrders } from '../../../../firebase';
+import { getAllOrders } from '../../../../firebase/orderService';
 
 export default function OrderManagment() {
     const [orders, setOrders] = useState([]);
@@ -8,7 +8,7 @@ export default function OrderManagment() {
     useEffect(() => {
         const fetchOrders = async () => {
             const fetchedOrders = await getAllOrders();
-            setOrders(fetchedOrders);
+            setOrders(fetchedOrders.orders);
         };
 
         fetchOrders();

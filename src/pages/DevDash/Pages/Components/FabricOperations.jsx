@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../../../../components/Input'
 import { Form, Formik } from 'formik'
-import { addFabric, deleteFabricByFabricId, getAllFabrics } from '../../../../firebase'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { Timestamp } from 'firebase/firestore'
 import VerificationModal from '../../../../components/VerificationModal'
+import { addFabric, deleteFabricByFabricId, getAllFabrics } from '../../../../firebase/fabricService'
 
 
 export default function FabricOperations() {

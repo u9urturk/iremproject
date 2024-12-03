@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Plus, Edit, Trash, Home, Building, Check } from 'lucide-react';
-import { createAddress, deleteAddress, getUserAddresses, updateAddress } from '../../firebase';
 import { useSelector } from 'react-redux';
+import { createAddress, deleteAddress, getUserAddresses, updateAddress } from '../../firebase/addressService';
 
 const AddressManager = ({handleJustAdd=false,onClose=()=>{},mainPage=null}) => {
     const user = useSelector(state => state.auth.user)

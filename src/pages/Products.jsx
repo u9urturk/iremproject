@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { getCategories, getCategoryByCategoryId, getProductByCategoryId, getProducts } from '../firebase'
 import ListenImages from '../components/ListenImages'
 import { Link } from 'react-router-dom'
 import ProductRating from '../components/ProductRaiting';
 import { useScroll } from '../context/ScrollContext';
+import { getCategories, getCategoryByCategoryId } from '../firebase/categoryService';
+import { getProductByCategoryId, getProducts } from '../firebase/productService';
 
 export default function Products({ id }) {
 
@@ -37,14 +38,14 @@ export default function Products({ id }) {
         () => {
             setProducts("");
             getProducts().then(res => {
-                res.forEach(async (doc) => {
-                    await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
+                res.products.forEach(async (product) => {
+                    await getCategoryByCategoryId(product.categoryId).then((res) => {
                         let data = {
-                            productId: doc.id,
+                            productId: product.id,
                             categoryName: res.name,
-                            productName: doc.data().productName,
-                            basePrice: doc.data().basePrice,
-                            rating: Math.round(doc.data().rating)
+                            productName: product.productName,
+                            basePrice: product.basePrice,
+                            rating: Math.round(product.rating)
 
                         }
                         setProducts(prevState => [...prevState, data])
@@ -63,13 +64,13 @@ export default function Products({ id }) {
     const productByCategoryIdReaction = (categoryId) => {
         setProducts("");
         getProductByCategoryId(categoryId).then((res) => {
-            res.forEach(async (doc) => {
-                await getCategoryByCategoryId(doc.data().categoryId).then((res) => {
+            res.products.forEach(async (product) => {
+                await getCategoryByCategoryId(product.categoryId).then((res) => {
 
                     let data = {
-                        productId: doc.id,
+                        productId: product.id,
                         categoryName: res.name,
-                        ...doc.data()
+                        ...product
                     }
                     setProducts(prevState => [...prevState, data])
                 });

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { addCategory } from '../firebase'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { Form, Formik } from 'formik'
 import Input from './Input'
 import Button from './Button'
+import { addCategory } from '../firebase/categoryService'
 
 export default function CategoryAdd({ onStateChange }) {
     const [isActive, setisActive] = useState(false)

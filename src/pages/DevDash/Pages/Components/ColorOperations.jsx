@@ -3,9 +3,9 @@ import '../../../../Modal.css'
 import "../../../../ScrollStyle.css"
 import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
-import { addColor, deleteColorByColorId, getColors } from '../../../../firebase.js';
 import VerificationModal from '../../../../components/VerificationModal.jsx';
 import ColorPicker from '../../../../components/ColorPicker.jsx';
+import { addColor, deleteColorByColorId, getColors } from '../../../../firebase/colorService.js';
 
 export default function ColorOperations() {
   const [colors, setColors] = useState([])

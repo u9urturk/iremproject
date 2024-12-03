@@ -5,12 +5,13 @@ import "../../../../ScrollStyle.css"
 import { Form, Formik } from 'formik';
 import Input from '../../../../components/Input.jsx';
 import classNames from 'classnames';
-import { addPattern, deletePatternByPatternId, getImgUrl, getPatterns, updatePattern } from '../../../../firebase.js';
 import { useSelector } from 'react-redux';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Timestamp } from 'firebase/firestore';
 import VerificationModal from '../../../../components/VerificationModal.jsx';
 import { toast } from 'react-toastify';
+import { addPattern, deletePatternByPatternId, getPatterns, updatePattern } from '../../../../firebase/patternService.js';
+import { getImgUrl } from '../../../../firebase/imageService.js';
 
 
 export default function PatternOperations() {
@@ -170,10 +171,9 @@ export default function PatternOperations() {
 
     const getAllPatternReaction = () => {
         getPatterns().then(res => {
-            res.forEach(async (doc) => {
-                //FireBase zaman dönüşümü !! 
-                const fbts = new Timestamp(doc.data().creationTime.seconds, doc.data().creationTime.nanoseconds)
-                const fbtsUpdate = new Timestamp(doc.data().updateTime.seconds, doc.data().updateTime.nanoseconds)
+            res.patterns.forEach(async (pattern) => {
+                const fbts = new Timestamp(pattern.creationTime.seconds, pattern.creationTime.nanoseconds)
+                const fbtsUpdate = new Timestamp(pattern.updateTime.seconds, pattern.updateTime.nanoseconds)
 
                 const date = fbts.toDate();
                 const dateUpdate = fbtsUpdate.toDate();
@@ -184,8 +184,8 @@ export default function PatternOperations() {
 
 
                 setPatterns(prevState => [...prevState, {
-                    id: doc.id, patternName: doc.data().name,
-                    urls: doc.data().imgsUrl === undefined ? Array(3).fill(null) : doc.data().imgsUrl,
+                    id: pattern.id, patternName: pattern.name,
+                    urls: pattern.imgsUrl === undefined ? Array(3).fill(null) : pattern.imgsUrl,
                     creationTime: readableDate,
                     updateTime: readableDateUpdate
                 }])

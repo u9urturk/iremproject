@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { downloadImages, getColorByColorId, getCommentsByProductId, getFabricsByFabricId, getPatternByPatternId, getProductByProductId, } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import ProductDetail from './uiComponents/ProductDetail';
+import { getCommentsByProductId } from '../firebase/commentService';
+import { getColorByColorId } from '../firebase/colorService';
+import { getFabricsByFabricId } from '../firebase/fabricService';
+import { getPatternByPatternId } from '../firebase/patternService';
+import { getProductByProductId } from '../firebase/productService';
 
 
 
@@ -20,24 +24,24 @@ export default function Product() {
   const getProductReaction = useCallback(
     () => {
       getProductByProductId(productId).then(async res => {
-        const colorPromise = getColorByColorId(res.colorId);
-        const fabricPromise = getFabricsByFabricId(res.fabricId);
-        const patternPromise = getPatternByPatternId(res.patternId);
+        const colorPromise = getColorByColorId(res.product.colorId);
+        const fabricPromise = getFabricsByFabricId(res.product.fabricId);
+        const patternPromise = getPatternByPatternId(res.product.patternId);
 
 
-        const [colors, fabrics, patterns] = await Promise.all([colorPromise, fabricPromise, patternPromise]);
+        const [colors, fabrics, patterns] = await Promise.all([colorPromise, fabricPromise, (await patternPromise).pattern]);
         setProduct({
-          name: res.productName,
-          basePrice: res.basePrice,
-          fullPrice: res.fullPrice || null,
+          name: res.product.productName,
+          basePrice: res.product.basePrice,
+          fullPrice: res.product.fullPrice || null,
           color: {colorName: colors?.name || 'Unknown Color' },
           fabric: {fabricName: fabrics?.name || 'Unknown Fabric'},
           patterns: {
             patternName: patterns?.name || 'Unknown Pattern', 
             urls: patterns?.imgsUrl?.filter(img => img !== null),
           },
-          rating: Math.round(res.rating),
-          explanation: res.explanation || 'No explanation provided', 
+          rating: Math.round(res.product.rating),
+          explanation: res.product.explanation || 'No explanation provided', 
         });
         
 

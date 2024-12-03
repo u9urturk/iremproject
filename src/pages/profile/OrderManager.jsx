@@ -1,8 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import { readOrders } from '../../firebase';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { readOrder, readOrdersByUserId } from '../../firebase/orderService';
+
+export const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 4:
+      return {
+        badge: "badge badge-error",
+        status: "İptal Edildi"
+      }
+    case 3:
+      return {
+        badge: "badge badge-success",
+        status: "Teslim Edildi"
+      }
+    case 2:
+      return {
+        badge: "badge badge-info",
+        status: "Yolda"
+      }
+    case 1:
+      return {
+        badge: "badge badge-info",
+        status: "Hazırlanıyor"
+      }
+    case 0:
+      return {
+        badge: "badge badge-warning",
+        status: "Yeni Sipariş"
+      }
+    default:
+      return "badge";
+  }
+};
+
 
 const OrderManager = () => {
 
@@ -12,21 +45,26 @@ const OrderManager = () => {
   const [expandedOrder, setExpandedOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [sortedOrders, setSortedOrders] = useState([]);
 
+  const status = [
+    {
+      code: 0,
+      statu: 'Yeni Sipariş'
+    }, {
+      code: 1,
+      statu: 'Hazırlanıyor'
+    }, {
+      code: 2,
+      statu: 'Yolda'
+    }, {
+      code: 3,
+      statu: 'Teslim Edildi'
+    }, {
+      code: 4,
+      statu: 'İptal Edildi'
+    },
+  ]
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "Teslim Edildi":
-        return "badge badge-success";
-      case "Kargoda":
-        return "badge badge-info";
-      case "İşlemde":
-        return "badge badge-warning";
-      default:
-        return "badge";
-    }
-  };
 
 
 
@@ -45,7 +83,7 @@ const OrderManager = () => {
   };
 
   const getOrders = () => {
-    readOrders(user.uid).then(res => {
+    readOrdersByUserId(user.uid).then(res => {
       sortOrders(res.orders);
     })
   }
@@ -57,7 +95,6 @@ const OrderManager = () => {
   }, [user])
 
   const goToOrderWithState = (data) => {
-    console.log(data)
     navigate(`/profile/orders/${data.id}`, {
       state: { order: data }
     });
@@ -101,10 +138,11 @@ const OrderManager = () => {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">Tüm Durumlar</option>
-                <option value="delivered">Teslim Edildi</option>
-                <option value="shipping">Kargoda</option>
-                <option value="processing">İşlemde</option>
+                {
+                  status.map((statu, key) => (
+                    <option key={key} value={statu.code}>{statu.statu}</option>
+                  ))
+                }
               </select>
             </div>
           </div>
@@ -128,8 +166,8 @@ const OrderManager = () => {
                         {new Date(order.updatedAt).toLocaleDateString('tr-TR')}
                       </span>
                     </div>
-                    <span className={getStatusBadgeClass(order.status ? order.status : "İşlemde")}>
-                      {order.status ? order.status : "İşlemde"}
+                    <span className={getStatusBadgeClass(order.status).badge}>
+                      {getStatusBadgeClass(order.status).status}
                     </span>
                   </div>
                   <div className="font-bold">
@@ -161,9 +199,7 @@ const OrderManager = () => {
                   </tbody>
                 </table>
 
-                {/* Detay Kartları */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  {/* Teslimat Bilgileri */}
                   <div className="card bg-base-200">
                     <div className="card-body">
                       <h3 className="card-title text-sm">Teslimat Adresi</h3>
@@ -171,7 +207,6 @@ const OrderManager = () => {
                     </div>
                   </div>
 
-                  {/* Ödeme Bilgileri */}
                   <div className="card bg-base-200">
                     <div className="card-body">
                       <h3 className="card-title text-sm">Ödeme Yöntemi</h3>
@@ -179,7 +214,6 @@ const OrderManager = () => {
                     </div>
                   </div>
 
-                  {/* Kargo Takip */}
                   <div className="card bg-base-200">
                     <div className="card-body">
                       <h3 className="card-title text-sm">Kargo Takip No</h3>

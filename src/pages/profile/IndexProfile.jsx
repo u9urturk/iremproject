@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaRegBell, FaCheckCircle } from "react-icons/fa";
-import { getUserByUid, updateUserProfile } from '../../firebase';
 import { useSelector } from 'react-redux';
+import { getUserbyId, updateUserProfile } from '../../firebase/userService';
 
 
 
@@ -22,7 +22,7 @@ export default function IndexProfile() {
 
   useEffect(() => {
     if (user) {
-      getUserByUid(user.uid).then(res => {
+      getUserbyId(user.uid).then(res => {
         setForm({
           displayName: res.displayName,
           email: res.email,

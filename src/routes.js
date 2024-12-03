@@ -17,7 +17,7 @@ import IndexProfile from "./pages/profile/IndexProfile"
 import MainProfile from "./pages/profile/MainProfile"
 import PrivateRoute from "./utils"
 import CheckoutSummary from "./pages/uiComponents/CheckoutSummary"
-import OrderManager from "./pages/profile/OrderManageger"
+import OrderManager from "./pages/profile/OrderManager"
 import OrderDetail from "./pages/profile/OrderDetail"
 
 const routes = [

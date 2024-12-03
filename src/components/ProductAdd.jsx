@@ -3,10 +3,10 @@ import { Save, ArrowRight, ArrowLeft, Eye, EyeOff, Plus } from 'lucide-react';
 import { useCategory } from '../context/CategoryContext';
 import validateFormData from '../validate/ValidateProductAdd';
 import { toast } from 'react-toastify';
-import { addProduct } from '../firebase';
 import ModelUi from './ModelUi';
+import { addProduct } from '../firebase/productService';
 
-export default function ProductAdd({ productStateChange }) {
+export default function ProductAdd() {
     const [currentStep, setCurrentStep] = useState(1);
     const { patterns, fabrics, colors, categories, } = useCategory();
     const [formData, setFormData] = useState({
@@ -17,9 +17,9 @@ export default function ProductAdd({ productStateChange }) {
             productName: '',
             categoryId: '',
             explanation: '',
-            colorId: '',
-            fabricId: '',
-            patternId: '',
+            colors: [],
+            fabrics: [],
+            patterns: [],
             basePrice: "",
             fullPrice: "",
             premiumProduct: true

@@ -1,6 +1,5 @@
 import React, {useState } from 'react'
 import { useSelector } from 'react-redux'
-import { login, logout, signInWithFacebook, signInWithGoogle } from '../firebase'
 import { AiOutlineCloseCircle, AiOutlineLogin, AiOutlineLogout } from 'react-icons/ai'
 import { Form, Formik } from 'formik'
 import Input from './Input'
@@ -9,6 +8,7 @@ import { LoginSchema } from '../Validation'
 import logo from '../materials/logos/logo.svg'
 import { Link } from 'react-router-dom'
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
+import { login, logout, signInWithFacebook, signInWithGoogle } from '../firebase/authService'
 
 
 export default function Login() {
@@ -51,7 +51,7 @@ export default function Login() {
                             <div onClick={() => { setisActive(false) }}><AiOutlineCloseCircle className='absolute top-4 right-4 text-brandPink transition-all cursor-pointer hover:scale-125' size={24}></AiOutlineCloseCircle></div>
                             <div className='flex items-center justify-center gap-x-3'>
                                 <img src={logo} width={70} height={150} alt="iremceyizevi" />
-                                <span class="ml-3 text-3xl  font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
+                                <span className="ml-3 text-3xl  font-serif font-extrabold tracking-tight place-items-end justify-center flex gap-x-1">İrem <p className='text-brandGreen text-xs'> Çeyiz Evi</p></span>
                             </div>
                             <Formik
                                 validationSchema={LoginSchema}

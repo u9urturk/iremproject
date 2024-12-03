@@ -1,8 +1,8 @@
 import React from 'react'
-import {  updateCategoryByCategoryId } from '../firebase'
 import { Form, Formik } from 'formik'
 import Input from './Input'
 import classNames from 'classnames'
+import { updateCategoryByCategoryId } from '../firebase/categoryService'
 
 export default function CategoryUpdate({ isActive, onClose, data }) {
 

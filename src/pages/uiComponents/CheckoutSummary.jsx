@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Package, CreditCard, MapPin, ArrowDownUp } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { createOrder, getUserAddresses } from '../../firebase';
 import { useSelector } from 'react-redux';
 import AddressManager from '../profile/AddressManager';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { getUserAddresses } from '../../firebase/addressService';
+import { createOrder } from '../../firebase/orderService';
 
 
 const CheckoutSummary = () => {

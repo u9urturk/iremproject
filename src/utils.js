@@ -6,7 +6,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 
-export const userHendle = async data => {
+export const userHandle = async data => {
     if (!data) {
         store.dispatch(clearUser());
         return;

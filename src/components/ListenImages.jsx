@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { downloadImage } from '../firebase';
 import classNames from 'classnames';
+import { downloadImage } from '../firebase/imageService';
 
 
 export default function ListenImages({productId,target}) {

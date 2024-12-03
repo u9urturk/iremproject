@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
-import { FcUpload } from "react-icons/fc";
+import { FaChevronCircleUp } from "react-icons/fa";
 
 
 export default function ScrollToTop() {
@@ -32,17 +32,11 @@ export default function ScrollToTop() {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  return (
-    <div className="fixed z-50 bottom-4 right-4">
-      {isVisible && (
-        <button
-          onClick={scrollToTop}
-          className="bg-brandGreen z-50 text-white p-3 rounded-full shadow-lg hover:scale-110 transition duration-300"
-        >
-          <FcUpload size={20} />
-
-        </button>
-      )}
-    </div>
-  );
+  if (isVisible) {
+    return (
+      <div onClick={scrollToTop} className="fixed bg-transparent z-50 p-3 cursor-pointer hover:scale-110 transition duration-300 bottom-4 right-4">
+        <FaChevronCircleUp  className='text-primary bg-transparent' size={28} />
+      </div>
+    );
+  }
 }

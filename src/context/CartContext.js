@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { addToCartFb, clearCartFb, getCart, removeCartItem, updateCartItem } from '../firebase';
 import { useSelector } from 'react-redux';
-import Product from '../pages/Product';
+import { addToCartFb, clearCartFb, getCart, removeCartItem, updateCartItem } from '../firebase/cartService';
 
 // Sepet durumu için başlangıç durumu 
 const initialState = {

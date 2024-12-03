@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { deleteCategoryByCategoryId, getCategories } from '../../../firebase';
 import VerificationModal from '../../../components/VerificationModal';
 import CategoryUpdate from '../../../components/CategoryUpdate';
 import { AiOutlineDelete } from 'react-icons/ai'
 import { RxUpdate } from 'react-icons/rx'
 import { Timestamp } from 'firebase/firestore';
+import { deleteCategoryByCategoryId, getCategories } from '../../../firebase/categoryService';
 
 export default function Categories({selectCategory}) {
     const [categories, setCategories] = useState([])

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { addComment, downloadImages } from '../../firebase';
+import { addComment } from '../../firebase/commentService';
+import { downloadImages } from '../../firebase/imageService';
 
 export default function ProductDetail({ product, user, addCart, quantityFB, productId, reviews, updateReviewState }) {
     const [includeProduct, setIncludeProduct] = useState(true);

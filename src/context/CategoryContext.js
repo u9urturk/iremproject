@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getAllFabrics, getCategories, getColors, getPatterns } from "../firebase";
+import { getCategories } from "../firebase/categoryService";
+import { getColors } from "../firebase/colorService";
+import { getAllFabrics } from "../firebase/fabricService";
+import { getPatterns } from "../firebase/patternService";
 
 // Context oluşturma
 const CategoryContext = createContext();
@@ -28,9 +31,8 @@ export const CategoryProvider = ({ children }) => {
         })
 
         getPatterns().then(res => {
-            res.forEach((doc) => {
-                let data = { id: doc.id, ...doc.data() }
-                setPatterns(prevState => [...prevState, data])
+            res.patterns.forEach((pattern) => {
+                setPatterns(prevState => [...prevState, pattern])
             })
         })
 

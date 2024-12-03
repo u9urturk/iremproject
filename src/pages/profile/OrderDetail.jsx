@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Package, CreditCard, MapPin, ArrowDownUp } from 'lucide-react';
-import { getUserAddresses } from '../../firebase';
 import { useSelector } from 'react-redux';
 import AddressManager from '../profile/AddressManager';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getUserAddresses } from '../../firebase/addressService';
+import { getStatusBadgeClass } from './OrderManager';
 
 const OrderDetail = () => {
     const location = useLocation();
@@ -14,33 +15,17 @@ const OrderDetail = () => {
     const [totalAmount, setTotalAmount] = useState(0)
     const [allAddress, setAllAddress] = useState([])
     const [justAdd, setJustAdd] = useState(false);
+    const [statu, setStatu] = useState(0)
 
     useEffect(() => {
         if (location.state !== null) {
             setAddress(location.state.order.address)
             setItems(location.state.order.items)
             setTotalAmount(location.state.order.totalAmount ? location.state.order.totalAmount : 0)
+            setStatu(location.state.order.status)
         }
     }, [location.state])
 
-    console.log(items, address, totalAmount);
-    const defaultAddress = (data) => {
-        return new Promise((resolve, reject) => {
-            if (!data || data.length === 0) {
-                reject("Adres listesi boş.");
-            }
-
-            const defaultAddress = data.find(e => e.isDefault === true);
-
-            if (data) {
-                resolve(defaultAddress);
-            } else {
-                reject("Varsayılan adres bulunamadı.");
-            }
-        });
-
-
-    }
 
     const justAddClose = (success) => {
         setJustAdd(false);
@@ -54,7 +39,6 @@ const OrderDetail = () => {
             navigate('/profile/orders');
         }
     }, [location, navigate]);
-    console.log(location.state)
 
     const getAllAddress = () => {
         getUserAddresses(user.uid).then(res => {
@@ -145,11 +129,14 @@ const OrderDetail = () => {
                     </div>
                 </div>
 
-                {/* Sağ Taraf - Sipariş Özeti */}
                 <div className="lg:col-span-1">
                     <div className="bg-base-200 rounded-lg shadow-lg p-6 sticky top-28">
-                        <h2 className="text-xl font-bold mb-6">Sipariş Özeti</h2>
-
+                        <div className='w-full flex justify-between items-start'>
+                            <h2 className="text-xl font-bold mb-6">Sipariş Özeti</h2>
+                            <span className={getStatusBadgeClass(statu).badge}>
+                                {getStatusBadgeClass(statu).status}
+                            </span>
+                        </div>
                         <div className="space-y-4 mb-6">
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Ara Toplam</span>
@@ -166,7 +153,6 @@ const OrderDetail = () => {
                             </div>
                         </div>
 
-                        {/* Bilgi Notları */}
                         <div className="space-y-3 mb-6">
                             <div className="flex  items-center gap-2 text-sm text-gray-600">
                                 <Package className="w-4 h-4" />
