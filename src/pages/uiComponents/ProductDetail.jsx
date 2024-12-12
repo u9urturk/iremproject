@@ -34,7 +34,7 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
 
     const getSelectProduct = () => {
         const currentIndex = product.varyants.findIndex(varyant => {
-         
+
 
             return (
                 varyant.color.id === currentProperty.color &&
@@ -43,6 +43,10 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
             );
         });
         setCurrentProduct(product.varyants[currentIndex]);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
 
 
     }
@@ -279,8 +283,9 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                         <div className="w-full h-12 bg-base-300 rounded mt-6" />
                     </div>
                 </div>
-            </div> : <div className="container animate-fade mx-auto px-4 py-8">
+            </div> : <div className="container animate-fade relative mx-auto px-4 py-8">
                 {/* Ana Ürün Kartı */}
+
                 <div className="card lg:card-side bg-base-100 shadow-xl">
                     {/* Sol Taraf - Ürün Görselleri */}
                     <div className="relative h-1/2 lg:w-1/2 p-6">
@@ -311,6 +316,9 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
 
                     {/* Sağ Taraf - Ürün Bilgileri */}
                     <div className="card-body lg:w-1/2">
+                        <div className={`tooltip absolute  top-1 right-4 tooltip-primary tooltip-left`} data-tip="Ürün özelliklerini değiştirerek diğer alternatifleri görüntüleyebilirsiniz">
+                            <button className="text-primary font-bold text-xl">?</button>
+                        </div>
                         {/* title */}
                         <div className='flex flex-col md:flex-row justify-center items-center md:justify-between w-full'>
                             <h2 className="card-title text-3xl font-bold">{product.name}</h2>

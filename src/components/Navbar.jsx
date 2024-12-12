@@ -68,6 +68,7 @@ export default function Navbar() {
                     <div className=' hidden md:flex items-center justify-center gap-x-8 text-sm font-semibold'>
                         <Link className='hover:scale-110 transition-transform'>Kategoriler</Link>
                         <Link className='hover:scale-110 transition-transform'>Ürünler</Link>
+                        <Link className='hover:scale-110 text-primary transition-transform'>Ürün Tasarla</Link>
                         <Link className='hover:scale-110 transition-transform'>Galeri</Link>
                         <Link className='hover:scale-110 transition-transform'>Hakkında</Link>
                     </div>
