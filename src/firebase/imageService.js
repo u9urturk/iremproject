@@ -1,18 +1,18 @@
 import { getDownloadURL, listAll, ref, uploadBytesResumable } from "firebase/storage";
 import { showToast, storage } from "./index.js";
 
-export const getImgUrl = async (id, file) => {
+export const getImgUrl = async (id, file,type) => {
     try {
-        const imgUrl = await uploadImage("patterns", id, file);
+        const imgUrl = await uploadImage(type, id, file);
         return imgUrl;
     } catch (error) {
         throw error;
     }
 };
 
-export const getImgUrls = async (id, files) => {
+export const getImgUrls = async (id, files,type) => {
     try {
-        const uploadPromises = files.map(file =>file!==null? uploadImage("patterns", id, file.file):null);
+        const uploadPromises = files.map(file =>file!==null? uploadImage(type, id, file.file):null);
         return await Promise.all(uploadPromises);
     } catch (error) {
         throw error;
@@ -32,7 +32,7 @@ export const uploadImage = async (target, id, file) => {
             'state_changed',
             snapshot => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                showToast('info', `Yükleniyor... %${Math.round(progress)}`);
+                // showToast('info', `Yükleniyor... %${Math.round(progress)}`);
             },
             error => {
                 showToast('error', "Yükleme sırasında bir hata oluştu.");
@@ -41,7 +41,7 @@ export const uploadImage = async (target, id, file) => {
             async () => {
                 try {
                     const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    showToast('success', "Başarıyla Yüklendi!");
+                    // showToast('success', "Başarıyla Yüklendi!");
                     resolve(downloadURL);
                 } catch (error) {
                     reject(error);

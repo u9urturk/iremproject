@@ -16,19 +16,42 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
     const [images, setImages] = useState([]);
     const [productReview, setProductReview] = useState(1);
     const [sortedReviews, setSortedReviews] = useState([]);
+    const [currentProduct, setCurrentProduct] = useState(product.varyants[0])
     const [pageLoading, setPageLoading] = useState(true);
     const [selectedValue, setSelectedValue] = useState("Sırala");
     const [currentProperty, setCurrentProperty] = useState({
-        length: 0,
-        urls: []
+        color: product.varyants[0].color.id,
+        pattern: product.varyants[0].pattern.id,
+        fabric: product.varyants[0].fabric.id
     })
-    const [selectedImage, setSelectedImage] = useState(0);
+
 
 
     const [newReview, setNewReview] = useState({
         rating: 5,
         comment: ''
     });
+
+    const getSelectProduct = () => {
+        const currentIndex = product.varyants.findIndex(varyant => {
+         
+
+            return (
+                varyant.color.id === currentProperty.color &&
+                varyant.fabric.id === currentProperty.fabric &&
+                varyant.pattern.id === currentProperty.pattern
+            );
+        });
+        setCurrentProduct(product.varyants[currentIndex]);
+
+
+    }
+
+    useEffect(() => {
+        getSelectProduct()
+    }, [currentProperty])
+
+
 
 
     useEffect(() => {
@@ -262,14 +285,14 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                     {/* Sol Taraf - Ürün Görselleri */}
                     <div className="relative h-1/2 lg:w-1/2 p-6">
                         <img
-                            src={images && images[activeImageIndex]}
+                            src={currentProduct && currentProduct.imgs[activeImageIndex]}
                             alt={`${product.name} - Ana Görsel`}
                             className="w-full h-96 rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => handleImageClick(activeImageIndex)}
                         />
                         {/* Küçük Görsel Önizlemeleri */}
                         <div className="grid grid-cols-3 gap-2 mt-4">
-                            {images && images.map((img, index) => (
+                            {currentProduct && currentProduct.imgs.map((img, index) => (
                                 <div
                                     key={`${productId}${index}`}
                                     className={`cursor-pointer rounded-lg overflow-hidden border-2 
@@ -362,7 +385,7 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={() => { addCart(images[0],includeProduct) }} className="btn btn-primary">
+                                    <button onClick={() => { addCart(images[0], includeProduct) }} className="btn btn-primary">
                                         Sepete Ekle
                                     </button>
                                 </div>
@@ -375,72 +398,84 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                         {/* Ürün Özellikleri */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                             {Object.entries({
-                                Renk: { value: product.color.colorName, },
-                                Kumaş: { value: product.fabric.fabricName },
-                                Model: {
-                                    value: product.patterns.patternName, images: product.patterns.urls,
-                                    openModal: () => { document.getElementById('my_modal_prpty').showModal() }
-                                },
-                            }).map(([key, { value, images , openModal}]) => (
-                                <div key={key} className="stats overflow-visible relative group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow">
+                                Renk: { value: currentProduct?.color.name, values: product.colors },
+                                Kumaş: { value: currentProduct?.fabric.name, values: product.fabrics },
+                                Model: { value: currentProduct?.pattern.img, values: product.patterns },
+                            }).map(([key, obj]) => (
+                                <div
+                                    key={key}
+                                    className="stats relative overflow-visible  group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow"
+                                >
                                     <div className="stat place-items-center p-2">
                                         <div className="stat-title">{key}</div>
-                                        <div className="stat-value text-lg">{value}</div>
+                                        {key === "Model" ? <img className='w-16 h-16' src={obj.value}></img> : <div className="stat-value text-lg">{obj.value}</div>}
                                     </div>
-                                    {/* Hover İçin Popup */}
-                                    <div className={`absolute top-[-170%] left-1/2 transform -translate-x-1/2 hidden ${images ? "group-hover:flex" : ""} flex-col items-center bg-base-100 border border-gray-200 rounded-lg shadow-lg z-[1] w-48 p-3`}>
-                                        <div className="font-bold mb-2">{key} Görselleri</div>
-                                        <div onClick={() => {
-                                            setCurrentProperty({
-                                                length: images.length,
-                                                urls: images
-                                            })
+                                    {/* Hover */}
+                                    <div className='absolute   items-center justify-center  hidden group-hover:flex group-hover:animate-fade-up bg-base-200 w-full h-full'>
+                                        <p onClick={() => { document.getElementById(`modal_${key}`).showModal() }} className='font-bold pl-4 '>{key} Seçenekleri</p>
+                                    </div>
 
-                                            openModal()
-                                        }} className="flex items-center justify-center  grid-cols-2 gap-2">
-                                            {images?.map((img, index) => (
-                                                img ? <img
-                                                    key={index}
-                                                    src={img}
-                                                    alt={`${key} ${index + 1}`}
-                                                    className="w-full h-16 object-cover rounded-md border border-gray-300"
-                                                /> : ""
-                                            ))}
+                                    <dialog id={`modal_${key}`} className="modal">
+                                        <div className="modal-box">
+                                            <h3 className="font-bold text-lg">{key}</h3>
+                                            <div className='flex items-center justify-center gap-4'>
+                                                {obj.values?.map((value, index) => {
+                                                    if (key === "Model") {
+                                                        return <div key={index} onClick={() => {
+                                                            setCurrentProperty((prev) => {
+                                                                return {
+                                                                    ...prev,
+                                                                    pattern: value.id
+                                                                }
+                                                            });
+                                                            document.getElementById(`modal_${key}`).close();
+
+                                                        }} className='w-auto flex items-center hover:scale-105 transition-all rounded-xl justify-center p-2 h-auto bg-base-300'>
+                                                            <img src={value.img} className='h-20 w-20' />
+                                                        </div>
+                                                    } else if (key === "Kumaş") {
+                                                        return <div key={index}
+                                                            onClick={() => {
+                                                                setCurrentProperty((prev) => {
+                                                                    return {
+                                                                        ...prev,
+                                                                        fabric: value.id
+                                                                    }
+                                                                });
+                                                                document.getElementById(`modal_${key}`).close();
+
+                                                            }}
+                                                            className='w-auto min-w-20 min-h-20 flex items-center hover:scale-105 transition-all rounded-xl justify-center p-2 h-auto bg-base-300'>
+                                                            <p className='font-bold text-center w-full'>{value.name}</p>
+                                                        </div>
+                                                    } else {
+                                                        return <div key={index}
+                                                            onClick={() => {
+                                                                setCurrentProperty((prev) => {
+                                                                    return {
+                                                                        ...prev,
+                                                                        color: value.id
+                                                                    }
+                                                                });
+                                                                document.getElementById(`modal_${key}`).close();
+
+                                                            }}
+                                                            className='w-auto min-w-20 min-h-20 flex items-center hover:scale-105 transition-all rounded-xl justify-center p-2 h-auto bg-base-300'>
+                                                            <div
+                                                                style={{ backgroundColor: value.colorCode ? value.colorCode : "#ce463e" }}
+                                                                className={`w-10 h-10 rounded-tl-full rounded-br-full`}></div>
+                                                        </div>
+                                                    }
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
+                                        <form method="dialog" className="modal-backdrop">
+                                            <button>close</button>
+                                        </form>
+                                    </dialog>
                                 </div>
                             ))}
-
-                            <dialog id="my_modal_prpty" className={`${currentProperty.urls ? "modal" : "hidden"}`}>
-                                <div className="modal-box relative">
-                                    <div className='font-bold text-2xl pb-2'> {"Model"} Görselleri </div>
-                                    {/* Büyük Resim */}
-
-                                    <img src={currentProperty?.urls[selectedImage]} alt={`Large View`} className="w-full h-auto rounded-lg" />
-
-                                    {/* Galeri Navigasyonu */}
-                                    <div className={`flex justify-between mt-4 ${currentProperty.length > 1 ? "" : "hidden"}`}>
-                                        <button
-                                            onClick={() => setSelectedImage((prev) => (prev === 0 ? currentProperty.length - 1 : prev - 1))}
-                                            className="bg-gray-700 select-none text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"
-                                        >
-                                            Önceki
-                                        </button>
-                                        <button
-                                            onClick={() => setSelectedImage((prev) => (prev === currentProperty.length - 1 ? 0 : prev + 1))}
-                                            className="bg-gray-700 select-none text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"
-                                        >
-                                            Sonraki
-                                        </button>
-                                    </div>
-                                </div>
-                                <form method="dialog" className="modal-backdrop">
-                                    <button>close</button>
-                                </form>
-                            </dialog>
                         </div>
-
-
                     </div>
                 </div>
 
@@ -605,7 +640,7 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                             >
                                 <img
                                     ref={imageRef}
-                                    src={images[activeImageIndex]}
+                                    src={currentProduct.imgs[activeImageIndex]}
                                     alt="Büyük Görsel"
                                     className="w-full h-full object-contain transition-transform duration-200"
                                     style={{

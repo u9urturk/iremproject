@@ -6,7 +6,7 @@ export default function ModelUi({ patterns, currentModel }) {
     const [currentPatterns, setCurrentPatterns] = useState([])
 
     useEffect(() => {
-        currentModel('productData', 'patternId', currentPatterns.id);
+        currentModel('patterns', currentPatterns);
     }, [currentPatterns])
 
 

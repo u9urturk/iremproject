@@ -3,35 +3,35 @@ import classNames from 'classnames';
 import { downloadImage } from '../firebase/imageService';
 
 
-export default function ListenImages({productId,target}) {
+export default function ListenImages({ productId, target }) {
     const [image, setImage] = useState(null);
-    const tg=target;
+    const tg = target;
 
-    const listen =useCallback(
-      () => {
-        downloadImage(tg,productId).then((res)=>{
-            setImage(res)
-        })
-      },
-      [productId,tg],
+    const listen = useCallback(
+        () => {
+            downloadImage(tg, productId).then((res) => {
+                setImage(res)
+            })
+        },
+        [productId, tg],
     )
-    
+
 
     useEffect(() => {
         listen()
-    }, [productId,listen])
+    }, [productId, listen])
 
     return (
         <Fragment>
             {
-                image ==null?
-                <span className=" rounded-t-2xl object-center  h-48  block loading loading-dots loading-lg"></span> :
-                <img alt="ecommerce" className={classNames({
-                    "object-cover rounded-t-2xl object-center w-full h-48  block":true,
-                })} src={image!=null ? image:""} />
+                image == null ?
+                    <span className=" rounded-t-2xl object-center  h-48  block loading loading-dots loading-lg"></span> :
+                    <img alt="ecommerce" className={classNames({
+                        "object-cover rounded-t-2xl object-center w-full h-48  block": true,
+                    })} src={image != null ? image : ""} />
 
             }
-           
+
         </Fragment>
     )
 }

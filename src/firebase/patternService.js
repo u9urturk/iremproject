@@ -27,7 +27,7 @@ export const addPattern = async ({ patternName, files }) => {
         };
 
         const docRef = await addDoc(collection(db, "patterns"), baseData);
-        const imgUrls = await getImgUrls(docRef.id, files);
+        const imgUrls = await getImgUrls(docRef.id, files,"patterns");
 
         await updatePattern(docRef.id, imgUrls, baseData);
 

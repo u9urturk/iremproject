@@ -1,6 +1,6 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db, showToast } from "./index.js";
-import { uploadImage } from "./imageService.js";
+import { getImgUrl } from "./imageService.js";
 
 export const addProduct = async (formData) => {
     try {
@@ -8,24 +8,37 @@ export const addProduct = async (formData) => {
             ...formData.productData,
             rating: 0,
             creationTime: Timestamp.fromDate(new Date()),
-            photos: [] // Başlangıçta boş bırakıyoruz.
+            varyants: []
         });
 
         if (docRef.id) {
-            // Fotoğrafların yükleme işlemlerini başlatıyoruz
-            const uploadPromises = formData.photos.map(photo => {
-                if (photo !== null) {
-                    return uploadImage("productImages", docRef.id, photo.file);
-                }
-            });
+            const updatedVariants = await Promise.all(
+                formData.varyants.map(async (varyant) => {
+                    const updatedImgs = await Promise.all(
+                        varyant.imgs.map(async (img) => {
+                            if (img !== null) {
+                                try {
+                                    return await getImgUrl(docRef.id, img.file, "productImages");
+                                } catch (error) {
+                                    console.error("Resim yükleme hatası: ", error);
+                                    return null;
+                                }
+                            }
+                            return null;
+                        })
+                    );
+                    return {
+                        ...varyant,
+                        imgs: updatedImgs,
+                    };
+                })
+            );
 
-            // Fotoğraflar yüklendikten sonra Firestore'u güncelliyoruz
-            await Promise.all(uploadPromises);
-            
-            // Firestore belgesine fotoğrafları ekliyoruz
-            await updateProductPhotos(docRef.id, formData.photos);
+            const updateDocRef = doc(db, "products", docRef.id);
+            await updateDoc(updateDocRef, { varyants: updatedVariants });
 
             showToast('success', `"${formData.productData.productName}" isimli ürün başarıyla eklendi.`);
+            return true;
         }
     } catch (error) {
         console.error("Error adding document: ", error);
@@ -33,17 +46,6 @@ export const addProduct = async (formData) => {
     }
 };
 
-
-const updateProductPhotos = async (productId, photos) => {
-    try {
-        const photoUrls = photos.map(photo => photo.url); 
-        const docRef = doc(db, "products", productId);
-        await updateDoc(docRef, { photos: photoUrls });
-    } catch (error) {
-        console.error("Fotoğraflar güncellenirken hata oluştu:", error);
-        showToast('error', "Fotoğraflar güncellenirken bir hata oluştu.");
-    }
-};
 
 
 

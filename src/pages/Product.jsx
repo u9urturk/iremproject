@@ -8,6 +8,7 @@ import { getColorByColorId } from '../firebase/colorService';
 import { getFabricsByFabricId } from '../firebase/fabricService';
 import { getPatternByPatternId } from '../firebase/patternService';
 import { getProductByProductId } from '../firebase/productService';
+import { showToast } from '../firebase';
 
 
 
@@ -24,28 +25,59 @@ export default function Product() {
   const getProductReaction = useCallback(
     () => {
       getProductByProductId(productId).then(async res => {
-        const colorPromise = getColorByColorId(res.product.colorId);
-        const fabricPromise = getFabricsByFabricId(res.product.fabricId);
-        const patternPromise = getPatternByPatternId(res.product.patternId);
+        try {
+          const colorArray = []
+          const colorPromise = res.product.varyants.map(varyant => varyant.color).filter(color => {
+            if (colorArray.find(cl => cl.id === color.id)) {
+              return;
+            }
+            colorArray.push(color)
+          })
+          const fabricArray = [];
+          const fabricPromise = res.product.varyants
+            .map(varyant => varyant.fabric)
+            .filter(fabric => {
+              if (fabricArray.find(fb => fb.id === fabric.id)) {
+                return false;
+              }
+              fabricArray.push(fabric);
+              return true;
+            });
+
+          const patternArray = [];
+          const patternPromise = res.product.varyants
+            .map(varyant => varyant.pattern)
+            .filter(pattern => {
+              if (patternArray.find(pt => pt.id === pattern.id)) {
+                return false;
+              }
+              patternArray.push(pattern);
+              return true;
+            });
 
 
-        const [colors, fabrics, patterns] = await Promise.all([colorPromise, fabricPromise, (await patternPromise).pattern]);
-        setProduct({
-          name: res.product.productName,
-          basePrice: res.product.basePrice,
-          fullPrice: res.product.fullPrice || null,
-          color: {colorName: colors?.name || 'Unknown Color' },
-          fabric: {fabricName: fabrics?.name || 'Unknown Fabric'},
-          patterns: {
-            patternName: patterns?.name || 'Unknown Pattern', 
-            urls: patterns?.imgsUrl?.filter(img => img !== null),
-          },
-          rating: Math.round(res.product.rating),
-          explanation: res.product.explanation || 'No explanation provided', 
-        });
-        
+          const [colors, fabrics, patterns] = await Promise.all([
+            Promise.all(colorPromise),
+            Promise.all(fabricPromise),
+            Promise.all(patternPromise),
+          ]);
 
-      })
+          setProduct({
+            name: res.product.productName,
+            basePrice: res.product.basePrice,
+            fullPrice: res.product.fullPrice || null,
+            colors: colorArray,
+            fabrics: fabricArray,
+            patterns: patternArray,
+            rating: Math.round(res.product.rating),
+            explanation: res.product.explanation || 'Ürün açıklaması bulunamadı',
+            varyants: res.product.varyants
+          });
+        } catch (error) {
+          console.error("Error fetching product data:", error);
+          showToast('error', "Ürün verileri alınırken bir hata oluştu.");
+        }
+      });
     },
     [productId],
   )
@@ -71,8 +103,8 @@ export default function Product() {
     [productId],
   )
 
-  const handleAddToCart = (baseImage,isFullPrice) => {
-    addToCart(productId, product, quantity, baseImage,isFullPrice)
+  const handleAddToCart = (baseImage, isFullPrice) => {
+    addToCart(productId, product, quantity, baseImage, isFullPrice)
   }
 
   const updateReviewState = (data) => {

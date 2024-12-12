@@ -59,10 +59,7 @@ const validateFormData = (formData) => {
     }
 
 
-    if (photos.filter((qq)=>(qq===null)).length > 3) {
-        toast.error("Görseller en az 3, en fazla 6 adet olmalıdır!");
-        return false;
-    }
+    
 
 
 

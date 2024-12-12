@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import ListenImages from '../components/ListenImages'
 import { Link } from 'react-router-dom'
 import ProductRating from '../components/ProductRaiting';
 import { useScroll } from '../context/ScrollContext';
 import { getCategories, getCategoryByCategoryId } from '../firebase/categoryService';
 import { getProductByCategoryId, getProducts } from '../firebase/productService';
+import classNames from 'classnames';
 
 export default function Products({ id }) {
 
@@ -24,7 +24,6 @@ export default function Products({ id }) {
             getCategories().then(res => {
                 res.forEach((doc) => {
                     let data = { categoryId: doc.id, ...doc.data() }
-                    // console.log(doc.data())
                     setCategories(prevState => [...prevState, data])
                 })
             })
@@ -45,7 +44,9 @@ export default function Products({ id }) {
                             categoryName: res.name,
                             productName: product.productName,
                             basePrice: product.basePrice,
-                            rating: Math.round(product.rating)
+                            fullPrice: product.fullPrice,
+                            rating: Math.round(product.rating),
+                            baseProperty: product.varyants[0]
 
                         }
                         setProducts(prevState => [...prevState, data])
@@ -70,6 +71,9 @@ export default function Products({ id }) {
                     let data = {
                         productId: product.id,
                         categoryName: res.name,
+                        baseProperty: product.varyants[0],
+                        fullPrice: product.fullPrice,
+
                         ...product
                     }
                     setProducts(prevState => [...prevState, data])
@@ -144,14 +148,23 @@ export default function Products({ id }) {
                             return <Link to={`product/${product.productId}`} key={product.productId}
                                 className="card w-44 md:w-52   hover:scale-110 transition-all shadow-2xl hover:shadow-lg h-auto cursor-pointer group">
 
-                                <figure ><ListenImages target={"productImages"} productId={product.productId}></ListenImages></figure>
+                                <figure >
+                                   { product.baseProperty == null ?
+                                    <span className=" rounded-t-2xl object-center  h-48  block loading loading-dots loading-lg"></span> :
+                                    <img alt="ecommerce" className={classNames({
+                                        "object-cover rounded-t-2xl object-center w-full h-48  block": true,
+                                    })} src={product.baseProperty.imgs != null ? product.baseProperty.imgs[0] : ""} />}
+                                </figure>
                                 <div className="card-body">
                                     <div>
                                         <h2 className="card-title truncate min-w-fit  text-md">{product.productName}</h2>
                                         <h4 className='font-serif text-xs   opacity-60'>{product.categoryName}</h4>
                                     </div>
                                     <ProductRating id={product.productId} size={"xs"} initialRating={product.rating} />
-                                    <div className='w-full h-auto'><div className=" badge  text-xs rounded-md md:text-md badge-secondary badge-lg badge-outline">{product.basePrice} &#x20BA;</div></div>
+                                    <div className='w-full flex items-center justify-between h-auto'>
+                                        <div className=" badge  text-sm font-semibold rounded-md md:text-md badge-secondary badge-lg badge-outline">{product.basePrice} &#x20BA;</div>
+                                        {product.fullPrice && <div className=" badge  text-sm font-semibold  rounded-md md:text-md badge-primary badge-lg badge-outline">{product.fullPrice} &#x20BA;</div>}
+                                    </div>
                                     <div className="card-actions w-full">
                                         <button className=" opacity-100 w-full bg-brandGreen font-sans font-semibold text-gray-100 shadow-2xl transition-all mt-2 rounded-md py-2 px-2  text-xs md:text-md ">Ürünü İncele</button>
                                     </div>

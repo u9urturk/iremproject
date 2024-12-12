@@ -20,7 +20,10 @@ function App() {
           {showRoutes}
 
           <Footer></Footer>
-          <ToastContainer
+        
+        </CartProvider>
+      </CategoryProvider>
+      <ToastContainer
             position="top-left"
             autoClose={1500}
             hideProgressBar={false}
@@ -30,10 +33,8 @@ function App() {
             progress={undefined}
             theme="colored"
             transition={Flip}
+            
           />
-        </CartProvider>
-      </CategoryProvider>
-
     </div>
   );
 }
