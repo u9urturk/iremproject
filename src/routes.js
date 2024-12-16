@@ -19,6 +19,7 @@ import PrivateRoute from "./utils"
 import CheckoutSummary from "./pages/uiComponents/CheckoutSummary"
 import OrderManager from "./pages/profile/OrderManager"
 import OrderDetail from "./pages/profile/OrderDetail"
+import ProductCustomizerMain from "./productCustomizer/ProductCustomizerMain"
 
 const routes = [
     {
@@ -65,6 +66,10 @@ const routes = [
                     }
                 ]
 
+            },
+            {
+                path:"productcustomizer",
+                element:<ProductCustomizerMain></ProductCustomizerMain>
             },
             {
                 auth: true,
