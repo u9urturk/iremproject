@@ -13,11 +13,10 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [images, setImages] = useState([]);
     const [productReview, setProductReview] = useState(1);
     const [sortedReviews, setSortedReviews] = useState([]);
     const [currentProduct, setCurrentProduct] = useState(product.varyants[0])
-    const [pageLoading, setPageLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(false);
     const [selectedValue, setSelectedValue] = useState("Sırala");
     const [currentProperty, setCurrentProperty] = useState({
         color: product.varyants[0].color.id,
@@ -33,9 +32,9 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
     });
 
     const getSelectProduct = () => {
+        setPageLoading(true)
         const currentIndex = product.varyants.findIndex(varyant => {
-
-
+   
             return (
                 varyant.color.id === currentProperty.color &&
                 varyant.fabric.id === currentProperty.fabric &&
@@ -48,6 +47,10 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
             behavior: 'smooth',
         });
 
+        setTimeout(() => {
+            setPageLoading(false)
+        }, 700);
+
 
     }
 
@@ -57,24 +60,11 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
 
 
 
-
     useEffect(() => {
         includeProduct ? setCurrentPrice(product.fullPrice) : setCurrentPrice(product.basePrice)
     }, [includeProduct])
 
 
-    const listenImages = useCallback(
-        () => {
-            downloadImages("productImages", productId).then((res) => {
-                setImages(res)
-                setTimeout(() => {
-                    setPageLoading(false)
-                }, 500);
-
-            })
-        },
-        [productId],
-    )
 
     useEffect(() => {
         quantityFB(quantity);
@@ -83,15 +73,11 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
 
 
     useEffect(() => {
-        listenImages()
         getProductReview();
         sortReviews();
-    }, [productId, listenImages])
+    }, [productId,reviews])
 
 
-
-
-    // Zoom kontrolü için ref
     const imageRef = useRef(null);
 
     const handleZoomIn = () => {
@@ -111,7 +97,6 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
 
     const handleLoadMore = () => {
         setLoading(true);
-        // Simüle edilmiş yükleme gecikmesi
         setTimeout(() => {
             setVisibleReviews(prev => Math.min(prev + 20, reviews.length));
             setLoading(false);
@@ -136,7 +121,6 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
     // Sıralama işlemini gerçekleştiren fonksiyon
     const sortReviews = (option = 'date_desc') => {
         let sortedData = [...reviews];
-
 
         if (option === 'date_desc') {
             sortedData.sort((a, b) => changeDateFormat(b.date) - changeDateFormat(a.date)); // Tarihe göre azalan
@@ -393,7 +377,7 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                                             +
                                         </button>
                                     </div>
-                                    <button onClick={() => { addCart(images[0], includeProduct) }} className="btn btn-primary">
+                                    <button onClick={() => { addCart(currentProduct, includeProduct) }} className="btn btn-primary">
                                         Sepete Ekle
                                     </button>
                                 </div>
@@ -414,13 +398,13 @@ export default function ProductDetail({ product, user, addCart, quantityFB, prod
                                     key={key}
                                     className="stats relative overflow-visible  group cursor-pointer hover:scale-95 transition-transform hover:shadow-xl shadow"
                                 >
-                                    <div className="stat place-items-center p-2">
-                                        <div className="stat-title">{key}</div>
+                                    <div className="stat bg-base-200 rounded-lg place-items-center p-2">
+                                        <div className="stat-title text-primary">{key}</div>
                                         {key === "Model" ? <img className='w-16 h-16' src={obj.value}></img> : <div className="stat-value text-lg">{obj.value}</div>}
                                     </div>
                                     {/* Hover */}
-                                    <div className='absolute   items-center justify-center  hidden group-hover:flex group-hover:animate-fade-up bg-base-200 w-full h-full'>
-                                        <p onClick={() => { document.getElementById(`modal_${key}`).showModal() }} className='font-bold pl-4 '>{key} Seçenekleri</p>
+                                    <div onClick={() => { document.getElementById(`modal_${key}`).showModal() }} className='absolute items-center justify-center rounded-lg   hidden group-hover:flex group-hover:animate-fade-up bg-base-200 w-full h-full'>
+                                        <p  className='font-bold pl-4 '>{key} Seçenekleri</p>
                                     </div>
 
                                     <dialog id={`modal_${key}`} className="modal">

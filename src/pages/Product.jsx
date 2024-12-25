@@ -103,8 +103,18 @@ export default function Product() {
     [productId],
   )
 
-  const handleAddToCart = (baseImage, isFullPrice) => {
-    addToCart(productId, product, quantity, baseImage, isFullPrice)
+  const handleAddToCart = (currentProduct, isFullPrice) => {
+    const newProduct= {
+      name:product.name,
+      basePrice:product.basePrice,
+      fullPrice:product.fullPrice,
+      isFullPrice:isFullPrice,
+      color:currentProduct.color,
+      fabric:currentProduct.fabric,
+      pattern:currentProduct.pattern,
+      imgs:currentProduct.imgs
+    }
+    addToCart(productId, newProduct, quantity, currentProduct.imgs[0], isFullPrice)
   }
 
   const updateReviewState = (data) => {

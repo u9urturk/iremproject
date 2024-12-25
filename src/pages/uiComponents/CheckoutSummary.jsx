@@ -17,7 +17,6 @@ const CheckoutSummary = () => {
     const [justAdd, setJustAdd] = useState(false);
     const navigate = useNavigate();
 
-    console.log(items)
     const defaultAddress = (data) => {
         return new Promise((resolve, reject) => {
             if (!data || data.length === 0) {
@@ -38,7 +37,6 @@ const CheckoutSummary = () => {
 
     const justAddClose = (success) => {
         setJustAdd(false);
-        console.log(success)
         if (success === true) { getAllAddress(); }
     }
 
@@ -105,22 +103,18 @@ const CheckoutSummary = () => {
                                     <div className="flex-1">
                                         <h3 className="font-semibold">{item.name}</h3>
                                         <div className="text-sm text-gray-600 mt-1">
-                                            <p>Renk: {item.color.colorName}</p>
-                                            <p>Kumaş: {item.fabric.fabricName}</p>
+                                            <p className='font-semibold'>Renk: {item.color.name}</p>
+                                            <p className='font-semibold'>Kumaş: {item.fabric.name}</p>
                                             <div className='flex items-center justify-start gap-x-1'>
-                                                <p>Model:</p>
+                                                <p className='font-semibold'>Model:</p>
                                                 <div className='flex items-center justify-center gap-x-1'>
-                                                    {
-                                                        item.patterns.urls.map((url,key)=>(
-                                                            <img key={key} src={url} className='w-16 h-16' alt="" srcset="" />
-                                                        ))
-                                                    }
+                                                    <img src={item.pattern.img} className='w-16 h-16 ml-2' />
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex justify-between items-center mt-2">
                                             <span className="text-sm">Adet: {item.quantity}</span>
-                                            <span className="font-semibold">{item.basePrice * item.quantity} ₺</span>
+                                            <span className="font-semibold">Fiyat: {(item.isFullPrice?item.fullPrice:item.basePrice) * item.quantity} ₺</span>
                                         </div>
                                     </div>
                                 </div>

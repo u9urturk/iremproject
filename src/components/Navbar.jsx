@@ -68,7 +68,7 @@ export default function Navbar() {
                     <div className=' hidden md:flex items-center justify-center gap-x-8 text-sm font-semibold'>
                         <Link className='hover:scale-110 transition-transform'>Kategoriler</Link>
                         <Link className='hover:scale-110 transition-transform'>Ürünler</Link>
-                        <Link to={"/productcustomizer"} className='hover:scale-110 text-primary transition-transform'>Ürün Tasarla</Link>
+                        {/* <Link to={"/productcustomizer"} className='hover:scale-110 text-primary transition-transform'>Ürün Tasarla</Link> */}
                         <Link className='hover:scale-110 transition-transform'>Galeri</Link>
                         <Link className='hover:scale-110 transition-transform'>Hakkında</Link>
                     </div>
@@ -116,7 +116,7 @@ export default function Navbar() {
                                         <li>
                                             <div className='indicator'>
                                                 <LuShoppingCart size={22} />
-                                                <span className="indicator-item text-xs opacity-85 badge badge-secondary">{totalQuantity}</span>
+                                                <span className="indicator-item text-xs opacity-85 badge badge-primary">{totalQuantity}</span>
                                             </div>
                                         </li>
                                     </label>

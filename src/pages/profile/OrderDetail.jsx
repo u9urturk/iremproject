@@ -64,16 +64,12 @@ const OrderDetail = () => {
                                     <div className="flex-1">
                                         <h3 className="font-semibold">{item.name}</h3>
                                         <div className="text-sm text-gray-600 mt-1">
-                                            <p>Renk: {item.color.colorName}</p>
-                                            <p>Kumaş: {item.fabric.fabricName}</p>
+                                            <p className='font-semibold'>Renk: {item.color.name}</p>
+                                            <p className='font-semibold'>Kumaş: {item.fabric.name}</p>
                                             <div className='flex items-center justify-start gap-x-1'>
-                                                <p>Model:</p>
+                                                <p className='font-semibold'>Model:</p>
                                                 <div className='flex items-center justify-center gap-x-1'>
-                                                    {
-                                                        item.patterns.urls.map((url, key) => (
-                                                            <img key={key} src={url} className='w-16 h-16' alt="" srcset="" />
-                                                        ))
-                                                    }
+                                                <img  src={item.pattern.img} className='w-16 h-16 ml-2' />
                                                 </div>
                                             </div>
                                         </div>
